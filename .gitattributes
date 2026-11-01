@@ -1,0 +1,3 @@
+# Store text files with LF so Windows checkouts and the Linux Actions runner agree,
+# and the daily data job doesn't commit line-ending-only changes.
+* text=auto eol=lf

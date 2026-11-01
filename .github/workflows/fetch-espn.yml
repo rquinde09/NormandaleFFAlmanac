@@ -1,0 +1,51 @@
+# Pulls league data from ESPN and commits data/ when something changed.
+# Secrets (repo Settings > Secrets and variables > Actions): ESPN_LEAGUE_ID, ESPN_S2, ESPN_SWID.
+# A failed run (expired cookie, ESPN change) commits nothing, so the site keeps the last good data.
+# GitHub emails failures for scheduled runs to whoever last edited the cron line below.
+name: Fetch ESPN data
+
+on:
+  schedule:
+    # Daily at 10:00 UTC (4–5 am Central), September through January
+    - cron: "0 10 * 9-12,1 *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-espn
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Fetch seasons
+        env:
+          ESPN_LEAGUE_ID: ${{ secrets.ESPN_LEAGUE_ID }}
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          ESPN_SWID: ${{ secrets.ESPN_SWID }}
+        run: python scripts/fetch_seasons.py
+
+      - name: Commit changed data
+        run: |
+          git add data
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update ESPN data"
+          git pull --rebase
+          git push

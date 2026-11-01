@@ -1,0 +1,221 @@
+[
+  {
+    "slug": "abdi",
+    "name": "Abdi Hayow",
+    "nickname": "Abdi",
+    "active": true,
+    "espnIds": [
+      "{04CB07A7-80EE-4051-AAEF-93F2A5E4430D}",
+      "{362A92B9-17DA-4A46-979A-72D195A7BF7C}"
+    ]
+  },
+  {
+    "slug": "aj",
+    "name": "AJ Elwir",
+    "nickname": "AJ",
+    "active": true,
+    "espnIds": [
+      "{95984AA0-C6D7-4C9F-A2B5-6680E44FADDE}"
+    ]
+  },
+  {
+    "slug": "ammari",
+    "name": "Ammar Suleiman",
+    "nickname": "Ammari",
+    "active": true,
+    "espnIds": [
+      "{DA75791D-63C1-4BA1-BC7A-B0074CE19036}"
+    ]
+  },
+  {
+    "slug": "andrew",
+    "name": "Andrew MacDonald",
+    "nickname": "Andrew",
+    "active": true,
+    "espnIds": [
+      "{26356A06-269B-4B1B-8A0C-6544D8D7299E}"
+    ]
+  },
+  {
+    "slug": "cesar",
+    "name": "Cesar Vega",
+    "nickname": "Cesar",
+    "active": false,
+    "espnIds": [
+      "{CABC7348-2377-4C90-99D5-18932E6BA698}"
+    ]
+  },
+  {
+    "slug": "esdras",
+    "name": "Esdras Mendez",
+    "nickname": "Esdras",
+    "active": false,
+    "espnIds": [
+      "{196EC26A-4BB4-4756-AEC2-6A4BB427560E}"
+    ]
+  },
+  {
+    "slug": "hoang",
+    "name": "Hoang Vo",
+    "nickname": "Hoang",
+    "active": false,
+    "espnIds": [
+      "{14D55B82-9148-4CDD-BB11-ECB357A7CD77}"
+    ]
+  },
+  {
+    "slug": "ivan",
+    "name": "Ivan Contreras",
+    "nickname": "Ivan",
+    "active": false,
+    "espnIds": [
+      "{A399DB71-2727-4ED2-99DB-7127277ED214}"
+    ]
+  },
+  {
+    "slug": "jeremy",
+    "name": "Jeremy Mitchell",
+    "nickname": "Jeremy",
+    "active": true,
+    "espnIds": [
+      "{0315B39C-8650-4799-A87D-B38CE878FC4B}",
+      "{36DFC88A-C92D-478D-9FC8-8AC92DE78D3A}"
+    ]
+  },
+  {
+    "slug": "jordan",
+    "name": "Jordan German",
+    "nickname": "Jordan",
+    "active": false,
+    "espnIds": [
+      "{27281DBE-CE32-46DB-BB7C-9E295D192E19}"
+    ]
+  },
+  {
+    "slug": "kaden",
+    "name": "Kaden Hoime",
+    "nickname": "Kaden",
+    "active": true,
+    "espnIds": [
+      "{FC558CB8-E5AE-4BC6-958C-B8E5AEEBC6EA}"
+    ]
+  },
+  {
+    "slug": "kenny",
+    "name": "Kenny Quinde",
+    "nickname": "Kenny",
+    "active": false,
+    "espnIds": [
+      "{512BD1A1-A749-402A-ABD1-A1A749302AA4}"
+    ]
+  },
+  {
+    "slug": "khalid",
+    "name": "Khalid Adam",
+    "nickname": "Khalid",
+    "active": false,
+    "espnIds": [
+      "{A5AC0FB3-52A5-4DAB-AC0F-B352A56DAB65}"
+    ]
+  },
+  {
+    "slug": "kyle",
+    "name": "Kyle Quitangon",
+    "nickname": "Kyle",
+    "active": true,
+    "espnIds": [
+      "{F3435930-778D-41EA-9FE9-382F2103D44B}"
+    ]
+  },
+  {
+    "slug": "luke",
+    "name": "Luke Anderson",
+    "nickname": "Luke",
+    "active": true,
+    "espnIds": [
+      "{3753F86E-E331-4B1C-93F8-6EE3314B1CE2}"
+    ]
+  },
+  {
+    "slug": "madison",
+    "name": "Madison Casciano",
+    "nickname": "Madison",
+    "active": false,
+    "espnIds": [
+      "{844FA6EB-73EC-4C49-B0E7-28FEBC0203A5}"
+    ]
+  },
+  {
+    "slug": "nigel",
+    "name": "Nigel Quitangon",
+    "nickname": "Nigel",
+    "active": true,
+    "espnIds": [
+      "{80F36648-A72E-4A12-8D90-E403093994D3}"
+    ]
+  },
+  {
+    "slug": "randy",
+    "name": "Randy Quinde",
+    "nickname": "Randy",
+    "active": true,
+    "espnIds": [
+      "{6A2D5E1F-F054-48FD-8BAE-7C80ECFBBB6D}"
+    ]
+  },
+  {
+    "slug": "robel",
+    "name": "Robel Asmelash",
+    "nickname": "Robel",
+    "active": true,
+    "espnIds": [
+      "{850C06AD-173C-4911-BBEA-FB3446206E3F}",
+      "{FD61E895-178A-4221-B324-97DD9CFE21B8}"
+    ]
+  },
+  {
+    "slug": "roger",
+    "name": "Roger Perez",
+    "nickname": "Roger",
+    "active": true,
+    "espnIds": [
+      "{8DA56E2D-B028-43B2-9777-45D736D457C0}"
+    ]
+  },
+  {
+    "slug": "ryan",
+    "name": "Ryan Klatke",
+    "nickname": "Ryan",
+    "active": true,
+    "espnIds": [
+      "{C23D989A-1989-4EC7-B06E-4D82E78547D4}"
+    ]
+  },
+  {
+    "slug": "suny",
+    "name": "Suny Mao",
+    "nickname": "Suny",
+    "active": true,
+    "espnIds": [
+      "{3C0E9C5C-0F6D-4167-9AE2-BFE959FF1FF3}"
+    ]
+  },
+  {
+    "slug": "tom",
+    "name": "Tom Roan",
+    "nickname": "Tom",
+    "active": false,
+    "espnIds": [
+      "{4A1EAA98-CB86-4104-8E9D-583A513D5F75}"
+    ]
+  },
+  {
+    "slug": "troy",
+    "name": "Troy Montoya",
+    "nickname": "Troy",
+    "active": false,
+    "espnIds": [
+      "{AAB17ECA-2A91-4ADD-8C9D-FAF4861D326A}"
+    ]
+  }
+]
