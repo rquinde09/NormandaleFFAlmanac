@@ -2048,7 +2048,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 90.78
+          "8": 103.58
         },
         "teamId": 19,
         "tiebreak": 0.0,
@@ -2111,7 +2111,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 124.56
+          "8": 126.36
         },
         "teamId": 8,
         "tiebreak": 0.0,
@@ -2128,7 +2128,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 53.3
+          "8": 62.3
         },
         "teamId": 1,
         "tiebreak": 0.0,
@@ -2151,7 +2151,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 99.84
+          "8": 122.48
         },
         "teamId": 18,
         "tiebreak": 0.0,
@@ -2168,7 +2168,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 95.34
+          "8": 106.64
         },
         "teamId": 9,
         "tiebreak": 0.0,
@@ -2191,7 +2191,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 61.1
+          "8": 66.1
         },
         "teamId": 20,
         "tiebreak": 0.0,
@@ -2231,7 +2231,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 76.66
+          "8": 83.86
         },
         "teamId": 2,
         "tiebreak": 0.0,
@@ -3877,10 +3877,10 @@
       2025
     ],
     "requestedMatchupPeriodId": 8,
-    "standingsUpdateDate": 1793523208412,
+    "standingsUpdateDate": 1793609714760,
     "teamsJoined": 14,
     "transactionScoringPeriod": 8,
-    "waiverLastExecutionDate": 1793523207768,
+    "waiverLastExecutionDate": 1793609714464,
     "waiverProcessStatus": {
       "2026-08-28T07:08:41.999+00:00": 3,
       "2026-08-31T07:09:32.025+00:00": 1,
@@ -4477,7 +4477,7 @@
     },
     {
       "abbrev": "FAH",
-      "currentProjectedRank": 12,
+      "currentProjectedRank": 11,
       "divisionId": 0,
       "draftDayProjectedRank": 1,
       "eliminated": false,
@@ -5173,7 +5173,7 @@
     },
     {
       "abbrev": "CMC",
-      "currentProjectedRank": 4,
+      "currentProjectedRank": 3,
       "divisionId": 0,
       "draftDayProjectedRank": 7,
       "eliminated": false,
@@ -5313,7 +5313,7 @@
     },
     {
       "abbrev": "LFY",
-      "currentProjectedRank": 3,
+      "currentProjectedRank": 4,
       "divisionId": 0,
       "draftDayProjectedRank": 2,
       "eliminated": false,
@@ -5732,7 +5732,7 @@
     },
     {
       "abbrev": "JEFE",
-      "currentProjectedRank": 11,
+      "currentProjectedRank": 12,
       "divisionId": 0,
       "draftDayProjectedRank": 10,
       "eliminated": false,
