@@ -2031,11 +2031,11 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 78.06
+          "8": 88.06
         },
         "teamId": 13,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 88.06
       },
       "home": {
         "adjustment": 0.0,
@@ -2052,12 +2052,12 @@
         },
         "teamId": 19,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 103.58
       },
       "id": 50,
       "matchupPeriodId": 8,
       "playoffTierType": "NONE",
-      "winner": "UNDECIDED"
+      "winner": "HOME"
     },
     {
       "away": {
@@ -2075,7 +2075,7 @@
         },
         "teamId": 15,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 125.7
       },
       "home": {
         "adjustment": 0.0,
@@ -2092,12 +2092,12 @@
         },
         "teamId": 11,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 145.82
       },
       "id": 51,
       "matchupPeriodId": 8,
       "playoffTierType": "NONE",
-      "winner": "UNDECIDED"
+      "winner": "HOME"
     },
     {
       "away": {
@@ -2115,7 +2115,7 @@
         },
         "teamId": 8,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 126.36
       },
       "home": {
         "adjustment": 0.0,
@@ -2128,16 +2128,16 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 62.3
+          "8": 87.78
         },
         "teamId": 1,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 87.78
       },
       "id": 52,
       "matchupPeriodId": 8,
       "playoffTierType": "NONE",
-      "winner": "UNDECIDED"
+      "winner": "AWAY"
     },
     {
       "away": {
@@ -2155,7 +2155,7 @@
         },
         "teamId": 18,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 122.48
       },
       "home": {
         "adjustment": 0.0,
@@ -2172,12 +2172,12 @@
         },
         "teamId": 9,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 106.64
       },
       "id": 53,
       "matchupPeriodId": 8,
       "playoffTierType": "NONE",
-      "winner": "UNDECIDED"
+      "winner": "AWAY"
     },
     {
       "away": {
@@ -2191,11 +2191,11 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 66.1
+          "8": 89.9
         },
         "teamId": 20,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 89.9
       },
       "home": {
         "adjustment": 0.0,
@@ -2208,16 +2208,16 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 76.48
+          "8": 98.08
         },
         "teamId": 3,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 98.08
       },
       "id": 54,
       "matchupPeriodId": 8,
       "playoffTierType": "NONE",
-      "winner": "UNDECIDED"
+      "winner": "HOME"
     },
     {
       "away": {
@@ -2235,7 +2235,7 @@
         },
         "teamId": 2,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 83.86
       },
       "home": {
         "adjustment": 0.0,
@@ -2252,12 +2252,12 @@
         },
         "teamId": 12,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 128.5
       },
       "id": 55,
       "matchupPeriodId": 8,
       "playoffTierType": "NONE",
-      "winner": "UNDECIDED"
+      "winner": "HOME"
     },
     {
       "away": {
@@ -2271,11 +2271,11 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 112.8
+          "8": 120.5
         },
         "teamId": 17,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 120.5
       },
       "home": {
         "adjustment": 0.0,
@@ -2288,30 +2288,48 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "8": 91.14
+          "8": 122.84
         },
         "teamId": 16,
         "tiebreak": 0.0,
-        "totalPoints": 0.0
+        "totalPoints": 122.84
       },
       "id": 56,
       "matchupPeriodId": 8,
       "playoffTierType": "NONE",
-      "winner": "UNDECIDED"
+      "winner": "HOME"
     },
     {
       "away": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 19,
         "tiebreak": 0.0,
         "totalPoints": 0.0
       },
       "home": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 11,
         "tiebreak": 0.0,
         "totalPoints": 0.0
@@ -2324,16 +2342,34 @@
     {
       "away": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 1,
         "tiebreak": 0.0,
         "totalPoints": 0.0
       },
       "home": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 13,
         "tiebreak": 0.0,
         "totalPoints": 0.0
@@ -2346,16 +2382,34 @@
     {
       "away": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 9,
         "tiebreak": 0.0,
         "totalPoints": 0.0
       },
       "home": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 15,
         "tiebreak": 0.0,
         "totalPoints": 0.0
@@ -2368,16 +2422,34 @@
     {
       "away": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 3,
         "tiebreak": 0.0,
         "totalPoints": 0.0
       },
       "home": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 8,
         "tiebreak": 0.0,
         "totalPoints": 0.0
@@ -2390,16 +2462,34 @@
     {
       "away": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 12,
         "tiebreak": 0.0,
         "totalPoints": 0.0
       },
       "home": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 18,
         "tiebreak": 0.0,
         "totalPoints": 0.0
@@ -2412,16 +2502,34 @@
     {
       "away": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 16,
         "tiebreak": 0.0,
         "totalPoints": 0.0
       },
       "home": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 20,
         "tiebreak": 0.0,
         "totalPoints": 0.0
@@ -2434,16 +2542,34 @@
     {
       "away": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 17,
         "tiebreak": 0.0,
         "totalPoints": 0.0
       },
       "home": {
         "adjustment": 0.0,
+        "cumulativeScore": {
+          "losses": 0,
+          "statBySlot": null,
+          "ties": 0,
+          "wins": 0
+        },
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
+        "pointsByScoringPeriod": {
+          "9": 0.0
+        },
         "teamId": 2,
         "tiebreak": 0.0,
         "totalPoints": 0.0
@@ -3224,7 +3350,7 @@
       "winner": "UNDECIDED"
     }
   ],
-  "scoringPeriodId": 8,
+  "scoringPeriodId": 9,
   "seasonId": 2026,
   "segmentId": 0,
   "settings": {
@@ -3854,7 +3980,7 @@
     "activatedDate": 1786414062809,
     "createdAsLeagueType": 0,
     "currentLeagueType": 0,
-    "currentMatchupPeriod": 8,
+    "currentMatchupPeriod": 9,
     "finalScoringPeriod": 17,
     "firstScoringPeriod": 1,
     "isActive": true,
@@ -3864,7 +3990,7 @@
     "isToBeDeleted": false,
     "isViewable": false,
     "isWaiverOrderEdited": false,
-    "latestScoringPeriod": 8,
+    "latestScoringPeriod": 9,
     "previousSeasons": [
       2017,
       2018,
@@ -3876,11 +4002,11 @@
       2024,
       2025
     ],
-    "requestedMatchupPeriodId": 8,
-    "standingsUpdateDate": 1793609714760,
+    "requestedMatchupPeriodId": 9,
+    "standingsUpdateDate": 1793695209071,
     "teamsJoined": 14,
-    "transactionScoringPeriod": 8,
-    "waiverLastExecutionDate": 1793609714464,
+    "transactionScoringPeriod": 9,
+    "waiverLastExecutionDate": 1793695208967,
     "waiverProcessStatus": {
       "2026-08-28T07:08:41.999+00:00": 3,
       "2026-08-31T07:09:32.025+00:00": 1,
@@ -3918,7 +4044,7 @@
   "teams": [
     {
       "abbrev": "J$",
-      "currentProjectedRank": 8,
+      "currentProjectedRank": 10,
       "divisionId": 0,
       "draftDayProjectedRank": 13,
       "eliminated": false,
@@ -3934,8 +4060,8 @@
         "{0315B39C-8650-4799-A87D-B38CE878FC4B}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 9,
-      "points": 785.1800000000001,
+      "playoffSeed": 10,
+      "points": 872.96,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{36DFC88A-C92D-478D-9FC8-8AC92DE78D3A}",
@@ -3955,34 +4081,34 @@
         },
         "division": {
           "gamesBack": 3.0,
-          "losses": 4,
-          "percentage": 0.42857142857142855,
+          "losses": 5,
+          "percentage": 0.375,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
           "streakLength": 1,
-          "streakType": "WIN",
+          "streakType": "LOSS",
           "ties": 0,
           "wins": 3
         },
         "home": {
           "gamesBack": 0.0,
-          "losses": 2,
-          "percentage": 0.5,
+          "losses": 3,
+          "percentage": 0.4,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
+          "streakLength": 2,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 2
         },
         "overall": {
           "gamesBack": 3.0,
-          "losses": 4,
-          "percentage": 0.42857142857142855,
-          "pointsAgainst": 770.8399999999999,
-          "pointsFor": 785.1800000000001,
+          "losses": 5,
+          "percentage": 0.375,
+          "pointsAgainst": 897.1999999999999,
+          "pointsFor": 872.96,
           "streakLength": 1,
-          "streakType": "WIN",
+          "streakType": "LOSS",
           "ties": 0,
           "wins": 3
         }
@@ -4001,7 +4127,7 @@
           "8": 2
         },
         "misc": 0,
-        "moveToActive": 42,
+        "moveToActive": 46,
         "moveToIR": 5,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4017,7 +4143,7 @@
         "125": 0.0,
         "128": 0.0,
         "129": 0.0,
-        "130": 4.0,
+        "130": 5.0,
         "132": 1.0,
         "133": 1.0,
         "134": 0.0,
@@ -4029,33 +4155,33 @@
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 889.0,
+        "24": 922.0,
         "25": 5.0,
         "26": 0.0,
-        "3": 1657.0,
-        "4": 10.0,
-        "42": 1960.0,
-        "43": 15.0,
+        "3": 1904.0,
+        "4": 11.0,
+        "42": 2196.0,
+        "43": 16.0,
         "44": 0.0,
-        "53": 176.0,
+        "53": 198.0,
         "63": 0.0,
-        "72": 3.0,
+        "72": 4.0,
         "77": 3.0,
         "80": 6.0,
         "85": 1.0,
-        "86": 16.0,
-        "89": 0.0,
+        "86": 22.0,
+        "89": 1.0,
         "90": 0.0,
         "91": 2.0,
         "92": 2.0,
         "93": 0.0,
-        "95": 1.0,
+        "95": 5.0,
         "96": 4.0,
         "97": 0.0,
         "98": 0.0,
         "99": 17.0
       },
-      "waiverRank": 1
+      "waiverRank": 5
     },
     {
       "abbrev": "BBL",
@@ -4074,8 +4200,8 @@
         "{95984AA0-C6D7-4C9F-A2B5-6680E44FADDE}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 13,
-      "points": 682.74,
+      "playoffSeed": 14,
+      "points": 766.6,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{95984AA0-C6D7-4C9F-A2B5-6680E44FADDE}",
@@ -4084,22 +4210,22 @@
       "record": {
         "away": {
           "gamesBack": 0.0,
-          "losses": 2,
-          "percentage": 0.3333333333333333,
+          "losses": 3,
+          "percentage": 0.25,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 2,
+          "streakLength": 3,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 1
         },
         "division": {
           "gamesBack": 4.0,
-          "losses": 5,
-          "percentage": 0.2857142857142857,
+          "losses": 6,
+          "percentage": 0.25,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 2,
+          "streakLength": 3,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 2
@@ -4117,11 +4243,11 @@
         },
         "overall": {
           "gamesBack": 4.0,
-          "losses": 5,
-          "percentage": 0.2857142857142857,
-          "pointsAgainst": 764.34,
-          "pointsFor": 682.74,
-          "streakLength": 2,
+          "losses": 6,
+          "percentage": 0.25,
+          "pointsAgainst": 892.84,
+          "pointsFor": 766.6,
+          "streakLength": 3,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 2
@@ -4142,7 +4268,7 @@
           "8": 6
         },
         "misc": 0,
-        "moveToActive": 45,
+        "moveToActive": 48,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4154,49 +4280,49 @@
         "103": 0.0,
         "104": 1.0,
         "123": 1.0,
-        "124": 0.0,
+        "124": 1.0,
         "125": 0.0,
         "128": 0.0,
         "129": 1.0,
         "130": 2.0,
         "132": 0.0,
-        "133": 3.0,
+        "133": 4.0,
         "134": 0.0,
         "135": 0.0,
         "136": 0.0,
         "19": 0.0,
-        "198": 2.0,
-        "20": 4.0,
+        "198": 4.0,
+        "20": 5.0,
         "201": 1.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 1500.0,
-        "25": 9.0,
+        "24": 1768.0,
+        "25": 10.0,
         "26": 0.0,
-        "3": 1351.0,
+        "3": 1470.0,
         "4": 9.0,
-        "42": 1367.0,
+        "42": 1530.0,
         "43": 4.0,
-        "44": 0.0,
-        "53": 135.0,
+        "44": 1.0,
+        "53": 149.0,
         "63": 0.0,
-        "72": 1.0,
+        "72": 2.0,
         "77": 1.0,
-        "80": 5.0,
+        "80": 6.0,
         "85": 0.0,
-        "86": 20.0,
+        "86": 23.0,
         "89": 0.0,
         "90": 2.0,
         "91": 2.0,
         "92": 0.0,
         "93": 0.0,
         "95": 5.0,
-        "96": 4.0,
+        "96": 6.0,
         "97": 0.0,
-        "98": 0.0,
-        "99": 13.0
+        "98": 1.0,
+        "99": 15.0
       },
-      "waiverRank": 12
+      "waiverRank": 1
     },
     {
       "abbrev": "LLA",
@@ -4215,8 +4341,8 @@
         "{3C0E9C5C-0F6D-4167-9AE2-BFE959FF1FF3}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 2,
-      "points": 880.8199999999999,
+      "playoffSeed": 1,
+      "points": 978.9,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{3C0E9C5C-0F6D-4167-9AE2-BFE959FF1FF3}",
@@ -4235,37 +4361,37 @@
           "wins": 3
         },
         "division": {
-          "gamesBack": 1.0,
+          "gamesBack": 0.0,
           "losses": 2,
-          "percentage": 0.7142857142857143,
+          "percentage": 0.75,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 2,
+          "streakLength": 3,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 5
+          "wins": 6
         },
         "home": {
           "gamesBack": 0.0,
           "losses": 2,
-          "percentage": 0.5,
+          "percentage": 0.6,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
-          "streakType": "WIN",
-          "ties": 0,
-          "wins": 2
-        },
-        "overall": {
-          "gamesBack": 1.0,
-          "losses": 2,
-          "percentage": 0.7142857142857143,
-          "pointsAgainst": 774.04,
-          "pointsFor": 880.8199999999999,
           "streakLength": 2,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 5
+          "wins": 3
+        },
+        "overall": {
+          "gamesBack": 0.0,
+          "losses": 2,
+          "percentage": 0.75,
+          "pointsAgainst": 863.9399999999999,
+          "pointsFor": 978.9,
+          "streakLength": 3,
+          "streakType": "WIN",
+          "ties": 0,
+          "wins": 6
         }
       },
       "transactionCounter": {
@@ -4282,7 +4408,7 @@
           "8": 3
         },
         "misc": 0,
-        "moveToActive": 17,
+        "moveToActive": 18,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4293,37 +4419,37 @@
         "102": 0.0,
         "103": 0.0,
         "104": 0.0,
-        "123": 1.0,
+        "123": 2.0,
         "124": 0.0,
         "125": 0.0,
         "128": 0.0,
         "129": 2.0,
         "130": 3.0,
-        "132": 1.0,
+        "132": 2.0,
         "133": 0.0,
         "134": 0.0,
         "135": 0.0,
         "136": 0.0,
         "19": 1.0,
         "198": 2.0,
-        "20": 4.0,
+        "20": 5.0,
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 683.0,
+        "24": 848.0,
         "25": 5.0,
         "26": 0.0,
-        "3": 1748.0,
-        "4": 15.0,
-        "42": 2376.0,
-        "43": 16.0,
+        "3": 1905.0,
+        "4": 16.0,
+        "42": 2669.0,
+        "43": 18.0,
         "44": 1.0,
-        "53": 228.0,
+        "53": 257.0,
         "63": 0.0,
         "72": 1.0,
         "77": 2.0,
-        "80": 6.0,
-        "85": 5.0,
+        "80": 7.0,
+        "85": 6.0,
         "86": 12.0,
         "89": 0.0,
         "90": 1.0,
@@ -4331,12 +4457,12 @@
         "92": 1.0,
         "93": 0.0,
         "95": 7.0,
-        "96": 2.0,
+        "96": 3.0,
         "97": 0.0,
         "98": 0.0,
-        "99": 15.0
+        "99": 16.0
       },
-      "waiverRank": 11
+      "waiverRank": 14
     },
     {
       "abbrev": "AAT",
@@ -4355,8 +4481,8 @@
         "{26356A06-269B-4B1B-8A0C-6544D8D7299E}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 6,
-      "points": 796.66,
+      "playoffSeed": 5,
+      "points": 923.02,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{26356A06-269B-4B1B-8A0C-6544D8D7299E}",
@@ -4366,24 +4492,24 @@
         "away": {
           "gamesBack": 0.0,
           "losses": 2,
-          "percentage": 0.5,
-          "pointsAgainst": 0.0,
-          "pointsFor": 0.0,
-          "streakLength": 1,
-          "streakType": "LOSS",
-          "ties": 0,
-          "wins": 2
-        },
-        "division": {
-          "gamesBack": 2.0,
-          "losses": 3,
-          "percentage": 0.5714285714285714,
+          "percentage": 0.6,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
           "streakLength": 1,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 4
+          "wins": 3
+        },
+        "division": {
+          "gamesBack": 1.0,
+          "losses": 3,
+          "percentage": 0.625,
+          "pointsAgainst": 0.0,
+          "pointsFor": 0.0,
+          "streakLength": 2,
+          "streakType": "WIN",
+          "ties": 0,
+          "wins": 5
         },
         "home": {
           "gamesBack": 0.0,
@@ -4397,15 +4523,15 @@
           "wins": 2
         },
         "overall": {
-          "gamesBack": 2.0,
+          "gamesBack": 1.0,
           "losses": 3,
-          "percentage": 0.5714285714285714,
-          "pointsAgainst": 763.98,
-          "pointsFor": 796.66,
-          "streakLength": 1,
+          "percentage": 0.625,
+          "pointsAgainst": 851.76,
+          "pointsFor": 923.02,
+          "streakLength": 2,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 4
+          "wins": 5
         }
       },
       "transactionCounter": {
@@ -4443,37 +4569,37 @@
         "136": 0.0,
         "19": 1.0,
         "198": 0.0,
-        "20": 4.0,
+        "20": 5.0,
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 1064.0,
-        "25": 10.0,
+        "24": 1267.0,
+        "25": 13.0,
         "26": 0.0,
-        "3": 1799.0,
-        "4": 11.0,
-        "42": 1863.0,
-        "43": 13.0,
+        "3": 2088.0,
+        "4": 13.0,
+        "42": 2018.0,
+        "43": 15.0,
         "44": 2.0,
-        "53": 152.0,
+        "53": 171.0,
         "63": 0.0,
         "72": 2.0,
         "77": 3.0,
-        "80": 9.0,
-        "85": 2.0,
-        "86": 10.0,
+        "80": 11.0,
+        "85": 3.0,
+        "86": 13.0,
         "89": 0.0,
-        "90": 0.0,
+        "90": 1.0,
         "91": 2.0,
         "92": 1.0,
         "93": 0.0,
         "95": 7.0,
-        "96": 4.0,
+        "96": 6.0,
         "97": 0.0,
         "98": 0.0,
-        "99": 18.0
+        "99": 26.0
       },
-      "waiverRank": 4
+      "waiverRank": 10
     },
     {
       "abbrev": "FAH",
@@ -4493,7 +4619,7 @@
       ],
       "playoffClinchType": "UNKNOWN",
       "playoffSeed": 12,
-      "points": 742.4,
+      "points": 849.04,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{80F36648-A72E-4A12-8D90-E403093994D3}",
@@ -4513,34 +4639,34 @@
         },
         "division": {
           "gamesBack": 4.0,
-          "losses": 5,
-          "percentage": 0.2857142857142857,
+          "losses": 6,
+          "percentage": 0.25,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
           "streakLength": 1,
-          "streakType": "WIN",
+          "streakType": "LOSS",
           "ties": 0,
           "wins": 2
         },
         "home": {
           "gamesBack": 0.0,
-          "losses": 3,
+          "losses": 4,
           "percentage": 0.0,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 3,
+          "streakLength": 4,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 0
         },
         "overall": {
           "gamesBack": 4.0,
-          "losses": 5,
-          "percentage": 0.2857142857142857,
-          "pointsAgainst": 800.12,
-          "pointsFor": 742.4,
+          "losses": 6,
+          "percentage": 0.25,
+          "pointsAgainst": 922.6,
+          "pointsFor": 849.04,
           "streakLength": 1,
-          "streakType": "WIN",
+          "streakType": "LOSS",
           "ties": 0,
           "wins": 2
         }
@@ -4559,7 +4685,7 @@
           "8": 3
         },
         "misc": 0,
-        "moveToActive": 64,
+        "moveToActive": 66,
         "moveToIR": 4,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4575,49 +4701,49 @@
         "125": 0.0,
         "128": 0.0,
         "129": 0.0,
-        "130": 2.0,
+        "130": 3.0,
         "132": 2.0,
         "133": 1.0,
         "134": 1.0,
         "135": 0.0,
         "136": 0.0,
         "19": 0.0,
-        "198": 0.0,
-        "20": 3.0,
+        "198": 1.0,
+        "20": 4.0,
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 896.0,
-        "25": 9.0,
+        "24": 1089.0,
+        "25": 10.0,
         "26": 0.0,
-        "3": 1865.0,
-        "4": 14.0,
-        "42": 1792.0,
-        "43": 13.0,
+        "3": 2041.0,
+        "4": 15.0,
+        "42": 2025.0,
+        "43": 14.0,
         "44": 0.0,
-        "53": 153.0,
+        "53": 175.0,
         "63": 0.0,
         "72": 5.0,
         "77": 5.0,
         "80": 3.0,
         "85": 3.0,
-        "86": 21.0,
+        "86": 26.0,
         "89": 0.0,
         "90": 0.0,
-        "91": 1.0,
+        "91": 2.0,
         "92": 1.0,
         "93": 0.0,
-        "95": 6.0,
+        "95": 8.0,
         "96": 4.0,
         "97": 0.0,
         "98": 0.0,
-        "99": 11.0
+        "99": 13.0
       },
-      "waiverRank": 10
+      "waiverRank": 3
     },
     {
       "abbrev": "BIG3",
-      "currentProjectedRank": 7,
+      "currentProjectedRank": 6,
       "divisionId": 0,
       "draftDayProjectedRank": 8,
       "eliminated": false,
@@ -4632,8 +4758,8 @@
         "{DA75791D-63C1-4BA1-BC7A-B0074CE19036}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 7,
-      "points": 779.56,
+      "playoffSeed": 4,
+      "points": 925.3799999999999,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{DA75791D-63C1-4BA1-BC7A-B0074CE19036}",
@@ -4652,37 +4778,37 @@
           "wins": 3
         },
         "division": {
-          "gamesBack": 2.0,
+          "gamesBack": 1.0,
           "losses": 3,
-          "percentage": 0.5714285714285714,
+          "percentage": 0.625,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 3,
+          "streakLength": 4,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 4
+          "wins": 5
         },
         "home": {
           "gamesBack": 0.0,
           "losses": 2,
-          "percentage": 0.3333333333333333,
+          "percentage": 0.5,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
+          "streakLength": 2,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 1
+          "wins": 2
         },
         "overall": {
-          "gamesBack": 2.0,
+          "gamesBack": 1.0,
           "losses": 3,
-          "percentage": 0.5714285714285714,
-          "pointsAgainst": 796.4,
-          "pointsFor": 779.56,
-          "streakLength": 3,
+          "percentage": 0.625,
+          "pointsAgainst": 922.1,
+          "pointsFor": 925.3799999999999,
+          "streakLength": 4,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 4
+          "wins": 5
         }
       },
       "transactionCounter": {
@@ -4698,7 +4824,7 @@
           "7": 1
         },
         "misc": 0,
-        "moveToActive": 71,
+        "moveToActive": 72,
         "moveToIR": 5,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4710,7 +4836,7 @@
         "103": 0.0,
         "104": 0.0,
         "123": 1.0,
-        "124": 0.0,
+        "124": 1.0,
         "125": 0.0,
         "128": 0.0,
         "129": 1.0,
@@ -4722,25 +4848,25 @@
         "136": 0.0,
         "19": 0.0,
         "198": 2.0,
-        "20": 6.0,
+        "20": 7.0,
         "201": 1.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 709.0,
-        "25": 8.0,
+        "24": 853.0,
+        "25": 9.0,
         "26": 0.0,
-        "3": 1754.0,
-        "4": 14.0,
-        "42": 1975.0,
-        "43": 12.0,
+        "3": 2042.0,
+        "4": 17.0,
+        "42": 2354.0,
+        "43": 16.0,
         "44": 0.0,
-        "53": 189.0,
+        "53": 221.0,
         "63": 0.0,
         "72": 0.0,
-        "77": 2.0,
-        "80": 7.0,
-        "85": 3.0,
-        "86": 17.0,
+        "77": 3.0,
+        "80": 9.0,
+        "85": 4.0,
+        "86": 20.0,
         "89": 0.0,
         "90": 0.0,
         "91": 1.0,
@@ -4750,13 +4876,13 @@
         "96": 5.0,
         "97": 1.0,
         "98": 0.0,
-        "99": 14.0
+        "99": 15.0
       },
-      "waiverRank": 2
+      "waiverRank": 11
     },
     {
       "abbrev": "BC",
-      "currentProjectedRank": 10,
+      "currentProjectedRank": 9,
       "divisionId": 0,
       "draftDayProjectedRank": 14,
       "eliminated": false,
@@ -4771,8 +4897,8 @@
         "{FC558CB8-E5AE-4BC6-958C-B8E5AEEBC6EA}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 10,
-      "points": 690.4599999999999,
+      "playoffSeed": 9,
+      "points": 818.9599999999999,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{FC558CB8-E5AE-4BC6-958C-B8E5AEEBC6EA}",
@@ -4791,37 +4917,37 @@
           "wins": 1
         },
         "division": {
-          "gamesBack": 3.0,
+          "gamesBack": 2.0,
           "losses": 4,
-          "percentage": 0.42857142857142855,
+          "percentage": 0.5,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 2,
-          "streakType": "LOSS",
+          "streakLength": 1,
+          "streakType": "WIN",
           "ties": 0,
-          "wins": 3
+          "wins": 4
         },
         "home": {
           "gamesBack": 0.0,
           "losses": 1,
-          "percentage": 0.6666666666666666,
+          "percentage": 0.75,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 2,
+          "streakLength": 3,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 2
+          "wins": 3
         },
         "overall": {
-          "gamesBack": 3.0,
+          "gamesBack": 2.0,
           "losses": 4,
-          "percentage": 0.42857142857142855,
-          "pointsAgainst": 748.18,
-          "pointsFor": 690.4599999999999,
-          "streakLength": 2,
-          "streakType": "LOSS",
+          "percentage": 0.5,
+          "pointsAgainst": 832.04,
+          "pointsFor": 818.9599999999999,
+          "streakLength": 1,
+          "streakType": "WIN",
           "ties": 0,
-          "wins": 3
+          "wins": 4
         }
       },
       "transactionCounter": {
@@ -4855,44 +4981,44 @@
         "128": 0.0,
         "129": 2.0,
         "130": 3.0,
-        "132": 0.0,
+        "132": 1.0,
         "133": 1.0,
         "134": 0.0,
         "135": 0.0,
         "136": 0.0,
         "19": 1.0,
-        "198": 2.0,
+        "198": 3.0,
         "20": 5.0,
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 627.0,
-        "25": 6.0,
+        "24": 773.0,
+        "25": 9.0,
         "26": 0.0,
-        "3": 1734.0,
-        "4": 8.0,
-        "42": 1724.0,
-        "43": 13.0,
+        "3": 1929.0,
+        "4": 9.0,
+        "42": 2105.0,
+        "43": 14.0,
         "44": 1.0,
-        "53": 123.0,
+        "53": 153.0,
         "63": 0.0,
-        "72": 0.0,
+        "72": 2.0,
         "77": 3.0,
-        "80": 4.0,
+        "80": 5.0,
         "85": 2.0,
-        "86": 16.0,
+        "86": 17.0,
         "89": 0.0,
         "90": 1.0,
         "91": 3.0,
         "92": 1.0,
         "93": 0.0,
-        "95": 7.0,
+        "95": 8.0,
         "96": 5.0,
         "97": 1.0,
         "98": 0.0,
-        "99": 21.0
+        "99": 25.0
       },
-      "waiverRank": 3
+      "waiverRank": 6
     },
     {
       "abbrev": "MAYO",
@@ -4911,8 +5037,8 @@
         "{3753F86E-E331-4B1C-93F8-6EE3314B1CE2}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 1,
-      "points": 881.74,
+      "playoffSeed": 2,
+      "points": 969.8,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{3753F86E-E331-4B1C-93F8-6EE3314B1CE2}",
@@ -4921,22 +5047,22 @@
       "record": {
         "away": {
           "gamesBack": 0.0,
-          "losses": 1,
-          "percentage": 0.6666666666666666,
+          "losses": 2,
+          "percentage": 0.5,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
+          "streakLength": 2,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 2
         },
         "division": {
           "gamesBack": 0.0,
-          "losses": 1,
-          "percentage": 0.8571428571428571,
+          "losses": 2,
+          "percentage": 0.75,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
+          "streakLength": 2,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 6
@@ -4954,11 +5080,11 @@
         },
         "overall": {
           "gamesBack": 0.0,
-          "losses": 1,
-          "percentage": 0.8571428571428571,
-          "pointsAgainst": 720.8999999999999,
-          "pointsFor": 881.74,
-          "streakLength": 1,
+          "losses": 2,
+          "percentage": 0.75,
+          "pointsAgainst": 824.4799999999999,
+          "pointsFor": 969.8,
+          "streakLength": 2,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 6
@@ -4992,7 +5118,7 @@
         "125": 0.0,
         "128": 0.0,
         "129": 1.0,
-        "130": 1.0,
+        "130": 2.0,
         "132": 1.0,
         "133": 2.0,
         "134": 1.0,
@@ -5004,33 +5130,33 @@
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 1348.0,
-        "25": 18.0,
+        "24": 1439.0,
+        "25": 20.0,
         "26": 1.0,
-        "3": 1936.0,
-        "4": 13.0,
-        "42": 1935.0,
-        "43": 13.0,
+        "3": 2135.0,
+        "4": 15.0,
+        "42": 2095.0,
+        "43": 14.0,
         "44": 0.0,
-        "53": 156.0,
+        "53": 174.0,
         "63": 0.0,
-        "72": 5.0,
+        "72": 7.0,
         "77": 0.0,
         "80": 8.0,
         "85": 0.0,
-        "86": 22.0,
+        "86": 27.0,
         "89": 0.0,
         "90": 0.0,
         "91": 1.0,
-        "92": 0.0,
+        "92": 1.0,
         "93": 0.0,
-        "95": 3.0,
+        "95": 4.0,
         "96": 5.0,
-        "97": 0.0,
+        "97": 1.0,
         "98": 0.0,
-        "99": 24.0
+        "99": 27.0
       },
-      "waiverRank": 5
+      "waiverRank": 13
     },
     {
       "abbrev": "PTWP",
@@ -5049,8 +5175,8 @@
         "{C23D989A-1989-4EC7-B06E-4D82E78547D4}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 14,
-      "points": 673.78,
+      "playoffSeed": 13,
+      "points": 799.48,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{C23D989A-1989-4EC7-B06E-4D82E78547D4}",
@@ -5059,22 +5185,22 @@
       "record": {
         "away": {
           "gamesBack": 0.0,
-          "losses": 3,
+          "losses": 4,
           "percentage": 0.0,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 3,
+          "streakLength": 4,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 0
         },
         "division": {
           "gamesBack": 4.0,
-          "losses": 5,
-          "percentage": 0.2857142857142857,
+          "losses": 6,
+          "percentage": 0.25,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
+          "streakLength": 2,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 2
@@ -5092,11 +5218,11 @@
         },
         "overall": {
           "gamesBack": 4.0,
-          "losses": 5,
-          "percentage": 0.2857142857142857,
-          "pointsAgainst": 828.2,
-          "pointsFor": 673.78,
-          "streakLength": 1,
+          "losses": 6,
+          "percentage": 0.25,
+          "pointsAgainst": 974.02,
+          "pointsFor": 799.48,
+          "streakLength": 2,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 2
@@ -5115,7 +5241,7 @@
           "8": 6
         },
         "misc": 0,
-        "moveToActive": 29,
+        "moveToActive": 30,
         "moveToIR": 1,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5131,7 +5257,7 @@
         "125": 0.0,
         "128": 0.0,
         "129": 2.0,
-        "130": 1.0,
+        "130": 2.0,
         "132": 1.0,
         "133": 1.0,
         "134": 0.0,
@@ -5143,33 +5269,33 @@
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 1248.0,
-        "25": 8.0,
+        "24": 1393.0,
+        "25": 9.0,
         "26": 0.0,
-        "3": 1702.0,
-        "4": 15.0,
-        "42": 1469.0,
-        "43": 5.0,
-        "44": 2.0,
-        "53": 138.0,
+        "3": 1912.0,
+        "4": 18.0,
+        "42": 1777.0,
+        "43": 7.0,
+        "44": 3.0,
+        "53": 164.0,
         "63": 0.0,
-        "72": 5.0,
-        "77": 2.0,
+        "72": 7.0,
+        "77": 3.0,
         "80": 5.0,
-        "85": 5.0,
-        "86": 10.0,
+        "85": 6.0,
+        "86": 13.0,
         "89": 0.0,
         "90": 1.0,
         "91": 0.0,
         "92": 0.0,
         "93": 0.0,
-        "95": 6.0,
-        "96": 1.0,
+        "95": 7.0,
+        "96": 2.0,
         "97": 0.0,
         "98": 0.0,
-        "99": 10.0
+        "99": 16.0
       },
-      "waiverRank": 8
+      "waiverRank": 2
     },
     {
       "abbrev": "CMC",
@@ -5189,7 +5315,7 @@
       ],
       "playoffClinchType": "UNKNOWN",
       "playoffSeed": 3,
-      "points": 820.74,
+      "points": 943.58,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{F3435930-778D-41EA-9FE9-382F2103D44B}",
@@ -5208,37 +5334,37 @@
           "wins": 3
         },
         "division": {
-          "gamesBack": 1.0,
+          "gamesBack": 0.0,
           "losses": 2,
-          "percentage": 0.7142857142857143,
+          "percentage": 0.75,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 2,
+          "streakLength": 3,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 5
+          "wins": 6
         },
         "home": {
           "gamesBack": 0.0,
           "losses": 2,
-          "percentage": 0.5,
+          "percentage": 0.6,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
-          "streakType": "WIN",
-          "ties": 0,
-          "wins": 2
-        },
-        "overall": {
-          "gamesBack": 1.0,
-          "losses": 2,
-          "percentage": 0.7142857142857143,
-          "pointsAgainst": 703.9799999999999,
-          "pointsFor": 820.74,
           "streakLength": 2,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 5
+          "wins": 3
+        },
+        "overall": {
+          "gamesBack": 0.0,
+          "losses": 2,
+          "percentage": 0.75,
+          "pointsAgainst": 824.4799999999999,
+          "pointsFor": 943.58,
+          "streakLength": 3,
+          "streakType": "WIN",
+          "ties": 0,
+          "wins": 6
         }
       },
       "transactionCounter": {
@@ -5255,7 +5381,7 @@
           "8": 2
         },
         "misc": 0,
-        "moveToActive": 42,
+        "moveToActive": 44,
         "moveToIR": 5,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5271,7 +5397,7 @@
         "125": 0.0,
         "128": 0.0,
         "129": 0.0,
-        "130": 4.0,
+        "130": 5.0,
         "132": 0.0,
         "133": 1.0,
         "134": 0.0,
@@ -5283,37 +5409,37 @@
         "201": 1.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 1048.0,
-        "25": 18.0,
+        "24": 1143.0,
+        "25": 21.0,
         "26": 0.0,
-        "3": 1766.0,
-        "4": 12.0,
-        "42": 1723.0,
-        "43": 10.0,
+        "3": 2087.0,
+        "4": 15.0,
+        "42": 1998.0,
+        "43": 12.0,
         "44": 0.0,
-        "53": 178.0,
+        "53": 199.0,
         "63": 0.0,
-        "72": 3.0,
+        "72": 4.0,
         "77": 2.0,
-        "80": 4.0,
-        "85": 5.0,
-        "86": 20.0,
+        "80": 5.0,
+        "85": 6.0,
+        "86": 21.0,
         "89": 0.0,
         "90": 0.0,
         "91": 1.0,
         "92": 0.0,
         "93": 0.0,
-        "95": 6.0,
+        "95": 7.0,
         "96": 4.0,
         "97": 0.0,
         "98": 0.0,
-        "99": 17.0
+        "99": 22.0
       },
-      "waiverRank": 14
+      "waiverRank": 12
     },
     {
       "abbrev": "LFY",
-      "currentProjectedRank": 4,
+      "currentProjectedRank": 7,
       "divisionId": 0,
       "draftDayProjectedRank": 2,
       "eliminated": false,
@@ -5329,8 +5455,8 @@
         "{362A92B9-17DA-4A46-979A-72D195A7BF7C}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 4,
-      "points": 815.3599999999999,
+      "playoffSeed": 7,
+      "points": 935.8599999999999,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{04CB07A7-80EE-4051-AAEF-93F2A5E4430D}",
@@ -5339,22 +5465,22 @@
       "record": {
         "away": {
           "gamesBack": 0.0,
-          "losses": 1,
-          "percentage": 0.75,
+          "losses": 2,
+          "percentage": 0.6,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 2,
-          "streakType": "WIN",
+          "streakLength": 1,
+          "streakType": "LOSS",
           "ties": 0,
           "wins": 3
         },
         "division": {
           "gamesBack": 2.0,
-          "losses": 3,
-          "percentage": 0.5714285714285714,
+          "losses": 4,
+          "percentage": 0.5,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
+          "streakLength": 2,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 4
@@ -5372,11 +5498,11 @@
         },
         "overall": {
           "gamesBack": 2.0,
-          "losses": 3,
-          "percentage": 0.5714285714285714,
-          "pointsAgainst": 821.6800000000001,
-          "pointsFor": 815.3599999999999,
-          "streakLength": 1,
+          "losses": 4,
+          "percentage": 0.5,
+          "pointsAgainst": 944.5200000000001,
+          "pointsFor": 935.8599999999999,
+          "streakLength": 2,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 4
@@ -5413,7 +5539,7 @@
         "128": 0.0,
         "129": 0.0,
         "130": 2.0,
-        "132": 0.0,
+        "132": 1.0,
         "133": 2.0,
         "134": 1.0,
         "135": 0.0,
@@ -5424,37 +5550,37 @@
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 1434.0,
-        "25": 11.0,
+        "24": 1851.0,
+        "25": 15.0,
         "26": 0.0,
         "3": 1724.0,
         "4": 8.0,
-        "42": 2100.0,
-        "43": 9.0,
+        "42": 2238.0,
+        "43": 11.0,
         "44": 0.0,
-        "53": 197.0,
+        "53": 214.0,
         "63": 0.0,
         "72": 4.0,
-        "77": 3.0,
-        "80": 5.0,
+        "77": 4.0,
+        "80": 6.0,
         "85": 2.0,
-        "86": 19.0,
+        "86": 22.0,
         "89": 0.0,
         "90": 0.0,
         "91": 0.0,
         "92": 1.0,
         "93": 0.0,
-        "95": 3.0,
+        "95": 4.0,
         "96": 4.0,
         "97": 1.0,
         "98": 0.0,
-        "99": 11.0
+        "99": 12.0
       },
-      "waiverRank": 13
+      "waiverRank": 8
     },
     {
       "abbrev": "RA",
-      "currentProjectedRank": 9,
+      "currentProjectedRank": 8,
       "divisionId": 0,
       "draftDayProjectedRank": 11,
       "eliminated": false,
@@ -5471,7 +5597,7 @@
       ],
       "playoffClinchType": "UNKNOWN",
       "playoffSeed": 8,
-      "points": 789.1800000000001,
+      "points": 911.6600000000001,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{FD61E895-178A-4221-B324-97DD9CFE21B8}",
@@ -5481,24 +5607,24 @@
         "away": {
           "gamesBack": 0.0,
           "losses": 2,
-          "percentage": 0.3333333333333333,
+          "percentage": 0.5,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
           "streakLength": 1,
-          "streakType": "LOSS",
+          "streakType": "WIN",
           "ties": 0,
-          "wins": 1
+          "wins": 2
         },
         "division": {
-          "gamesBack": 3.0,
+          "gamesBack": 2.0,
           "losses": 4,
-          "percentage": 0.42857142857142855,
+          "percentage": 0.5,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 2,
-          "streakType": "LOSS",
+          "streakLength": 1,
+          "streakType": "WIN",
           "ties": 0,
-          "wins": 3
+          "wins": 4
         },
         "home": {
           "gamesBack": 0.0,
@@ -5512,15 +5638,15 @@
           "wins": 2
         },
         "overall": {
-          "gamesBack": 3.0,
+          "gamesBack": 2.0,
           "losses": 4,
-          "percentage": 0.42857142857142855,
-          "pointsAgainst": 842.02,
-          "pointsFor": 789.1800000000001,
-          "streakLength": 2,
-          "streakType": "LOSS",
+          "percentage": 0.5,
+          "pointsAgainst": 948.66,
+          "pointsFor": 911.6600000000001,
+          "streakLength": 1,
+          "streakType": "WIN",
           "ties": 0,
-          "wins": 3
+          "wins": 4
         }
       },
       "transactionCounter": {
@@ -5538,7 +5664,7 @@
           "8": 6
         },
         "misc": 0,
-        "moveToActive": 82,
+        "moveToActive": 83,
         "moveToIR": 7,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5566,37 +5692,37 @@
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 1249.0,
-        "25": 9.0,
+        "24": 1415.0,
+        "25": 11.0,
         "26": 0.0,
-        "3": 1457.0,
-        "4": 10.0,
-        "42": 1950.0,
-        "43": 12.0,
+        "3": 1674.0,
+        "4": 11.0,
+        "42": 2212.0,
+        "43": 16.0,
         "44": 2.0,
-        "53": 150.0,
+        "53": 178.0,
         "63": 0.0,
         "72": 5.0,
         "77": 5.0,
         "80": 7.0,
         "85": 2.0,
-        "86": 9.0,
+        "86": 10.0,
         "89": 0.0,
         "90": 1.0,
         "91": 0.0,
-        "92": 1.0,
+        "92": 2.0,
         "93": 0.0,
         "95": 3.0,
         "96": 3.0,
         "97": 0.0,
         "98": 0.0,
-        "99": 16.0
+        "99": 17.0
       },
-      "waiverRank": 9
+      "waiverRank": 7
     },
     {
       "abbrev": "AMON",
-      "currentProjectedRank": 6,
+      "currentProjectedRank": 4,
       "divisionId": 0,
       "draftDayProjectedRank": 5,
       "eliminated": false,
@@ -5611,8 +5737,8 @@
         "{8DA56E2D-B028-43B2-9777-45D736D457C0}"
       ],
       "playoffClinchType": "UNKNOWN",
-      "playoffSeed": 5,
-      "points": 809.7000000000002,
+      "playoffSeed": 6,
+      "points": 913.2800000000002,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{8DA56E2D-B028-43B2-9777-45D736D457C0}",
@@ -5631,37 +5757,37 @@
           "wins": 2
         },
         "division": {
-          "gamesBack": 2.0,
+          "gamesBack": 1.0,
           "losses": 3,
-          "percentage": 0.5714285714285714,
+          "percentage": 0.625,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 2,
+          "streakLength": 3,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 4
+          "wins": 5
         },
         "home": {
           "gamesBack": 0.0,
           "losses": 1,
-          "percentage": 0.6666666666666666,
+          "percentage": 0.75,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
-          "streakType": "WIN",
-          "ties": 0,
-          "wins": 2
-        },
-        "overall": {
-          "gamesBack": 2.0,
-          "losses": 3,
-          "percentage": 0.5714285714285714,
-          "pointsAgainst": 780.5000000000001,
-          "pointsFor": 809.7000000000002,
           "streakLength": 2,
           "streakType": "WIN",
           "ties": 0,
-          "wins": 4
+          "wins": 3
+        },
+        "overall": {
+          "gamesBack": 1.0,
+          "losses": 3,
+          "percentage": 0.625,
+          "pointsAgainst": 868.5600000000002,
+          "pointsFor": 913.2800000000002,
+          "streakLength": 3,
+          "streakType": "WIN",
+          "ties": 0,
+          "wins": 5
         }
       },
       "transactionCounter": {
@@ -5691,32 +5817,32 @@
         "128": 0.0,
         "129": 0.0,
         "130": 2.0,
-        "132": 4.0,
+        "132": 5.0,
         "133": 0.0,
         "134": 1.0,
         "135": 0.0,
         "136": 0.0,
         "19": 0.0,
         "198": 2.0,
-        "20": 4.0,
+        "20": 7.0,
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 1215.0,
-        "25": 9.0,
+        "24": 1410.0,
+        "25": 10.0,
         "26": 0.0,
-        "3": 1965.0,
-        "4": 18.0,
-        "42": 1566.0,
-        "43": 15.0,
+        "3": 2427.0,
+        "4": 23.0,
+        "42": 1672.0,
+        "43": 16.0,
         "44": 2.0,
-        "53": 151.0,
+        "53": 167.0,
         "63": 0.0,
         "72": 3.0,
-        "77": 1.0,
-        "80": 6.0,
+        "77": 3.0,
+        "80": 7.0,
         "85": 4.0,
-        "86": 19.0,
+        "86": 20.0,
         "89": 0.0,
         "90": 0.0,
         "91": 1.0,
@@ -5726,9 +5852,9 @@
         "96": 3.0,
         "97": 1.0,
         "98": 0.0,
-        "99": 21.0
+        "99": 23.0
       },
-      "waiverRank": 7
+      "waiverRank": 9
     },
     {
       "abbrev": "JEFE",
@@ -5748,7 +5874,7 @@
       ],
       "playoffClinchType": "UNKNOWN",
       "playoffSeed": 11,
-      "points": 816.9399999999999,
+      "points": 906.8399999999999,
       "pointsAdjusted": 0.0,
       "pointsDelta": 0.0,
       "primaryOwner": "{6A2D5E1F-F054-48FD-8BAE-7C80ECFBBB6D}",
@@ -5757,22 +5883,22 @@
       "record": {
         "away": {
           "gamesBack": 0.0,
-          "losses": 2,
-          "percentage": 0.5,
+          "losses": 3,
+          "percentage": 0.4,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 1,
+          "streakLength": 2,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 2
         },
         "division": {
           "gamesBack": 4.0,
-          "losses": 5,
-          "percentage": 0.2857142857142857,
+          "losses": 6,
+          "percentage": 0.25,
           "pointsAgainst": 0.0,
           "pointsFor": 0.0,
-          "streakLength": 3,
+          "streakLength": 4,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 2
@@ -5790,11 +5916,11 @@
         },
         "overall": {
           "gamesBack": 4.0,
-          "losses": 5,
-          "percentage": 0.2857142857142857,
-          "pointsAgainst": 850.0799999999999,
-          "pointsFor": 816.9399999999999,
-          "streakLength": 3,
+          "losses": 6,
+          "percentage": 0.25,
+          "pointsAgainst": 948.16,
+          "pointsFor": 906.8399999999999,
+          "streakLength": 4,
           "streakType": "LOSS",
           "ties": 0,
           "wins": 2
@@ -5815,7 +5941,7 @@
           "8": 4
         },
         "misc": 0,
-        "moveToActive": 52,
+        "moveToActive": 54,
         "moveToIR": 3,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5831,45 +5957,45 @@
         "125": 0.0,
         "128": 0.0,
         "129": 0.0,
-        "130": 2.0,
+        "130": 3.0,
         "132": 2.0,
         "133": 0.0,
         "134": 1.0,
         "135": 0.0,
         "136": 0.0,
-        "19": 0.0,
+        "19": 1.0,
         "198": 8.0,
-        "20": 2.0,
+        "20": 3.0,
         "201": 0.0,
         "206": 0.0,
         "209": 0.0,
-        "24": 1308.0,
-        "25": 9.0,
+        "24": 1421.0,
+        "25": 10.0,
         "26": 0.0,
-        "3": 1371.0,
-        "4": 8.0,
-        "42": 1923.0,
-        "43": 12.0,
+        "3": 1581.0,
+        "4": 10.0,
+        "42": 2135.0,
+        "43": 13.0,
         "44": 0.0,
-        "53": 175.0,
+        "53": 190.0,
         "63": 0.0,
         "72": 4.0,
         "77": 6.0,
         "80": 8.0,
-        "85": 2.0,
-        "86": 11.0,
+        "85": 3.0,
+        "86": 12.0,
         "89": 0.0,
         "90": 0.0,
-        "91": 0.0,
+        "91": 1.0,
         "92": 2.0,
         "93": 0.0,
-        "95": 4.0,
-        "96": 1.0,
+        "95": 5.0,
+        "96": 2.0,
         "97": 0.0,
         "98": 0.0,
-        "99": 10.0
+        "99": 15.0
       },
-      "waiverRank": 6
+      "waiverRank": 4
     }
   ]
 }
