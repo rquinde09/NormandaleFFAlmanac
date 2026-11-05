@@ -4003,10 +4003,10 @@
       2025
     ],
     "requestedMatchupPeriodId": 9,
-    "standingsUpdateDate": 1793782517427,
+    "standingsUpdateDate": 1793868820255,
     "teamsJoined": 14,
     "transactionScoringPeriod": 9,
-    "waiverLastExecutionDate": 1793782517262,
+    "waiverLastExecutionDate": 1793868820050,
     "waiverProcessStatus": {
       "2026-08-28T07:08:41.999+00:00": 3,
       "2026-08-31T07:09:32.025+00:00": 1,
@@ -4039,7 +4039,8 @@
       "2026-10-30T07:05:53.806+00:00": 1,
       "2026-10-31T07:52:16.658+00:00": 1,
       "2026-11-01T08:53:27.768+00:00": 1,
-      "2026-11-04T08:55:17.262+00:00": 14
+      "2026-11-04T08:55:17.262+00:00": 14,
+      "2026-11-05T08:53:40.049+00:00": 0
     }
   },
   "teams": [
@@ -4257,8 +4258,8 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 35,
-        "drops": 38,
+        "acquisitions": 37,
+        "drops": 39,
         "matchupAcquisitionTotals": {
           "1": 1,
           "2": 3,
@@ -4268,7 +4269,7 @@
           "6": 3,
           "7": 3,
           "8": 6,
-          "9": 2
+          "9": 4
         },
         "misc": 0,
         "moveToActive": 50,
@@ -4539,17 +4540,17 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 8,
-        "drops": 7,
+        "acquisitions": 9,
+        "drops": 8,
         "matchupAcquisitionTotals": {
           "4": 1,
           "5": 1,
           "7": 4,
           "8": 1,
-          "9": 1
+          "9": 2
         },
         "misc": 0,
-        "moveToActive": 20,
+        "moveToActive": 21,
         "moveToIR": 1,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4617,7 +4618,7 @@
       "isTransactionLocked": false,
       "logo": "https://g.espncdn.com/lm-static/logo-packs/core/BobsBurgers/Bob_OnModel.svg",
       "logoType": "VECTOR",
-      "name": "Hibachi @ the Hilton Garden Inn",
+      "name": "Jacking Goff ",
       "owners": [
         "{80F36648-A72E-4A12-8D90-E403093994D3}"
       ],
@@ -4677,8 +4678,8 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 30,
-        "drops": 31,
+        "acquisitions": 31,
+        "drops": 32,
         "matchupAcquisitionTotals": {
           "2": 3,
           "3": 5,
@@ -4687,10 +4688,10 @@
           "6": 7,
           "7": 3,
           "8": 3,
-          "9": 1
+          "9": 2
         },
         "misc": 0,
-        "moveToActive": 68,
+        "moveToActive": 69,
         "moveToIR": 4,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4818,19 +4819,20 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 26,
-        "drops": 28,
+        "acquisitions": 27,
+        "drops": 29,
         "matchupAcquisitionTotals": {
           "2": 3,
           "3": 4,
           "4": 7,
           "5": 6,
           "6": 5,
-          "7": 1
+          "7": 1,
+          "9": 1
         },
         "misc": 0,
         "moveToActive": 72,
-        "moveToIR": 5,
+        "moveToIR": 6,
         "paid": 0.0,
         "teamCharges": 0.0,
         "trades": 1
@@ -5388,7 +5390,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 46,
+        "moveToActive": 47,
         "moveToIR": 5,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5659,8 +5661,8 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 26,
-        "drops": 29,
+        "acquisitions": 27,
+        "drops": 30,
         "matchupAcquisitionTotals": {
           "1": 2,
           "2": 2,
@@ -5670,10 +5672,10 @@
           "6": 1,
           "7": 1,
           "8": 6,
-          "9": 2
+          "9": 3
         },
         "misc": 0,
-        "moveToActive": 85,
+        "moveToActive": 87,
         "moveToIR": 7,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5937,8 +5939,8 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 22,
-        "drops": 23,
+        "acquisitions": 23,
+        "drops": 24,
         "matchupAcquisitionTotals": {
           "1": 2,
           "2": 2,
@@ -5947,10 +5949,11 @@
           "5": 2,
           "6": 3,
           "7": 4,
-          "8": 4
+          "8": 4,
+          "9": 1
         },
         "misc": 0,
-        "moveToActive": 55,
+        "moveToActive": 58,
         "moveToIR": 4,
         "paid": 0.0,
         "teamCharges": 0.0,
