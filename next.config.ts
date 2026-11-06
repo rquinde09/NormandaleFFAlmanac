@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       { source: "/home", destination: "/", permanent: true },
       { source: "/league-history", destination: "/standings", permanent: true },
       { source: "/leaderboard", destination: "/standings", permanent: true },
+      { source: "/retired-teams", destination: "/teams", permanent: true },
       { source: "/records/game-records", destination: "/records?view=game", permanent: true },
       { source: "/records/season-records", destination: "/records?view=season", permanent: true },
     ];

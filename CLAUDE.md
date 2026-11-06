@@ -28,6 +28,14 @@ without new evidence.
 - Accounts: the site owner's personal GitHub (not an org) and Vercel Hobby plan, with Luke as
   collaborator. ESPN access uses one league member's cookies, kept in `.env.local` and Actions
   secrets. Luke knows whose they are; the repo doesn't record it.
+- Repo: github.com/rquinde09/NormandaleFFAlmanac. Vercel project `normandale-ff-almanac`, live at
+  https://normandale-ff-almanac.vercel.app, with no environment variables.
+- Domain: nccfantasyfootball.com is registered at Squarespace Domains (moved from Google Domains;
+  renews 2027-09-15), with DNS on Google's `ns-cloud-d*.googledomains.com` nameservers. As of
+  2026-11-02 it has one record: `www` CNAME `ghs.googlehosted.com` (the Google Site). The bare
+  domain doesn't resolve, and there's no MX or TXT, so no email depends on it. To switch, add both
+  names to the Vercel project and set the records Vercel shows. Keep the nameservers. To roll
+  back, point `www` at `ghs.googlehosted.com` again.
 - The repo is PUBLIC (decided 2026-11-01). Vercel Hobby deploys a private repo only when the
   commit author is the Hobby account owner ("Collaboration has never been permitted on Hobby
   plans", Vercel KB "Why aren't commits triggering deployments"), so the Actions job's commits
@@ -85,6 +93,13 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - Tie rule is `NONE` (ties stand). There were no ties and no score adjustments in 2017–2025, and
   every playoff matchup was one week long.
 - `rankCalculatedFinal` gives each team's final place (1 = champion).
+- Player lineups (fetched for 2017–2025 on 2026-11-05): views `mMatchupScore` + `mScoreboard`
+  with `scoringPeriodId` and an `x-fantasy-filter` on the matchup period return each side's
+  `rosterForCurrentScoringPeriod` (whole roster, with `lineupSlotId` and points) for 2018+, and
+  only `rosterForMatchupPeriod` for 2017: starters only, every one with `lineupSlotId` 0. 2021
+  returns no lineups at all; `mRoster` there gives only the end-of-season roster. In every other
+  season, every lineup's starters add up to the team score. `lineupSlotId` 20 = bench, 21 = IR,
+  23 = FLEX. `defaultPositionId`: 1 QB, 2 RB, 3 WR, 4 TE, 5 K, 16 D/ST.
 - `fetch_seasons.py` drops personal settings, team-private lists and live/projection fields
   (`DROP_KEYS`) before saving, so the repo holds no private data and unchanged days don't commit.
 
@@ -92,34 +107,57 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - Node 26 LTS. Run `npm install`, then `npm run build` and `npm start`, or `npm run dev`. npm 11
   blocks esbuild's install script; `tsx` works without it, so leave it blocked.
 - `npm run check` (`scripts/check-data.ts`): through 2025, all-time totals must match the Sheet
-  copy 23/23, plus the 13 record holders and the championship counts. Run it after any change
-  to `lib/league.ts`.
+  copy 23/23, plus the 13 record holders, the championship counts, the old Leaderboard's
+  per-season averages and order 14/14, and each championship lineup against the final score. Run it after any change to `lib/league.ts` or
+  `lib/standings.ts`.
 - Python lives in `.venv` (`python -m venv .venv`, then `.venv/Scripts/python -m pip install -r
   requirements.txt`). `scripts/check_env.py` checks `.env.local` without printing values.
   `scripts/probe.py [season ...]` prints a season summary, with owner IDs cut to 8 characters.
 - `scripts/fetch_seasons.py [season ...] [--force]` writes `data/raw/{season}.json`. It skips
-  completed seasons that already have a file, and saves only responses that pass checks. It also
-  writes `data/meta.json` (`updatedAt`, the last time data changed), which the footer shows.
+  completed seasons that already have a file, and saves only responses that pass checks. Once a
+  season's last game is decided, it also fetches that season's weekly lineups (one request per
+  week) into `data/raw/lineups/{season}.json`, keeping only each player's ID, name, position,
+  slot and points (about 0.9 MB a season). That file is written once; 2021's is saved empty so
+  it isn't asked for again. It also writes `data/meta.json` (`updatedAt`, the last time data
+  changed), which the footer shows.
 - `.github/workflows/fetch-espn.yml` runs the fetch daily at 10:00 UTC, September–January (plus
   manual runs). It commits `data/` only when something changed. Secrets: `ESPN_LEAGUE_ID`,
   `ESPN_S2`, `ESPN_SWID`. Collaborators on a personal repo can add them.
 
 ## Site
-- Routes: `/` (season status, reigning champion, news), `/standings`, `/teams`,
-  `/teams/[slug]`, `/records` (`?view=season`), `/hall-of-mahaan-bakaree` (champions computed
-  from final ranks), `/news/[slug]`.
-- Old Google Sites URLs redirect in `next.config.ts`: `/home`, `/league-history`,
-  `/leaderboard`, `/records/game-records`, `/records/season-records`. `/teams/<name>` and
-  `/hall-of-mahaan-bakaree` keep their old paths.
-- Standings: the sort, direction, search and Active filter live in the URL and are updated with
-  `window.history.replaceState`, which Next keeps in sync with `useSearchParams`. Win % and PF/G
-  rank only managers with `MIN_SEASONS` (3, a placeholder) seasons; shorter careers list after
-  them.
+- Routes: `/` (season status, reigning champion, news), `/standings` (`?view=season|game`),
+  `/teams`, `/teams/[slug]`, `/records` (`?view=season`), `/hall-of-mahaan-bakaree` (champions
+  computed from final ranks; the nav tab says "Champions"), `/news/[slug]`.
+- Old Google Sites URLs redirect in `next.config.ts`: `/home`, `/league-history`, `/leaderboard`,
+  `/retired-teams`, `/records/game-records`, `/records/season-records`. `/teams/<name>` and
+  `/hall-of-mahaan-bakaree` keep their old paths. The Teams tab stays "Teams" (site owner,
+  2026-11-05).
+- Standings has three views, defined in `lib/standings.ts`: All-time totals (W, L, PF, PA,
+  Seasons, Titles, Trades), Per season averages (W, L, PF, PA per season, Seasons; through 2025
+  its numbers match the old Leaderboard page), and Per game averages (Win %, PF, PA, PDIFF per
+  game). All three count live. Each ends with Rank Δ: the change in that view's ranking since the
+  end of the previous season, counted among the managers shown, so the Active switch renumbers and
+  search doesn't. Active only is on by default (`active=0` turns it off). View, sort, direction,
+  search and Active live in the URL, updated with `window.history.replaceState` (`lib/url.ts`),
+  which Next keeps in sync with `useSearchParams`. Per season and Per game rank only managers with
+  `MIN_SEASONS` (3, a placeholder) seasons; shorter careers list after them.
+- Manager pages: career card, a year-by-year chart of finished seasons, then one season at a time,
+  picked by year or by tapping the chart, newest first. The chart always shows finishing position
+  (left axis, 1st at the top; 1st, 2nd and 3rd are gold, silver and bronze dots) and, as a second
+  line on the right axis, Wins, PF or PA, chosen with a toggle (the site owner's spec,
+  2026-11-05). The season in progress stays off the chart, since half a season's PF flattens the
+  rest.
+- Champions page (`/hall-of-mahaan-bakaree`): each title expands (`<details>`) to the
+  championship game's lineup with the bench, the season's best game (the champion's highest
+  score), and the best player (most points while in the starting lineup, playoffs included).
+  `lib/champions.ts` computes these from `data/raw/lineups/`. 2017 shows starters by position
+  with no bench; 2021 says ESPN has no lineups.
 - Records use the old site's 14 names. Game records count every decided game, live season
   included. Season records count completed seasons only. They're computed over all seasons,
   2017 included. The old hand-kept Records pages skipped most 2017 entries, so 6 holders differ
   from the old site, for example Cesar Vega's 33.72 in 2017 holds "The Vega".
-  `scripts/check-data.ts` notes each old value.
+  `scripts/check-data.ts` notes each old value. Active only is on by default: a margin record
+  belongs to the winner, a game total to either manager, a score to the scorer.
 - PWA: `app/manifest.ts`, with icons generated by `app/icon.tsx` and `app/apple-icon.tsx`.
 
 ## Counting rules (settled 2026-11-01: they reproduce the Sheet exactly for all 23 managers)
@@ -130,6 +168,10 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   progress once ESPN marks it decided (Luke's call, 2026-11-01). Pages show which week the data
   runs through, e.g. "through Week 7, 2026".
 - Seasons = seasons in which the person owned a team. The season in progress counts as one.
+- Per-season averages divide by seasons with the season in progress weighted by how much of it
+  has been played: weeks with decided games ÷ all its weeks, playoffs included (8/17 after week 8
+  of 2026), so the view updates weekly (Luke's call, 2026-11-05). That's `seasonWeight` in
+  `careerTotals`; a finished season counts 1.
 - Each team-season goes to the one person in `managers.json` among its owner IDs. Tommy P.
   co-managed 2017 team #8 with Jordan German and is left out of `managers.json` on purpose, so
   Jordan gets the credit, as in the Sheet.
@@ -150,17 +192,19 @@ Copy the food logger (https://food-logger-rust.vercel.app/): page `#09090b`, car
 progress bars, PWA manifest. Mobile first: nothing should need a rotated phone.
 
 ## Standings UX
-- Phone: cards with a sort control (Win % / Wins / PF / PDIFF) and an up/down toggle.
+- Phone: cards with a sort control (four stats per view) and an up/down toggle.
 - Desktop: a table whose name column stays put while the other columns scroll.
 - Name search box and an "Active only" switch. Sort and filter state live in the URL.
-- Win % needs a minimum-seasons rule (threshold TBD, placeholder 3), or a 2-season 22-12 manager
-  outranks a 9-season 90-61 one. Show PF per game next to total PF.
+- Rate views need a minimum-seasons rule (threshold TBD, placeholder 3), or a 2-season 22-12
+  manager outranks a 9-season 90-61 one.
 
 ## Old site (Google Sites)
-Home (welcome text only), Hall of Mahaan Bakaree (11 images, not ported; the new page is
-computed), Teams (first-name pages with embedded Sheet charts; titles shown as stars), League
-History (the Sheet chart), Leaderboard (empty), Records (game and season subpages, kept by
-hand, "Will Update End of Season").
+Home (welcome text and 6 news posts, 2020–2026; the text is ported to `content/news`, the ~10
+photos aren't, by the site owner's choice), Hall of Mahaan Bakaree (11 images, not ported; the new page is computed), Teams
+(first-name pages with embedded Sheet charts; titles shown as stars), Retired Teams, League
+History (the Sheet chart), Leaderboard (a Sheet chart of per-season averages, copied to
+`data/reference/google-sheet-leaderboard-through-2025.csv`; its RKΔ has 2 hand-typed errors),
+Records (game and season subpages, kept by hand, "Will Update End of Season").
 
 ## Stages
 1. Get the league ID and the `espn_s2` and `SWID` cookies into `.env.local`. Done 2026-11-01.
@@ -173,9 +217,12 @@ hand, "Will Update End of Season").
    2026-11-01: no typos, one counting choice (all games count).
 4. v1 site: all-time standings, manager pages (career totals and each season), records, news.
    Then the scheduled Actions job. Then point nccfantasyfootball.com at Vercel, keeping the
-   Google Site up until the new one checks out. ← current. Site and workflow built and checked
-   locally 2026-11-01; hosting settled as a public repo on Vercel Hobby. Not yet done: GitHub
-   repo and push, secrets, a manual test run of the workflow, connecting Vercel, the domain.
+   Google Site up until the new one checks out. ← current. Live on Vercel 2026-11-02: repo
+   pushed, Actions secrets set, and the scheduled job's commits deploy on their own (checked
+   2026-11-04). The site owner's notes are built (standings views, records and standings Active
+   default, manager chart and year picker, Champions tab with expandable details, old news
+   posts). He withdrew the Leaderboard-page request and doesn't want the old photos for now.
+   Next: the domain.
 
 Later, not v1: head-to-head records, standings for each season, photos for the Hall.
 

@@ -1,0 +1,1331 @@
+{
+  "seasonId": 2021,
+  "weeks": [
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 104.96
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 133.34
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 153.8
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 102.68
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 117.96
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 100.48
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 117.98
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 122.62
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 162.24
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 109.92
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 144.08
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 113.48
+          }
+        }
+      ],
+      "matchupPeriodId": 1,
+      "scoringPeriodId": 1
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 84.92
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 130.5
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 114.82
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 105.3
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 157.28
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 144.14
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 141.12
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 98.42
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 143.88
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 70.52
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 116.2
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 131.38
+          }
+        }
+      ],
+      "matchupPeriodId": 2,
+      "scoringPeriodId": 2
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 122.04
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 124.44
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 99.54
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 153.82
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 112.74
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 124.02
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 120.1
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 147.88
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 109.38
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 142.64
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 50.54
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 148.02
+          }
+        }
+      ],
+      "matchupPeriodId": 3,
+      "scoringPeriodId": 3
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 100.94
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 101.52
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 123.88
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 88.08
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 102.32
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 140.92
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 152.1
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 120.12
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 132.22
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 88.02
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 121.18
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 123.82
+          }
+        }
+      ],
+      "matchupPeriodId": 4,
+      "scoringPeriodId": 4
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 115.56
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 114.22
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 156.18
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 69.54
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 121.64
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 135.6
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 109.36
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 137.4
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 176.48
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 107.5
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 127.48
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 129.88
+          }
+        }
+      ],
+      "matchupPeriodId": 5,
+      "scoringPeriodId": 5
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 94.78
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 69.98
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 93.48
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 111.24
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 151.92
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 127.8
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 130.9
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 129.1
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 113.32
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 135.1
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 150.64
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 138.58
+          }
+        }
+      ],
+      "matchupPeriodId": 6,
+      "scoringPeriodId": 6
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 99.84
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 135.24
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 102.46
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 73.14
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 136.22
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 139.54
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 124.38
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 119.84
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 83.6
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 146.74
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 142.16
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 80.08
+          }
+        }
+      ],
+      "matchupPeriodId": 7,
+      "scoringPeriodId": 7
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 109.36
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 69.76
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 84.16
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 101.12
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 80.5
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 131.62
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 108.3
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 109.3
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 99.36
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 130.7
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 111.02
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 139.36
+          }
+        }
+      ],
+      "matchupPeriodId": 8,
+      "scoringPeriodId": 8
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 130.48
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 120.38
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 134.74
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 67.04
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 93.52
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 115.08
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 102.46
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 103.94
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 98.56
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 117.86
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 69.48
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 97.5
+          }
+        }
+      ],
+      "matchupPeriodId": 9,
+      "scoringPeriodId": 9
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 84.5
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 121.62
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 130.24
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 124.82
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 72.64
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 88.72
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 118.42
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 87.74
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 159.24
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 115.88
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 110.3
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 100.26
+          }
+        }
+      ],
+      "matchupPeriodId": 10,
+      "scoringPeriodId": 10
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 125.68
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 82.72
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 135.78
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 148.28
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 126.06
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 105.54
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 106.18
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 61.7
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 93.96
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 176.22
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 84.38
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 128.6
+          }
+        }
+      ],
+      "matchupPeriodId": 11,
+      "scoringPeriodId": 11
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 141.78
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 76.5
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 104.78
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 135.5
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 118.92
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 90.96
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 98.92
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 160.62
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 82.42
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 118.04
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 141.76
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 57.92
+          }
+        }
+      ],
+      "matchupPeriodId": 12,
+      "scoringPeriodId": 12
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 158.42
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 81.4
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 76.18
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 106.3
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 139.82
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 109.02
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 131.52
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 143.18
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 113.66
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 120.02
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 168.7
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 73.16
+          }
+        }
+      ],
+      "matchupPeriodId": 13,
+      "scoringPeriodId": 13
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 86.24
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 119.68
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 139.02
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 132.22
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 140.18
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 155.5
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 95.32
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 110.02
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 135.2
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 176.42
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 99.84
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 60.22
+          }
+        }
+      ],
+      "matchupPeriodId": 14,
+      "scoringPeriodId": 14
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 115.84
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 126.66
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 126.3
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 104.48
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 140.82
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 130.34
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 93.6
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 92.24
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 115.7
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 63.16
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 40.44
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 117.98
+          }
+        }
+      ],
+      "matchupPeriodId": 15,
+      "scoringPeriodId": 15
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 110.92
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 146.68
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 71.46
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 134.5
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 101.44
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 149.1
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 121.36
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 180.0
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 130.2
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 107.3
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 91.44
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 88.58
+          }
+        }
+      ],
+      "matchupPeriodId": 16,
+      "scoringPeriodId": 16
+    },
+    {
+      "games": [
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 18,
+            "totalPoints": 139.46
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 1,
+            "totalPoints": 130.66
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 12,
+            "totalPoints": 80.0
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 11,
+            "totalPoints": 122.86
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 17,
+            "totalPoints": 149.54
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 13,
+            "totalPoints": 119.04
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 16,
+            "totalPoints": 132.96
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 9,
+            "totalPoints": 128.98
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 8,
+            "totalPoints": 60.8
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 2,
+            "totalPoints": 126.02
+          }
+        },
+        {
+          "away": {
+            "lineup": [],
+            "teamId": 15,
+            "totalPoints": 119.88
+          },
+          "home": {
+            "lineup": [],
+            "teamId": 3,
+            "totalPoints": 116.4
+          }
+        }
+      ],
+      "matchupPeriodId": 17,
+      "scoringPeriodId": 17
+    }
+  ]
+}

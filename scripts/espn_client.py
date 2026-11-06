@@ -1,5 +1,7 @@
-"""Shared ESPN access: loads the league ID and cookies, fetches one season's league data."""
+"""Shared ESPN access: loads the league ID and cookies, fetches one season's league data and its
+weekly box scores."""
 
+import json
 import os
 
 from espn_api.requests.espn_requests import EspnFantasyRequests
@@ -8,6 +10,8 @@ from check_env import DEFAULT_PATH, parse
 
 # mMatchup leaves out playoffTierType; mMatchupScore (what espn-api's scoreboard uses) has it
 VIEWS = ["mTeam", "mMatchupScore", "mSettings", "mStandings"]
+# What espn-api's box_scores() asks for: each matchup's lineups with every player's points
+BOX_VIEWS = ["mMatchupScore", "mScoreboard"]
 ENV_NAMES = ("ESPN_LEAGUE_ID", "ESPN_S2", "ESPN_SWID")
 
 
@@ -33,3 +37,17 @@ def fetch_season(season, league_id, cookies):
     tried = endpoint_kind(req)
     data = req.league_get(params={"view": VIEWS})
     return data, endpoint_kind(req), tried
+
+
+def season_requests(season, league_id, cookies):
+    """One requester per season, so the endpoint fallback (see CLAUDE.md) happens only once."""
+    return EspnFantasyRequests("nfl", season, league_id, cookies=cookies)
+
+
+def fetch_box_scores(req, matchup_period, scoring_period):
+    """One week's matchups with each side's lineup. Raises espn-api's errors on failure."""
+    filters = {"schedule": {"filterMatchupPeriodIds": {"value": [matchup_period]}}}
+    return req.league_get(
+        params={"view": BOX_VIEWS, "scoringPeriodId": scoring_period},
+        headers={"x-fantasy-filter": json.dumps(filters)},
+    )

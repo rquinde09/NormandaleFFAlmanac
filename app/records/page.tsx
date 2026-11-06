@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { PageTitle } from "@/components/ui";
-import { RecordsView, type RecordCard, type RecordEntry } from "@/components/RecordsView";
+import { RecordsView, type RecordCard, type RecordEntry, type RecordSet } from "@/components/RecordsView";
 import { pts, record, score } from "@/lib/format";
 import {
   gameRecords,
@@ -56,18 +56,26 @@ function seasonEntry(league: League, def: RecordDef<SeasonRecordEntry>, { teamSe
 
 function toCard<E>(def: RecordDef<E>, entry: (e: E) => RecordEntry): RecordCard {
   const [first, ...rest] = def.entries.map(entry);
-  return { key: def.key, title: def.title, subtitle: def.subtitle, holder: first, rest };
+  return { key: def.key, title: def.title, subtitle: def.subtitle, holder: first ?? null, rest };
+}
+
+function recordSet(league: League, counts?: (person: string) => boolean): RecordSet {
+  return {
+    game: gameRecords(league, 5, counts).map((d) => toCard(d, (e) => gameEntry(league, d.key, e))),
+    season: seasonRecords(league, 5, counts).map((d) => toCard(d, (e) => seasonEntry(league, d, e))),
+  };
 }
 
 export default function RecordsPage() {
   const league = getLeague();
-  const game = gameRecords(league).map((d) => toCard(d, (e) => gameEntry(league, d.key, e)));
-  const season = seasonRecords(league).map((d) => toCard(d, (e) => seasonEntry(league, d, e)));
+  const active = new Set(league.managers.filter((m) => m.active).map((m) => m.slug));
   return (
     <>
-      <PageTitle sub="Every game since 2017 counts. Season records use completed seasons only.">Records</PageTitle>
+      <PageTitle sub="Every game since 2017 counts. Season records use completed seasons only. With Active on, a game total counts if either manager is active.">
+        Records
+      </PageTitle>
       <Suspense>
-        <RecordsView game={game} season={season} />
+        <RecordsView all={recordSet(league)} active={recordSet(league, (p) => active.has(p))} />
       </Suspense>
     </>
   );

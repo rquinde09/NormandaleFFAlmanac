@@ -3,13 +3,18 @@
 // - record holders, checked by hand against the raw data. The old Records pages were kept by hand
 //   and skip most 2017 entries; where they differ, the old value is noted next to the expectation.
 // - championship counts (the stars in the old Teams menu)
+// - per-season averages, order and RKΔ against the old Leaderboard copy
+// - championship lineups against the final scores
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
 import { careerTotals, champions, gameRecords, getLeague, seasonRecords, type League } from "../lib/league";
+import { VIEWS, rankOrder } from "../lib/standings";
+import { championDetails } from "../lib/champions";
 
 const THROUGH = 2025;
 const SHEET = path.join(process.cwd(), "data", "reference", "google-sheet-through-2025.csv");
+const LEADERBOARD = path.join(process.cwd(), "data", "reference", "google-sheet-leaderboard-through-2025.csv");
 
 const full = getLeague();
 const league: League = {
@@ -88,6 +93,48 @@ for (const c of champions(league)) counts[c.person] = (counts[c.person] ?? 0) + 
 const expected = { aj: 3, jeremy: 2, jordan: 1, nigel: 1, robel: 1, suny: 1 };
 check(JSON.stringify(Object.entries(counts).sort()) === JSON.stringify(Object.entries(expected).sort()),
   "championships match the old Teams menu stars", JSON.stringify(counts));
+
+// 5. The old Leaderboard: averages per season for the 14 managers of 2025, in rank order, with
+// RKΔ (the change since the end of 2024). The site's Per season standings view.
+const [, ...board] = fs.readFileSync(LEADERBOARD, "utf8").trim().split(/\r?\n/);
+const perSeason = VIEWS.find((v) => v.key === "season")!;
+const slugs: string[] = [];
+let boardMatched = 0;
+for (const line of board) {
+  const [name, w, l, pf, pa, , seasons] = line.split(",");
+  const m = league.managers.find((x) => x.name === name);
+  const t = m && totals.get(m.slug);
+  if (m) slugs.push(m.slug);
+  const per = (n: number) => n / t!.seasons;
+  // Through 2025 every season is complete, so each counts as one whole season
+  const ok = !!t && t.seasons === +seasons && t.seasonWeight === t.seasons && close(per(t.w), +w, 0.001) && close(per(t.l), +l, 0.001) &&
+    close(per(t.pf), +pf, 0.001) && close(per(t.pa), +pa, 0.001);
+  if (ok) boardMatched += 1;
+  else console.log(`     ${name}: Leaderboard ${w} ${l} ${pf} ${pa} over ${seasons}; computed ${t ? [t.w, t.l, t.pf, t.pa].map((n) => per(n).toFixed(4)).join(" ") + ` over ${t.seasons}` : "missing"}`);
+}
+check(boardMatched === board.length, `Leaderboard per-season averages: ${boardMatched}/${board.length} managers match`);
+const before = careerTotals(league, THROUGH - 1);
+const nowOrder = rankOrder(perSeason, slugs.map((s) => [s, totals.get(s) ?? null]));
+const prevOrder = rankOrder(perSeason, slugs.map((s) => [s, before.get(s) ?? null]));
+check(nowOrder.join() === slugs.join(), "Leaderboard order", nowOrder.join(" "));
+// The Sheet's RKΔ is typed by hand. Its Ryan +3 and Jordan −4 can't come from one 2024 ranking with
+// the other 12 values (Ryan +3 puts him 14th in 2024, where Luke's 0 already is); computed +2 and −3.
+const RKD_TYPOS = ["ryan", "jordan"];
+const changes = board.map((line) => +line.split(",")[7]);
+const computed = slugs.map((s) => prevOrder.indexOf(s) - nowOrder.indexOf(s));
+const differ = slugs.filter((_, i) => computed[i] !== changes[i]);
+check(differ.join() === RKD_TYPOS.join(), `Leaderboard RKΔ: ${slugs.length - differ.length}/${slugs.length} match, plus the 2 Sheet typos`,
+  differ.join(" "));
+
+// 6. Champions page: each final's starters add up to the champion's score (ESPN has no 2021
+// lineups), and the 2023 final matches the old news post (178.68–76.5 over Robel)
+const finals = champions(league).map((c) => ({ c, d: championDetails(league, c) }));
+const adds = finals.filter(({ d }) => d.starters && d.final && close(d.starters.reduce((a, p) => a + p.points, 0), d.final.home.points, 0.011));
+check(adds.length === finals.length - 1 && !finals.find(({ c }) => c.season === 2021)!.d.starters,
+  `championship lineups add up to the final score: ${adds.length}/${finals.length}, no 2021 lineups`);
+const f2023 = finals.find(({ c }) => c.season === 2023)!.d.final!;
+check(close(f2023.home.points, 178.68) && close(f2023.away.points, 76.5) && f2023.away.person === "robel", "2023 final",
+  `${f2023.home.points}–${f2023.away.points} vs ${f2023.away.person}`);
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

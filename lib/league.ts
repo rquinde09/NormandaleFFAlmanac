@@ -2,6 +2,7 @@
 // The counting rules live in CLAUDE.md; scripts/check-data.ts checks them against the old Sheet.
 import fs from "node:fs";
 import path from "node:path";
+import { VIEWS, type Career } from "@/lib/standings";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 
@@ -53,8 +54,10 @@ export type SeasonInfo = {
   season: number;
   teams: number;
   regularWeeks: number;
+  weeks: number; // every matchup period, playoffs included
   complete: boolean;
   throughWeek: number; // last week with a decided game
+  share: number; // how much of the season has been played: 1 once complete, else throughWeek / weeks
 };
 
 export type League = {
@@ -89,7 +92,8 @@ type RawSeason = {
   seasonId: number;
   teams: RawTeam[];
   schedule: RawGame[];
-  settings: { scheduleSettings: { matchupPeriodCount: number } };
+  // matchupPeriods lists every period of the season, even ones not yet on the schedule
+  settings: { scheduleSettings: { matchupPeriodCount: number; matchupPeriods: Record<string, number[]> } };
 };
 
 const norm = (id: string) => id.trim().replace(/^\{|\}$/g, "").toUpperCase();
@@ -176,12 +180,16 @@ export function getLeague(): League {
       .sort((a, b) => a.week - b.week);
     games.push(...seasonGames);
 
+    const weeks = Object.keys(s.settings.scheduleSettings.matchupPeriods).length;
+    const throughWeek = Math.max(0, ...seasonGames.map((g) => g.week));
     seasons.push({
       season: s.seasonId,
       teams: s.teams.length,
       regularWeeks,
+      weeks,
       complete,
-      throughWeek: Math.max(0, ...seasonGames.map((g) => g.week)),
+      throughWeek,
+      share: complete ? 1 : Math.min(1, throughWeek / weeks),
     });
 
     for (const team of s.teams) {
@@ -230,23 +238,22 @@ export function titles(league: League, person: string) {
   return league.teamSeasons.filter((ts) => ts.person === person && ts.finalRank === 1).map((ts) => ts.season);
 }
 
-export type CareerRow = Totals & {
+export type CareerRow = Career & {
   slug: string;
   name: string;
   nickname: string;
   active: boolean;
-  seasons: number;
-  titles: number;
   rank: number;
   rankChange: number | null; // null for someone with no games before this season
 };
 
-// All-time totals per person over every decided game through `through` (default: everything, live).
+// Career totals per person over every decided game through `through` (default: everything, live).
 export function careerTotals(league: League, through?: number) {
-  const totals = new Map<string, Totals & { seasons: number; titles: number }>();
+  const share = new Map(league.seasons.map((s) => [s.season, s.share]));
+  const totals = new Map<string, Career>();
   for (const ts of league.teamSeasons) {
     if (through !== undefined && ts.season > through) continue;
-    const row = totals.get(ts.person) ?? { ...emptyTotals(), seasons: 0, titles: 0 };
+    const row = totals.get(ts.person) ?? { ...emptyTotals(), seasons: 0, seasonWeight: 0, titles: 0, trades: 0 };
     row.w += ts.all.w;
     row.l += ts.all.l;
     row.t += ts.all.t;
@@ -254,17 +261,18 @@ export function careerTotals(league: League, through?: number) {
     row.pa += ts.all.pa;
     row.games += ts.all.games;
     row.seasons += 1;
+    row.seasonWeight += share.get(ts.season) ?? 1;
+    row.trades += ts.trades;
     if (ts.finalRank === 1) row.titles += 1;
     totals.set(ts.person, row);
   }
   return totals;
 }
 
-// Ranked like the old Sheet: by wins, then points for.
-function rankOrder(totals: Map<string, Totals>) {
-  return [...totals.entries()]
-    .sort(([, a], [, b]) => b.w - a.w || b.pf - a.pf)
-    .map(([slug]) => slug);
+const allTime = VIEWS.find((v) => v.key === "all")!;
+
+function rankOrder(totals: Map<string, Career>) {
+  return [...totals.entries()].sort(([, a], [, b]) => allTime.rank(a, b)).map(([slug]) => slug);
 }
 
 export function allTimeStandings(league: League): CareerRow[] {
@@ -289,6 +297,33 @@ export function allTimeStandings(league: League): CareerRow[] {
   });
 }
 
+// Each person's career for the standings page, live (`now`) and at the end of the previous
+// season (`prev`, for Rank Δ). All three views count the season in progress.
+export type StandingsRow = {
+  slug: string;
+  name: string;
+  nickname: string;
+  active: boolean;
+  now: Career;
+  prev: Career | null;
+};
+
+export function standingsRows(league: League): StandingsRow[] {
+  const latest = latestSeason(league).season;
+  const now = careerTotals(league);
+  const prev = careerTotals(league, latest - 1);
+  return league.managers
+    .filter((m) => now.has(m.slug))
+    .map((m) => ({
+      slug: m.slug,
+      name: m.name,
+      nickname: m.nickname,
+      active: m.active,
+      now: now.get(m.slug)!,
+      prev: prev.get(m.slug) ?? null,
+    }));
+}
+
 // ---- Records (the old site's names) ----
 
 export type GameRecordEntry = { game: Game; value: number };
@@ -305,17 +340,23 @@ export type RecordDef<E> = {
 const margin = (g: Game) => Math.abs(g.home.points - g.away.points);
 const total = (g: Game) => g.home.points + g.away.points;
 
-export function gameRecords(league: League, top = 5): RecordDef<GameRecordEntry>[] {
+// `counts` limits the lists to certain people (the Active only switch). A margin record belongs to
+// the winner, a game total to both managers, a score to whoever scored it.
+export function gameRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<GameRecordEntry>[] {
   const g = league.games;
-  const by = (value: (x: Game) => number, desc: boolean) =>
+  const winnerOf = (x: Game) => (x.winner === "AWAY" ? x.away : x.home);
+  const byWinner = (x: Game) => counts(winnerOf(x).person);
+  const byEither = (x: Game) => counts(x.home.person) || counts(x.away.person);
+  const by = (value: (x: Game) => number, desc: boolean, holds: (x: Game) => boolean) =>
     g
+      .filter(holds)
       .map((game) => ({ game, value: value(game) }))
       .sort((a, b) => (desc ? b.value - a.value : a.value - b.value))
       .slice(0, top);
   const sides = g.flatMap((game) => [
     { game, side: game.home, value: game.home.points },
     { game, side: game.away, value: game.away.points },
-  ]);
+  ]).filter(({ side }) => counts(side.person));
   const bySide = (desc: boolean) =>
     [...sides]
       .sort((a, b) => (desc ? b.value - a.value : a.value - b.value))
@@ -326,10 +367,10 @@ export function gameRecords(league: League, top = 5): RecordDef<GameRecordEntry>
         value,
       }));
   return [
-    { key: "blowout", title: "The @$$-Whooping", subtitle: "Biggest point difference", entries: by(margin, true), unit: "pts" },
-    { key: "closest", title: "The Clincher", subtitle: "Closest point difference", entries: by(margin, false), unit: "pts" },
-    { key: "highest-total", title: "Clash of Titans", subtitle: "Highest game total", entries: by(total, true), unit: "pts" },
-    { key: "lowest-total", title: "The Snooze Fest", subtitle: "Lowest game total", entries: by(total, false), unit: "pts" },
+    { key: "blowout", title: "The @$$-Whooping", subtitle: "Biggest point difference", entries: by(margin, true, byWinner), unit: "pts" },
+    { key: "closest", title: "The Clincher", subtitle: "Closest point difference", entries: by(margin, false, byWinner), unit: "pts" },
+    { key: "highest-total", title: "Clash of Titans", subtitle: "Highest game total", entries: by(total, true, byEither), unit: "pts" },
+    { key: "lowest-total", title: "The Snooze Fest", subtitle: "Lowest game total", entries: by(total, false, byEither), unit: "pts" },
     { key: "highest-score", title: "Mr. Clean", subtitle: "Most points scored", entries: bySide(true), unit: "pts" },
     { key: "lowest-score", title: "The Vega", subtitle: "Fewest points scored", entries: bySide(false), unit: "pts" },
   ];
@@ -338,9 +379,9 @@ export function gameRecords(league: League, top = 5): RecordDef<GameRecordEntry>
 const flip = (w: Game["winner"]): Game["winner"] => (w === "HOME" ? "AWAY" : w === "AWAY" ? "HOME" : "TIE");
 
 // Season records count completed seasons only, so a half-played season can't hold "fewest points against".
-export function seasonRecords(league: League, top = 5): RecordDef<SeasonRecordEntry>[] {
+export function seasonRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<SeasonRecordEntry>[] {
   const complete = new Set(league.seasons.filter((s) => s.complete).map((s) => s.season));
-  const rows = league.teamSeasons.filter((ts) => complete.has(ts.season));
+  const rows = league.teamSeasons.filter((ts) => complete.has(ts.season) && counts(ts.person));
   const pick = (value: (ts: TeamSeason) => number, compare: (a: TeamSeason, b: TeamSeason) => number) =>
     [...rows].sort(compare).slice(0, top).map((teamSeason) => ({ teamSeason, value: value(teamSeason) }));
   return [

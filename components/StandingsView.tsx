@@ -2,110 +2,95 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { ActiveSwitch } from "@/components/ActiveSwitch";
 import { Segmented } from "@/components/Segmented";
 import { Bar, RankChange, Stars } from "@/components/ui";
-import { pct, pts, record, signed } from "@/lib/format";
+import type { StandingsRow } from "@/lib/league";
+import { MIN_SEASONS, VIEWS, qualifies, rankOrder, type Career, type Stat } from "@/lib/standings";
+import { updateParams } from "@/lib/url";
 
-export type StandingsRow = {
-  slug: string;
-  name: string;
-  nickname: string;
-  active: boolean;
-  w: number;
-  l: number;
-  t: number;
-  pf: number;
-  pa: number;
-  seasons: number;
-  titles: number;
-  rankChange: number | null;
-  winPct: number;
-  pfPerGame: number;
-  pdiff: number;
+export type StandingsMeta = {
+  first: number;
+  latest: number;
+  latestComplete: boolean;
+  throughWeek: number;
+  weeks: number; // in the latest season, playoffs included
 };
 
-// Rate stats rank only managers with this many seasons, so a short career can't top the list.
-// Placeholder until the league picks a number (see CLAUDE.md).
-const MIN_SEASONS = 3;
+type Entry = { row: StandingsRow; now: Career; prev: Career | null };
 
-type Column = {
-  key: string;
-  label: string;
-  value: (r: StandingsRow) => number;
-  show: (r: StandingsRow) => string;
-  rate?: boolean;
-  tiesOnly?: boolean; // shown only once the league has a tie
-};
-
-const COLUMNS: Column[] = [
-  { key: "wins", label: "W", value: (r) => r.w, show: (r) => String(r.w) },
-  { key: "losses", label: "L", value: (r) => r.l, show: (r) => String(r.l) },
-  { key: "ties", label: "T", value: (r) => r.t, show: (r) => String(r.t), tiesOnly: true },
-  { key: "winpct", label: "Win %", value: (r) => r.winPct, show: (r) => pct(r.winPct), rate: true },
-  { key: "pf", label: "PF", value: (r) => r.pf, show: (r) => pts(r.pf) },
-  { key: "pfpg", label: "PF/G", value: (r) => r.pfPerGame, show: (r) => pts(r.pfPerGame), rate: true },
-  { key: "pa", label: "PA", value: (r) => r.pa, show: (r) => pts(r.pa) },
-  { key: "pdiff", label: "PDIFF", value: (r) => r.pdiff, show: (r) => signed(r.pdiff) },
-  { key: "seasons", label: "Seasons", value: (r) => r.seasons, show: (r) => String(r.seasons) },
-  { key: "titles", label: "Titles", value: (r) => r.titles, show: (r) => String(r.titles) },
-];
-
-const PHONE_SORTS = [
-  { value: "wins", label: "Wins" },
-  { value: "winpct", label: "Win %" },
-  { value: "pf", label: "PF" },
-  { value: "pdiff", label: "PDIFF" },
-];
-
-export function StandingsView({ rows }: { rows: StandingsRow[] }) {
+export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: StandingsMeta }) {
   const params = useSearchParams();
   const pathname = usePathname();
-  const col = COLUMNS.find((c) => c.key === params.get("sort")) ?? COLUMNS[0];
+  const view = VIEWS.find((v) => v.key === params.get("view")) ?? VIEWS[0];
+  const hasTies = rows.some((r) => r.now.t > 0);
+  const stats = view.stats.filter((s) => hasTies || !s.tiesOnly);
+  const col = stats.find((s) => s.key === params.get("sort")) ?? stats.find((s) => s.key === view.rankStat)!;
   const dir = params.get("dir") === "asc" ? "asc" : "desc";
   const query = params.get("q") ?? "";
-  const activeOnly = params.get("active") === "1";
+  const activeOnly = params.get("active") !== "0"; // on unless switched off
 
-  // Updating history directly keeps sorting instant; Next.js keeps useSearchParams in sync.
-  // Start from the live URL, not this render's params, so quick successive changes all stick.
-  function update(next: Record<string, string | null>) {
-    const p = new URLSearchParams(window.location.search);
-    for (const [k, v] of Object.entries(next)) {
-      if (v === null || v === "") p.delete(k);
-      else p.set(k, v);
-    }
-    const s = p.toString();
-    window.history.replaceState(null, "", s ? `${pathname}?${s}` : pathname);
-  }
+  const update = (next: Record<string, string | null>) => updateParams(pathname, next);
   const setSort = (key: string) =>
-    update({ sort: key === "wins" ? null : key, dir: key === col.key && dir === "desc" ? "asc" : null });
+    update({ sort: key === view.rankStat ? null : key, dir: key === col.key && dir === "desc" ? "asc" : null });
 
-  const needle = query.trim().toLowerCase();
-  const shown = rows.filter(
-    (r) => (!activeOnly || r.active) && (!needle || `${r.name} ${r.nickname}`.toLowerCase().includes(needle)),
-  );
-  const qualifies = (r: StandingsRow) => !col.rate || r.seasons >= MIN_SEASONS;
-  const sorted = [...shown].sort((a, b) => {
-    if (qualifies(a) !== qualifies(b)) return qualifies(a) ? -1 : 1;
-    const d = col.value(a) - col.value(b);
-    return (dir === "desc" ? -d : d) || b.w - a.w || b.pf - a.pf;
+  // Everyone this view covers. Positions and Rank Δ are counted within it, so the Active switch
+  // renumbers them and searching doesn't.
+  const pool: Entry[] = rows.filter((r) => !activeOnly || r.active).map((row) => ({ row, now: row.now, prev: row.prev }));
+
+  const ok = (e: Entry) => qualifies(view, e.now);
+  const sorted = [...pool].sort((a, b) => {
+    if (ok(a) !== ok(b)) return ok(a) ? -1 : 1;
+    const d = col.value(a.now) - col.value(b.now);
+    return (dir === "desc" ? -d : d) || view.rank(a.now, b.now);
   });
-  const ranked = sorted.filter(qualifies);
-  const values = ranked.map(col.value);
+  const position = new Map(sorted.map((e, i) => [e.row.slug, i + 1]));
+  const nowOrder = rankOrder(view, pool.map((e) => [e.row.slug, e.now]));
+  const prevOrder = rankOrder(view, pool.map((e) => [e.row.slug, e.prev]));
+  const rankChange = (slug: string) => {
+    const before = prevOrder.indexOf(slug);
+    const now = nowOrder.indexOf(slug);
+    return before === -1 || now === -1 ? null : before - now;
+  };
+
+  const values = sorted.filter(ok).map((e) => col.value(e.now));
   const lo = Math.min(...values, 0);
   const hi = Math.max(...values);
-  const barValue = (r: StandingsRow) => (hi > lo ? (col.value(r) - lo) / (hi - lo) : 0);
-  const hasTies = rows.some((r) => r.t > 0);
-  const columns = COLUMNS.filter((c) => hasTies || !c.tiesOnly);
+  const barValue = (e: Entry) => (ok(e) && hi > lo ? (col.value(e.now) - lo) / (hi - lo) : 0);
+
+  const needle = query.trim().toLowerCase();
+  const shown = sorted.filter((e) => !needle || `${e.row.name} ${e.row.nickname}`.toLowerCase().includes(needle));
+  const firstUnranked = view.rate ? shown.findIndex((e) => !ok(e)) : -1;
+
+  const live = meta.latestComplete ? "" : ` ${meta.latest} through week ${meta.throughWeek}.`;
+  const partial = meta.latestComplete
+    ? ""
+    : ` ${meta.latest} counts as ${meta.throughWeek}/${meta.weeks} of a season so far.`;
+  const since = meta.latest - 1;
+  const describe = {
+    all: `Totals over every game since ${meta.first}: regular season, playoffs and consolation.${live}`,
+    season: `Averages per season since ${meta.first}.${partial}`,
+    game: `Averages per game over every game since ${meta.first}.${live}`,
+  }[view.key];
 
   return (
     <div className="space-y-3">
       <div className="space-y-2">
+        <Segmented
+          label="Standings"
+          options={VIEWS.map((v) => ({ value: v.key, label: v.label }))}
+          value={view.key}
+          onChange={(key) => update({ view: key === "all" ? null : key, sort: null, dir: null })}
+        />
+        <p className="text-sm text-zinc-400">
+          {describe} Rank Δ is the change since the end of {since}.
+        </p>
         <div className="md:hidden">
           <Segmented
             label="Sort by"
-            options={PHONE_SORTS}
+            options={view.phoneSorts}
             value={col.key}
-            onChange={(key) => update({ sort: key === "wins" ? null : key, dir: null })}
+            onChange={(key) => update({ sort: key === view.rankStat ? null : key, dir: null })}
           />
         </div>
         <div className="flex items-center gap-2">
@@ -124,58 +109,49 @@ export function StandingsView({ rows }: { rows: StandingsRow[] }) {
           >
             {dir === "desc" ? "↓ High" : "↑ Low"}
           </button>
-          <label className="flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300">
-            <input
-              type="checkbox"
-              checked={activeOnly}
-              onChange={(e) => update({ active: e.target.checked ? "1" : null })}
-              className="accent-red-500"
-            />
-            Active
-          </label>
+          <ActiveSwitch checked={activeOnly} onChange={(on) => update({ active: on ? null : "0" })} />
         </div>
       </div>
 
-      {sorted.length === 0 && <p className="py-6 text-center text-sm text-zinc-500">No managers match.</p>}
+      {shown.length === 0 && <p className="py-6 text-center text-sm text-zinc-500">No managers match.</p>}
 
       {/* Phone: cards */}
       <ol className="space-y-2 md:hidden">
-        {sorted.map((r, i) => (
-          <li key={r.slug}>
-            {col.rate && i === ranked.length && <Unranked />}
+        {shown.map((e, i) => (
+          <li key={e.row.slug}>
+            {i === firstUnranked && <Unranked />}
             <Link
-              href={`/teams/${r.slug}`}
+              href={`/teams/${e.row.slug}`}
               className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4 transition-colors active:border-zinc-600"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-baseline gap-3">
                   <span className="w-5 shrink-0 text-right text-sm tabular-nums text-zinc-500">
-                    {qualifies(r) ? i + 1 : "–"}
+                    {ok(e) ? position.get(e.row.slug) : "–"}
                   </span>
                   <div className="min-w-0">
                     <div className="truncate font-semibold text-zinc-50">
-                      {r.nickname} <Stars count={r.titles} />
+                      {e.row.nickname} <Stars count={e.row.now.titles} />
                     </div>
                     <div className="truncate text-xs text-zinc-500">
-                      {r.name}
-                      {!r.active && " · retired"}
+                      {e.row.name}
+                      {!e.row.active && " · retired"} · {e.now.seasons} season{e.now.seasons === 1 ? "" : "s"}
                     </div>
                   </div>
                 </div>
                 <div className="shrink-0 text-right">
-                  <div className="text-lg font-semibold tabular-nums text-zinc-50">{col.show(r)}</div>
-                  <div className="text-xs text-zinc-500">{col.label === "W" ? "Wins" : col.label}</div>
+                  <div className="text-lg font-semibold tabular-nums text-zinc-50">{col.show(e.now)}</div>
+                  <div className="text-xs text-zinc-500">{col.name}</div>
                 </div>
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2 text-xs">
-                <Mini label="Record" value={record(r)} />
-                <Mini label="Win %" value={pct(r.winPct)} />
-                <Mini label="PF/G" value={pts(r.pfPerGame)} />
-                <Mini label="PDIFF" value={signed(r.pdiff)} />
+                {view.phoneMinis.filter((m) => m.key !== col.key).slice(0, 4).map((m) => (
+                  <Mini key={m.label} label={m.label} value={m.show(e.now)} />
+                ))}
               </div>
               <div className="mt-3 flex items-center gap-3">
-                <Bar value={qualifies(r) ? barValue(r) : 0} />
-                {col.key === "wins" && <RankChange change={r.rankChange} />}
+                <Bar value={barValue(e)} />
+                {col.key === view.rankStat && ok(e) && <RankChange change={rankChange(e.row.slug)} />}
               </div>
             </Link>
           </li>
@@ -188,41 +164,42 @@ export function StandingsView({ rows }: { rows: StandingsRow[] }) {
           <thead>
             <tr className="border-b border-zinc-800 text-xs text-zinc-400">
               <th className="sticky left-0 z-10 bg-zinc-900 px-3 py-2.5 text-left font-medium">Manager</th>
-              {columns.map((c) => (
-                <SortHeader key={c.key} c={c} active={c.key === col.key} dir={dir} onClick={setSort} />
+              {stats.map((s) => (
+                <SortHeader key={s.key} s={s} active={s.key === col.key} dir={dir} onClick={setSort} />
               ))}
-              <th className="px-3 py-2.5 text-right font-medium" title="Change in all-time rank since the end of last season">
+              <th className="px-3 py-2.5 text-right font-medium" title={`Change in rank since the end of ${since}`}>
                 Rank Δ
               </th>
             </tr>
           </thead>
           <tbody>
-            {sorted.map((r, i) => (
-              <tr key={r.slug} className={`border-b border-zinc-800/60 last:border-0 ${col.rate && i === ranked.length ? "border-t-2 border-t-zinc-700" : ""}`}>
+            {shown.map((e, i) => (
+              <tr
+                key={e.row.slug}
+                className={`border-b border-zinc-800/60 last:border-0 ${i === firstUnranked ? "border-t-2 border-t-zinc-700" : ""}`}
+              >
                 <td className="sticky left-0 z-10 bg-zinc-900 px-3 py-2.5">
-                  <Link href={`/teams/${r.slug}`} className="flex items-baseline gap-3 whitespace-nowrap hover:text-white">
-                    <span className="w-5 text-right text-zinc-500">{qualifies(r) ? i + 1 : "–"}</span>
-                    <span className="font-medium text-zinc-100">{r.name}</span>
-                    <Stars count={r.titles} />
-                    {!r.active && <span className="text-xs text-zinc-500">retired</span>}
+                  <Link href={`/teams/${e.row.slug}`} className="flex items-baseline gap-3 whitespace-nowrap hover:text-white">
+                    <span className="w-5 text-right text-zinc-500">{ok(e) ? position.get(e.row.slug) : "–"}</span>
+                    <span className="font-medium text-zinc-100">{e.row.name}</span>
+                    <Stars count={e.row.now.titles} />
+                    {!e.row.active && <span className="text-xs text-zinc-500">retired</span>}
                   </Link>
                 </td>
-                {columns.map((c) => (
-                  <td key={c.key} className={`px-3 py-2.5 text-right ${c.key === col.key ? "font-semibold text-zinc-50" : "text-zinc-300"}`}>
-                    {c.show(r)}
+                {stats.map((s) => (
+                  <td key={s.key} className={`px-3 py-2.5 text-right ${s.key === col.key ? "font-semibold text-zinc-50" : "text-zinc-300"}`}>
+                    {s.show(e.now)}
                   </td>
                 ))}
-                <td className="px-3 py-2.5 text-right">
-                  <RankChange change={r.rankChange} />
-                </td>
+                <td className="px-3 py-2.5 text-right">{ok(e) && <RankChange change={rankChange(e.row.slug)} />}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {col.rate && ranked.length < sorted.length && (
+      {firstUnranked !== -1 && (
         <p className="text-xs text-zinc-500">
-          {col.label} ranks managers with at least {MIN_SEASONS} seasons. Shorter careers are listed after them.
+          {view.label} ranks managers with at least {MIN_SEASONS} seasons. Shorter careers are listed after them.
         </p>
       )}
     </div>
@@ -247,20 +224,20 @@ function Unranked() {
 }
 
 function SortHeader({
-  c,
+  s,
   active,
   dir,
   onClick,
 }: {
-  c: Column;
+  s: Stat;
   active: boolean;
   dir: "asc" | "desc";
   onClick: (key: string) => void;
 }) {
   return (
     <th className="px-3 py-2.5 text-right font-medium" aria-sort={active ? (dir === "desc" ? "descending" : "ascending") : "none"}>
-      <button onClick={() => onClick(c.key)} className={`whitespace-nowrap ${active ? "text-zinc-50" : "hover:text-zinc-200"}`}>
-        {c.label}
+      <button onClick={() => onClick(s.key)} title={s.name} className={`whitespace-nowrap ${active ? "text-zinc-50" : "hover:text-zinc-200"}`}>
+        {s.label}
         {active ? (dir === "desc" ? " ↓" : " ↑") : ""}
       </button>
     </th>
