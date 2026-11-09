@@ -2311,7 +2311,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 0.0
+          "9": 137.74
         },
         "teamId": 19,
         "tiebreak": 0.0,
@@ -2328,7 +2328,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 0.0
+          "9": 149.68
         },
         "teamId": 11,
         "tiebreak": 0.0,
@@ -2351,7 +2351,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 5.3
+          "9": 108.76
         },
         "teamId": 1,
         "tiebreak": 0.0,
@@ -2368,7 +2368,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 19.68
+          "9": 105.34
         },
         "teamId": 13,
         "tiebreak": 0.0,
@@ -2391,7 +2391,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 12.0
+          "9": 108.3
         },
         "teamId": 9,
         "tiebreak": 0.0,
@@ -2408,7 +2408,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 13.58
+          "9": 79.78
         },
         "teamId": 15,
         "tiebreak": 0.0,
@@ -2431,7 +2431,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 0.0
+          "9": 129.88
         },
         "teamId": 3,
         "tiebreak": 0.0,
@@ -2448,7 +2448,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 0.0
+          "9": 77.1
         },
         "teamId": 8,
         "tiebreak": 0.0,
@@ -2471,7 +2471,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 11.2
+          "9": 96.98
         },
         "teamId": 12,
         "tiebreak": 0.0,
@@ -2488,7 +2488,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 8.9
+          "9": 108.26
         },
         "teamId": 18,
         "tiebreak": 0.0,
@@ -2511,7 +2511,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 0.0
+          "9": 104.08
         },
         "teamId": 16,
         "tiebreak": 0.0,
@@ -2528,7 +2528,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 0.0
+          "9": 84.62
         },
         "teamId": 20,
         "tiebreak": 0.0,
@@ -2551,7 +2551,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 0.0
+          "9": 92.28
         },
         "teamId": 17,
         "tiebreak": 0.0,
@@ -2568,7 +2568,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "9": 0.0
+          "9": 117.06
         },
         "teamId": 2,
         "tiebreak": 0.0,
@@ -4003,10 +4003,10 @@
       2025
     ],
     "requestedMatchupPeriodId": 9,
-    "standingsUpdateDate": 1794125419359,
+    "standingsUpdateDate": 1794213517610,
     "teamsJoined": 14,
     "transactionScoringPeriod": 9,
-    "waiverLastExecutionDate": 1794125419238,
+    "waiverLastExecutionDate": 1794213517494,
     "waiverProcessStatus": {
       "2026-08-28T07:08:41.999+00:00": 3,
       "2026-08-31T07:09:32.025+00:00": 1,
@@ -4473,7 +4473,7 @@
     },
     {
       "abbrev": "AAT",
-      "currentProjectedRank": 5,
+      "currentProjectedRank": 4,
       "divisionId": 0,
       "draftDayProjectedRank": 3,
       "eliminated": false,
@@ -4611,7 +4611,7 @@
     },
     {
       "abbrev": "FAH",
-      "currentProjectedRank": 11,
+      "currentProjectedRank": 12,
       "divisionId": 0,
       "draftDayProjectedRank": 1,
       "eliminated": false,
@@ -4694,7 +4694,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 74,
+        "moveToActive": 77,
         "moveToIR": 4,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4822,8 +4822,8 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 31,
-        "drops": 32,
+        "acquisitions": 32,
+        "drops": 33,
         "matchupAcquisitionTotals": {
           "2": 3,
           "3": 4,
@@ -4831,7 +4831,7 @@
           "5": 6,
           "6": 5,
           "7": 1,
-          "9": 5
+          "9": 6
         },
         "misc": 0,
         "moveToActive": 73,
@@ -4974,7 +4974,7 @@
           "8": 3
         },
         "misc": 0,
-        "moveToActive": 33,
+        "moveToActive": 35,
         "moveToIR": 0,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5736,7 +5736,7 @@
     },
     {
       "abbrev": "AMON",
-      "currentProjectedRank": 4,
+      "currentProjectedRank": 5,
       "divisionId": 0,
       "draftDayProjectedRank": 5,
       "eliminated": false,
@@ -5814,7 +5814,7 @@
           "8": 2
         },
         "misc": 0,
-        "moveToActive": 27,
+        "moveToActive": 29,
         "moveToIR": 1,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5872,7 +5872,7 @@
     },
     {
       "abbrev": "JEFE",
-      "currentProjectedRank": 12,
+      "currentProjectedRank": 11,
       "divisionId": 0,
       "draftDayProjectedRank": 10,
       "eliminated": false,
@@ -5880,9 +5880,9 @@
       "id": 20,
       "isActive": false,
       "isTransactionLocked": false,
-      "logo": "https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/88ca4930-b832-11f1-97e3-f1a49aa893a9",
+      "logo": "https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/201699d0-dbbd-11f1-ad78-7930c83b6715",
       "logoType": "CUSTOM_UPLOAD",
-      "name": "Call of Murray",
+      "name": "AJ's Brown Fried Rice",
       "owners": [
         "{6A2D5E1F-F054-48FD-8BAE-7C80ECFBBB6D}"
       ],
