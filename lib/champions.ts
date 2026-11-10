@@ -1,10 +1,21 @@
 // Details behind each title on the Champions page: the championship game's lineup, the season's
 // best game, and the player who scored the most points while in the starting lineup. Lineups come
 // from data/raw/lineups/{season}.json, fetched once a season is over. 2017 has starters only, all
-// in slot 0, and ESPN keeps no lineups for 2021.
+// in slot 0. ESPN keeps no lineups for 2021, so that champion's lineup was entered by hand from the
+// site owner (data/manual/lineups-2021.json), without points.
 import fs from "node:fs";
 import path from "node:path";
 import type { Game, League, TeamSeason } from "@/lib/league";
+
+type ManualPlayer = { slot: string; name: string };
+type ManualLineup = { season: number; person: string; starters: ManualPlayer[]; bench: ManualPlayer[] };
+
+const MANUAL_DIR = path.join(process.cwd(), "data", "manual");
+
+function readManual(season: number): ManualLineup | null {
+  const file = path.join(MANUAL_DIR, `lineups-${season}.json`);
+  return fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, "utf8")) as ManualLineup) : null;
+}
 
 type RawPlayer = {
   playerId: number;
@@ -27,11 +38,12 @@ const BENCH = new Set([20, 21]);
 const POSITIONS: [number, string][] = [[1, "QB"], [2, "RB"], [3, "WR"], [4, "TE"], [16, "D/ST"], [5, "K"]];
 const positionOf = (p: RawPlayer) => POSITIONS.find(([id]) => id === p.defaultPositionId)?.[1] ?? "";
 
-export type LineupPlayer = { name: string; slot: string; points: number };
+export type LineupPlayer = { name: string; slot: string; points: number | null }; // null: entered by hand
 export type ChampionDetails = {
   final: Game | null; // the champion on the home side
-  starters: LineupPlayer[] | null; // null when ESPN has no lineups for the season
+  starters: LineupPlayer[] | null; // null when there's no lineup for the season
   bench: LineupPlayer[] | null; // null when ESPN lists starters only
+  manual: boolean; // the lineup was entered by hand, without points
   bestGame: Game | null; // the champion on the home side
   bestPlayer: { name: string; position: string; points: number; starts: number } | null;
 };
@@ -107,5 +119,12 @@ export function championDetails(league: League, champ: TeamSeason): ChampionDeta
       }
     : null;
 
-  return { final, starters, bench, bestGame, bestPlayer };
+  // No ESPN lineup: use one entered by hand, if there is one for this champion
+  const manual = !starters ? readManual(champ.season) : null;
+  if (manual && manual.person === champ.person) {
+    const hand = (players: ManualPlayer[]) => players.map((p) => ({ name: p.name, slot: p.slot, points: null }));
+    return { final, starters: hand(manual.starters), bench: manual.bench.length ? hand(manual.bench) : null, manual: true, bestGame, bestPlayer };
+  }
+
+  return { final, starters, bench, manual: false, bestGame, bestPlayer };
 }

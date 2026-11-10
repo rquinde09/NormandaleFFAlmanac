@@ -2,7 +2,7 @@
 // The counting rules live in CLAUDE.md; scripts/check-data.ts checks them against the old Sheet.
 import fs from "node:fs";
 import path from "node:path";
-import { VIEWS, type Career } from "@/lib/standings";
+import type { Career } from "@/lib/standings";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 
@@ -21,6 +21,7 @@ export type Manager = {
   nickname: string;
   active: boolean;
   espnIds: string[];
+  commish?: boolean; // has been the league's commissioner, kept by hand (ESPN data doesn't say)
 };
 
 export type Side = { person: string; teamId: number; points: number };
@@ -43,6 +44,7 @@ export type TeamSeason = {
   teamName: string;
   seed: number;
   finalRank: number | null; // null while the season is in progress
+  lastPlace: boolean; // finished last of the season's teams: the pancake
   regular: Totals; // ESPN's own record: regular season only
   all: Totals; // every decided game, the site's counting rule
   trades: number;
@@ -205,13 +207,15 @@ export function getLeague(): League {
         if (g.kind === "regular") addGame(regular, g[side].points, g[other].points, result);
         results.push(result);
       }
+      const finalRank = complete ? (team.rankCalculatedFinal || team.rankFinal || null) : null;
       teamSeasons.push({
         season: s.seasonId,
         person: credit.get(team.id)!,
         teamId: team.id,
         teamName: teamName(team),
         seed: team.playoffSeed,
-        finalRank: complete ? (team.rankCalculatedFinal || team.rankFinal || null) : null,
+        finalRank,
+        lastPlace: finalRank === s.teams.length,
         regular,
         all,
         trades: team.transactionCounter?.trades ?? 0,
@@ -238,22 +242,13 @@ export function titles(league: League, person: string) {
   return league.teamSeasons.filter((ts) => ts.person === person && ts.finalRank === 1).map((ts) => ts.season);
 }
 
-export type CareerRow = Career & {
-  slug: string;
-  name: string;
-  nickname: string;
-  active: boolean;
-  rank: number;
-  rankChange: number | null; // null for someone with no games before this season
-};
-
 // Career totals per person over every decided game through `through` (default: everything, live).
 export function careerTotals(league: League, through?: number) {
   const share = new Map(league.seasons.map((s) => [s.season, s.share]));
   const totals = new Map<string, Career>();
   for (const ts of league.teamSeasons) {
     if (through !== undefined && ts.season > through) continue;
-    const row = totals.get(ts.person) ?? { ...emptyTotals(), seasons: 0, seasonWeight: 0, titles: 0, trades: 0 };
+    const row = totals.get(ts.person) ?? { ...emptyTotals(), seasons: 0, seasonWeight: 0, titles: 0, lastPlaces: 0, trades: 0 };
     row.w += ts.all.w;
     row.l += ts.all.l;
     row.t += ts.all.t;
@@ -264,37 +259,10 @@ export function careerTotals(league: League, through?: number) {
     row.seasonWeight += share.get(ts.season) ?? 1;
     row.trades += ts.trades;
     if (ts.finalRank === 1) row.titles += 1;
+    if (ts.lastPlace) row.lastPlaces += 1;
     totals.set(ts.person, row);
   }
   return totals;
-}
-
-const allTime = VIEWS.find((v) => v.key === "all")!;
-
-function rankOrder(totals: Map<string, Career>) {
-  return [...totals.entries()].sort(([, a], [, b]) => allTime.rank(a, b)).map(([slug]) => slug);
-}
-
-export function allTimeStandings(league: League): CareerRow[] {
-  const latest = latestSeason(league).season;
-  const now = careerTotals(league);
-  const before = careerTotals(league, latest - 1); // end of the previous season
-  const order = rankOrder(now);
-  const previous = rankOrder(before);
-  return order.map((slug, i) => {
-    const m = managerBySlug(league, slug)!;
-    const prevIndex = previous.indexOf(slug);
-    const row = now.get(slug)!;
-    return {
-      ...row,
-      slug,
-      name: m.name,
-      nickname: m.nickname,
-      active: m.active,
-      rank: i + 1,
-      rankChange: prevIndex === -1 || (before.get(slug)?.games ?? 0) === 0 ? null : prevIndex - i,
-    };
-  });
 }
 
 // Each person's career for the standings page, live (`now`) and at the end of the previous
@@ -340,23 +308,21 @@ export type RecordDef<E> = {
 const margin = (g: Game) => Math.abs(g.home.points - g.away.points);
 const total = (g: Game) => g.home.points + g.away.points;
 
-// `counts` limits the lists to certain people (the Active only switch). A margin record belongs to
-// the winner, a game total to both managers, a score to whoever scored it.
+// `counts` limits the lists to certain people (the Active only switch): a game counts only when
+// both its managers do, so a record set against a retired manager drops out (the site owner,
+// 2026-11-07). A margin record belongs to the winner, a game total to both managers, a score to
+// whoever scored it.
 export function gameRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<GameRecordEntry>[] {
-  const g = league.games;
-  const winnerOf = (x: Game) => (x.winner === "AWAY" ? x.away : x.home);
-  const byWinner = (x: Game) => counts(winnerOf(x).person);
-  const byEither = (x: Game) => counts(x.home.person) || counts(x.away.person);
-  const by = (value: (x: Game) => number, desc: boolean, holds: (x: Game) => boolean) =>
+  const g = league.games.filter((x) => counts(x.home.person) && counts(x.away.person));
+  const by = (value: (x: Game) => number, desc: boolean) =>
     g
-      .filter(holds)
       .map((game) => ({ game, value: value(game) }))
       .sort((a, b) => (desc ? b.value - a.value : a.value - b.value))
       .slice(0, top);
   const sides = g.flatMap((game) => [
     { game, side: game.home, value: game.home.points },
     { game, side: game.away, value: game.away.points },
-  ]).filter(({ side }) => counts(side.person));
+  ]);
   const bySide = (desc: boolean) =>
     [...sides]
       .sort((a, b) => (desc ? b.value - a.value : a.value - b.value))
@@ -367,10 +333,10 @@ export function gameRecords(league: League, top = 5, counts: (person: string) =>
         value,
       }));
   return [
-    { key: "blowout", title: "The @$$-Whooping", subtitle: "Biggest point difference", entries: by(margin, true, byWinner), unit: "pts" },
-    { key: "closest", title: "The Clincher", subtitle: "Closest point difference", entries: by(margin, false, byWinner), unit: "pts" },
-    { key: "highest-total", title: "Clash of Titans", subtitle: "Highest game total", entries: by(total, true, byEither), unit: "pts" },
-    { key: "lowest-total", title: "The Snooze Fest", subtitle: "Lowest game total", entries: by(total, false, byEither), unit: "pts" },
+    { key: "blowout", title: "The @$$-Whooping", subtitle: "Biggest point difference", entries: by(margin, true), unit: "pts" },
+    { key: "closest", title: "The Clincher", subtitle: "Closest point difference", entries: by(margin, false), unit: "pts" },
+    { key: "highest-total", title: "Clash of Titans", subtitle: "Highest game total", entries: by(total, true), unit: "pts" },
+    { key: "lowest-total", title: "The Snooze Fest", subtitle: "Lowest game total", entries: by(total, false), unit: "pts" },
     { key: "highest-score", title: "Mr. Clean", subtitle: "Most points scored", entries: bySide(true), unit: "pts" },
     { key: "lowest-score", title: "The Vega", subtitle: "Fewest points scored", entries: bySide(false), unit: "pts" },
   ];

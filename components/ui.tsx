@@ -44,6 +44,16 @@ export function Stars({ count }: { count: number }) {
   );
 }
 
+// One pancake per last-place finish, the league's punishment
+export function Pancakes({ count }: { count: number }) {
+  if (!count) return null;
+  return (
+    <span title={`${count} last-place finish${count > 1 ? "es" : ""}`} aria-label={`${count} last place`}>
+      {"🥞".repeat(count)}
+    </span>
+  );
+}
+
 export function RankChange({ change }: { change: number | null }) {
   if (change === null) return <span className="text-xs text-zinc-500">new</span>;
   if (change === 0) return <span className="text-xs text-zinc-600">–</span>;

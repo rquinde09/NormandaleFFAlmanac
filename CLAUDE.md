@@ -19,7 +19,8 @@ without new evidence.
   records, champions). Client components get only derived rows. Python only fetches. There is
   one implementation of the counting rules, in TypeScript.
 - `data/managers.json` (hand-edited) maps ESPN owner IDs to people: `slug` (the URL,
-  `/teams/<slug>`, matching the old site), `name`, `nickname`, `active`, `espnIds`. Stats
+  `/teams/<slug>`, matching the old site), `name`, `nickname`, `active`, `espnIds`, and an
+  optional `commish: true` for The Commish achievement. Stats
   aggregate by person, not by ESPN team (team names change every year). A team whose owners
   aren't in `managers.json` fails the build on purpose, and Vercel then keeps the last good
   deploy. A new manager means adding them here.
@@ -97,7 +98,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   with `scoringPeriodId` and an `x-fantasy-filter` on the matchup period return each side's
   `rosterForCurrentScoringPeriod` (whole roster, with `lineupSlotId` and points) for 2018+, and
   only `rosterForMatchupPeriod` for 2017: starters only, every one with `lineupSlotId` 0. 2021
-  returns no lineups at all; `mRoster` there gives only the end-of-season roster. In every other
+  returns no lineups at all; `mRoster` there gives only the end-of-season roster. ESPN's own
+  2021 box score pages show the slots, but 0.0 points for every player (team totals are right). In every other
   season, every lineup's starters add up to the team score. `lineupSlotId` 20 = bench, 21 = IR,
   23 = FLEX. `defaultPositionId`: 1 QB, 2 RB, 3 WR, 4 TE, 5 K, 16 D/ST.
 - `fetch_seasons.py` drops personal settings, team-private lists and live/projection fields
@@ -108,8 +110,10 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   blocks esbuild's install script; `tsx` works without it, so leave it blocked.
 - `npm run check` (`scripts/check-data.ts`): through 2025, all-time totals must match the Sheet
   copy 23/23, plus the 13 record holders, the championship counts, the old Leaderboard's
-  per-season averages and order 14/14, and each championship lineup against the final score. Run it after any change to `lib/league.ts` or
-  `lib/standings.ts`.
+  per-season averages and order 14/14, each championship lineup against the final score (and the
+  hand-entered 2021 roster), last place against the pancake post, and the Active records example.
+  Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts` or
+  `lib/manager.ts`.
 - Python lives in `.venv` (`python -m venv .venv`, then `.venv/Scripts/python -m pip install -r
   requirements.txt`). `scripts/check_env.py` checks `.env.local` without printing values.
   `scripts/probe.py [season ...]` prints a season summary, with owner IDs cut to 8 characters.
@@ -125,39 +129,72 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   `ESPN_S2`, `ESPN_SWID`. Collaborators on a personal repo can add them.
 
 ## Site
-- Routes: `/` (season status, reigning champion, news), `/standings` (`?view=season|game`),
-  `/teams`, `/teams/[slug]`, `/records` (`?view=season`), `/hall-of-mahaan-bakaree` (champions
-  computed from final ranks; the nav tab says "Champions"), `/news/[slug]`.
-- Old Google Sites URLs redirect in `next.config.ts`: `/home`, `/league-history`, `/leaderboard`,
-  `/retired-teams`, `/records/game-records`, `/records/season-records`. `/teams/<name>` and
+- Routes: `/` (season status, the reigning champion under "Reigning Mahaan Bakaree Champion (The
+  Great Goat)", news), `/standings` (`?view=all|season`; no `view` is Per game), `/teams`,
+  `/teams/[slug]`, `/records` (`?view=season`), `/hall-of-mahaan-bakaree` (champions computed
+  from final ranks; the nav tab says "Champions"), `/news/[slug]`.
+- Old Google Sites URLs redirect in `next.config.ts`: `/home`, `/league-history` (to
+  `/standings?view=all`), `/leaderboard` (to `?view=season`), `/retired-teams`,
+  `/records/game-records`, `/records/season-records`. `/teams/<name>` and
   `/hall-of-mahaan-bakaree` keep their old paths. The Teams tab stays "Teams" (site owner,
   2026-11-05).
 - Standings has three views, defined in `lib/standings.ts`: All-time totals (W, L, PF, PA,
   Seasons, Titles, Trades), Per season averages (W, L, PF, PA per season, Seasons; through 2025
   its numbers match the old Leaderboard page), and Per game averages (Win %, PF, PA, PDIFF per
-  game). All three count live. Each ends with Rank Δ: the change in that view's ranking since the
+  game). Per game is the default (`DEFAULT_VIEW`, site owner 2026-11-07); All-time is
+  `?view=all`. All three count live. Each ends with Rank Δ: the change in that view's ranking since the
   end of the previous season, counted among the managers shown, so the Active switch renumbers and
   search doesn't. Active only is on by default (`active=0` turns it off). View, sort, direction,
   search and Active live in the URL, updated with `window.history.replaceState` (`lib/url.ts`),
   which Next keeps in sync with `useSearchParams`. Per season and Per game rank only managers with
   `MIN_SEASONS` (3, a placeholder) seasons; shorter careers list after them.
-- Manager pages: career card, a year-by-year chart of finished seasons, then one season at a time,
-  picked by year or by tapping the chart, newest first. The chart always shows finishing position
-  (left axis, 1st at the top; 1st, 2nd and 3rd are gold, silver and bronze dots) and, as a second
-  line on the right axis, Wins, PF or PA, chosen with a toggle (the site owner's spec,
-  2026-11-05). The season in progress stays off the chart, since half a season's PF flattens the
-  rest.
+- Teams page: name, stars, pancakes and seasons only, no rank or record, in two columns so every
+  active manager fits on one phone screen. Retired managers sit in a collapsed "Retired" row
+  (`<details>`) below (site owner, 2026-11-10).
+- Manager pages (the site owner's Round 2 spec, 2026-11-07, answers 2026-11-10), top to bottom:
+  - First card: nickname with stars and pancakes, Active/Retired, "Champion: years" and "Loser:
+    years" (last place). The career numbers fold out under "Career stats": the all-time record,
+    then Seasons, Win %, PF/G and Total PF, left to right. No rank, best finish or PDIFF.
+  - Manager Performance (`components/ManagerPerformance.tsx`): one red line, with tabs for
+    Finish, Wins, PF and PA, and one y axis that follows the tab (Finish has 1st at the top). On
+    every tab, 1st–3rd are gold, silver and bronze dots and last place is a pancake. The season
+    in progress stays off the chart, since half a season's PF flattens the rest. Below it, the
+    year picker (tapping the chart picks a year too, newest first) and the picked season's
+    team, finish, PF/G, PA/G, streak and trades. The streak is the longer of the longest winning
+    and losing streaks, with the winning one on a tie.
+  - Opponents (`lib/manager.ts`, `components/Opponents.tsx`): head-to-head over every decided
+    game, live season included, in seven tabs. Faced (most games), Easiest (most wins against),
+    Toughest (most losses against), Most PF and Most PA (totals over every game against that
+    opponent, not per game), Best win (most points in a win) and Worst loss (fewest points in a
+    loss). Each shows a ring with Win %, that points total or that game's score in the middle.
+    Active is on by default and leaves out retired opponents.
+  - Achievements (`achievements` in `lib/manager.ts`): eight emoji icons, greyed out until earned
+    in any season: 🐐 The Mahaan Bakaree (title), 🥞 The Pancake House (last place), 🔥 Smoked the
+    Competition (most PF in the league that season), 🧑‍🎨 The Choke Artist (runner-up), 🥶 The
+    Below Zero (fewest PA in the league that season), 🥇 The #1 Seed (`playoffSeed` 1), 🤝 Trade
+    (any trade, live season included) and 🫡 The Commish (`"commish": true` in `managers.json`,
+    kept by hand: Jeremy and Randy, site owner 2026-11-10). Season PF and PA count every game
+    that season, so a playoff bye's missing game is part of the game (site owner); ties share
+    the award. Everything but trades counts completed seasons only. The Below Zero award isn't
+    the "Below Zero" season record (fewest wins).
 - Champions page (`/hall-of-mahaan-bakaree`): each title expands (`<details>`) to the
   championship game's lineup with the bench, the season's best game (the champion's highest
   score), and the best player (most points while in the starting lineup, playoffs included).
   `lib/champions.ts` computes these from `data/raw/lineups/`. 2017 shows starters by position
-  with no bench; 2021 says ESPN has no lineups.
+  with no bench. ESPN has no 2021 lineups, so that champion's final lineup was entered by hand from
+  the site owner (`data/manual/lineups-2021.json`, 2026-11-07) and its slots checked against
+  ESPN's box score of the week 17 final (2026-11-10: Trey Lance started at QB, Lamar Jackson was
+  on the bench). Starters and bench, no points, no best player. A new hand-entered lineup goes in
+  `data/manual/lineups-{season}.json` with the same shape, and is used only when ESPN has none
+  for that champion.
 - Records use the old site's 14 names. Game records count every decided game, live season
   included. Season records count completed seasons only. They're computed over all seasons,
   2017 included. The old hand-kept Records pages skipped most 2017 entries, so 6 holders differ
   from the old site, for example Cesar Vega's 33.72 in 2017 holds "The Vega".
-  `scripts/check-data.ts` notes each old value. Active only is on by default: a margin record
-  belongs to the winner, a game total to either manager, a score to the scorer.
+  `scripts/check-data.ts` notes each old value. Each card shows the holder; 2nd–5th fold out
+  (`<details>`). Active only is on by default. With it on, a game record counts only games between
+  two active managers, so a record set against a retired manager drops out (site owner,
+  2026-11-07: the @$$-Whooping becomes Luke def. Suny). Season records count the manager.
 - PWA: `app/manifest.ts`, with icons generated by `app/icon.tsx` and `app/apple-icon.tsx`.
 
 ## Counting rules (settled 2026-11-01: they reproduce the Sheet exactly for all 23 managers)
@@ -178,6 +215,10 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - Troy Montoya played 2017–2019 on an ESPN account in another name (owner ID `AAB17ECA…`). The
   mapping was confirmed by his Sheet row matching to the hundredth of a point.
 - Ties: none so far. Default if one happens: show W-L-T, and Win % counts a tie as half a win.
+- Last place (the league's "Loser", punished with pancakes) is `finalRank` equal to the season's
+  team count (`lastPlace` on each team-season). It matches the 2024 pancake news post: 2018 Nigel,
+  2019 Kaden, 2020 Ryan, 2021 Suny, Luke 2022–23; `npm run check` tests it. Pancakes (🥞) show
+  like the title stars (★).
 - The Sheet sorts by Wins. Its RKΔ column wasn't updated after 2025 (it matches the 2023→2024
   movement for 19/23), so the site computes rank change itself: the change since the end of the
   previous completed season.
@@ -222,7 +263,9 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    2026-11-04). The site owner's notes are built (standings views, records and standings Active
    default, manager chart and year picker, Champions tab with expandable details, old news
    posts). He withdrew the Leaderboard-page request and doesn't want the old photos for now.
-   Next: the domain.
+   Round 2 (2026-11-07, answers 2026-11-10) is built: home label, Per game default, Teams page,
+   manager page boxes (Manager Performance, Opponents, Achievements), records fold-out and Active
+   rule, and the hand-entered 2021 lineup. Next: the domain.
 
 Later, not v1: head-to-head records, standings for each season, photos for the Hall.
 

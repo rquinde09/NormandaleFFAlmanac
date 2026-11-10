@@ -3,6 +3,7 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { ActiveSwitch } from "@/components/ActiveSwitch";
 import { Segmented } from "@/components/Segmented";
+import { ordinal } from "@/lib/format";
 import { updateParams } from "@/lib/url";
 
 export type RecordEntry = { who: string; value: string; detail: string };
@@ -49,19 +50,28 @@ export function RecordsView({ all, active }: { all: RecordSet; active: RecordSet
             ) : (
               <div className="mt-3 text-sm text-zinc-500">No record yet.</div>
             )}
+            {/* 2nd to 5th stay folded until asked for (the site owner, 2026-11-07) */}
             {c.rest.length > 0 && (
-              <ol start={2} className="mt-3 space-y-1.5 border-t border-zinc-800 pt-3 text-sm">
-                {c.rest.map((e, i) => (
-                  <li key={i} className="flex items-baseline gap-3">
-                    <span className="w-4 shrink-0 text-right text-xs tabular-nums text-zinc-600">{i + 2}</span>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-zinc-300">{e.who}</div>
-                      <div className="truncate text-xs text-zinc-500">{e.detail}</div>
-                    </div>
-                    <span className="shrink-0 tabular-nums text-zinc-300">{e.value}</span>
-                  </li>
-                ))}
-              </ol>
+              <details className="group mt-3 border-t border-zinc-800 pt-3">
+                <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-medium text-zinc-400 hover:text-zinc-200 [&::-webkit-details-marker]:hidden">
+                  {c.rest.length > 1 ? `2nd–${ordinal(c.rest.length + 1)}` : "2nd"}
+                  <span className="text-zinc-500 transition-transform group-open:rotate-180" aria-hidden>
+                    ▾
+                  </span>
+                </summary>
+                <ol start={2} className="mt-2 space-y-1.5 text-sm">
+                  {c.rest.map((e, i) => (
+                    <li key={i} className="flex items-baseline gap-3">
+                      <span className="w-4 shrink-0 text-right text-xs tabular-nums text-zinc-600">{i + 2}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-zinc-300">{e.who}</div>
+                        <div className="truncate text-xs text-zinc-500">{e.detail}</div>
+                      </div>
+                      <span className="shrink-0 tabular-nums text-zinc-300">{e.value}</span>
+                    </li>
+                  ))}
+                </ol>
+              </details>
             )}
           </li>
         ))}

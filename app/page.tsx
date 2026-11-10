@@ -38,7 +38,7 @@ export default function Home() {
       {champ && (
         <Link href={`/teams/${champ.person}`} className="block">
           <Card className="transition-colors hover:border-zinc-700">
-            <SectionLabel>Reigning champion · {champ.season}</SectionLabel>
+            <SectionLabel>Reigning Mahaan Bakaree Champion (The Great Goat) · {champ.season}</SectionLabel>
             <div className="flex items-baseline justify-between">
               <div className="text-xl font-semibold text-zinc-50">
                 {champManager.nickname} <Stars count={titles(league, champ.person).length} />

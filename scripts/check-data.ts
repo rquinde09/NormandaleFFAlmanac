@@ -4,7 +4,9 @@
 //   and skip most 2017 entries; where they differ, the old value is noted next to the expectation.
 // - championship counts (the stars in the old Teams menu)
 // - per-season averages, order and RKΔ against the old Leaderboard copy
-// - championship lineups against the final scores
+// - championship lineups against the final scores, and the hand-entered 2021 one
+// - last place against the 2024 pancake news post
+// - the Active records rule against the site owner's example
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
@@ -126,15 +128,38 @@ const differ = slugs.filter((_, i) => computed[i] !== changes[i]);
 check(differ.join() === RKD_TYPOS.join(), `Leaderboard RKΔ: ${slugs.length - differ.length}/${slugs.length} match, plus the 2 Sheet typos`,
   differ.join(" "));
 
-// 6. Champions page: each final's starters add up to the champion's score (ESPN has no 2021
-// lineups), and the 2023 final matches the old news post (178.68–76.5 over Robel)
+// 6. Champions page: each final's starters add up to the champion's score. ESPN has no 2021
+// lineups; that one was entered by hand from the site owner (9 starters, 4 bench, no points). The
+// 2023 final matches the old news post (178.68–76.5 over Robel).
 const finals = champions(league).map((c) => ({ c, d: championDetails(league, c) }));
-const adds = finals.filter(({ d }) => d.starters && d.final && close(d.starters.reduce((a, p) => a + p.points, 0), d.final.home.points, 0.011));
-check(adds.length === finals.length - 1 && !finals.find(({ c }) => c.season === 2021)!.d.starters,
-  `championship lineups add up to the final score: ${adds.length}/${finals.length}, no 2021 lineups`);
+const espn = finals.filter(({ d }) => !d.manual);
+const adds = espn.filter(({ d }) => d.starters && d.final && close(d.starters.reduce((a, p) => a + (p.points ?? NaN), 0), d.final.home.points, 0.011));
+check(adds.length === espn.length && espn.length === finals.length - 1,
+  `championship lineups add up to the final score: ${adds.length}/${espn.length} from ESPN`);
+const hand = finals.find(({ c }) => c.season === 2021)!;
+check(hand.c.person === "robel" && hand.d.manual && hand.d.starters?.length === 9 && hand.d.bench?.length === 4 &&
+  [...hand.d.starters, ...hand.d.bench].every((p) => p.points === null), "2021 championship roster entered by hand",
+  `${hand.c.person}: ${hand.d.starters?.length} starters, ${hand.d.bench?.length} bench`);
 const f2023 = finals.find(({ c }) => c.season === 2023)!.d.final!;
 check(close(f2023.home.points, 178.68) && close(f2023.away.points, 76.5) && f2023.away.person === "robel", "2023 final",
   `${f2023.home.points}–${f2023.away.points} vs ${f2023.away.person}`);
+
+// 7. Last place (the pancake) is finalRank equal to the season's team count. The 2024 pancake news
+// post names the last-place finishers: 2018 Nigel, 2019 Kaden, 2020 Ryan, 2021 Suny, Luke 2022–23.
+// The site owner added Jordan for 2025 (2026-11-10).
+const lastExpect: Record<number, string> = { 2018: "nigel", 2019: "kaden", 2020: "ryan", 2021: "suny", 2022: "luke", 2023: "luke", 2025: "jordan" };
+const lasts = league.seasons.map((s) => ({ s, who: league.teamSeasons.filter((t) => t.season === s.season && t.lastPlace).map((t) => t.person) }));
+check(lasts.every(({ who }) => who.length === 1) && Object.entries(lastExpect).every(([y, p]) => lasts.find(({ s }) => s.season === +y)!.who[0] === p),
+  "last place matches the pancake post, one per season", lasts.map(({ s, who }) => `${s.season} ${who.join("+")}`).join(", "));
+
+// 8. Records with Active on count only games between two active managers: the site owner's example
+// is The @$$-Whooping, where AJ's win over Jordan (retired) gives way to Luke def. Suny.
+const activeSet = new Set(league.managers.filter((m) => m.active).map((m) => m.slug));
+const activeBlowout = gameRecords(league, 5, (p) => activeSet.has(p)).find((r) => r.key === "blowout")!.entries[0].game;
+const blowWinner = activeBlowout.winner === "AWAY" ? activeBlowout.away : activeBlowout.home;
+const blowLoser = activeBlowout.winner === "AWAY" ? activeBlowout.home : activeBlowout.away;
+check(blowWinner.person === "luke" && blowLoser.person === "suny", "Active @$$-Whooping is Luke def. Suny",
+  `${blowWinner.person} def. ${blowLoser.person} in ${activeBlowout.season}`);
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

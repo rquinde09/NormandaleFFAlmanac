@@ -71,7 +71,7 @@ export default function RecordsPage() {
   const active = new Set(league.managers.filter((m) => m.active).map((m) => m.slug));
   return (
     <>
-      <PageTitle sub="Every game since 2017 counts. Season records use completed seasons only. With Active on, a game total counts if either manager is active.">
+      <PageTitle sub="Every game since 2017 counts. Season records use completed seasons only. With Active on, game records count only games between two active managers.">
         Records
       </PageTitle>
       <Suspense>

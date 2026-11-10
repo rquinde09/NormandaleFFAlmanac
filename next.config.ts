@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/home", destination: "/", permanent: true },
-      { source: "/league-history", destination: "/standings", permanent: true },
-      { source: "/leaderboard", destination: "/standings", permanent: true },
+      { source: "/league-history", destination: "/standings?view=all", permanent: true },
+      { source: "/leaderboard", destination: "/standings?view=season", permanent: true },
       { source: "/retired-teams", destination: "/teams", permanent: true },
       { source: "/records/game-records", destination: "/records?view=game", permanent: true },
       { source: "/records/season-records", destination: "/records?view=season", permanent: true },

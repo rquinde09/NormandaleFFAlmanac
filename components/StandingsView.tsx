@@ -6,7 +6,7 @@ import { ActiveSwitch } from "@/components/ActiveSwitch";
 import { Segmented } from "@/components/Segmented";
 import { Bar, RankChange, Stars } from "@/components/ui";
 import type { StandingsRow } from "@/lib/league";
-import { MIN_SEASONS, VIEWS, qualifies, rankOrder, type Career, type Stat } from "@/lib/standings";
+import { DEFAULT_VIEW, MIN_SEASONS, VIEWS, qualifies, rankOrder, type Career, type Stat } from "@/lib/standings";
 import { updateParams } from "@/lib/url";
 
 export type StandingsMeta = {
@@ -22,7 +22,7 @@ type Entry = { row: StandingsRow; now: Career; prev: Career | null };
 export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: StandingsMeta }) {
   const params = useSearchParams();
   const pathname = usePathname();
-  const view = VIEWS.find((v) => v.key === params.get("view")) ?? VIEWS[0];
+  const view = VIEWS.find((v) => v.key === params.get("view")) ?? VIEWS.find((v) => v.key === DEFAULT_VIEW)!;
   const hasTies = rows.some((r) => r.now.t > 0);
   const stats = view.stats.filter((s) => hasTies || !s.tiesOnly);
   const col = stats.find((s) => s.key === params.get("sort")) ?? stats.find((s) => s.key === view.rankStat)!;
@@ -80,7 +80,7 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
           label="Standings"
           options={VIEWS.map((v) => ({ value: v.key, label: v.label }))}
           value={view.key}
-          onChange={(key) => update({ view: key === "all" ? null : key, sort: null, dir: null })}
+          onChange={(key) => update({ view: key === DEFAULT_VIEW ? null : key, sort: null, dir: null })}
         />
         <p className="text-sm text-zinc-400">
           {describe} Rank Δ is the change since the end of {since}.

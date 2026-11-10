@@ -77,6 +77,7 @@
     "name": "Jeremy Mitchell",
     "nickname": "Jeremy",
     "active": true,
+    "commish": true,
     "espnIds": [
       "{0315B39C-8650-4799-A87D-B38CE878FC4B}",
       "{36DFC88A-C92D-478D-9FC8-8AC92DE78D3A}"
@@ -159,6 +160,7 @@
     "name": "Randy Quinde",
     "nickname": "Randy",
     "active": true,
+    "commish": true,
     "espnIds": [
       "{6A2D5E1F-F054-48FD-8BAE-7C80ECFBBB6D}"
     ]

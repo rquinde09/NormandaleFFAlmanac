@@ -1,0 +1,22 @@
+{
+  "note": "ESPN returns no lineups for 2021. Entered by hand from the site owner, 2026-11-07; slots checked against ESPN's box score of the week 17 final, 2026-11-10. ESPN shows no player points for 2021.",
+  "season": 2021,
+  "person": "robel",
+  "starters": [
+    { "slot": "QB", "name": "Trey Lance" },
+    { "slot": "RB", "name": "Ronald Jones II" },
+    { "slot": "RB", "name": "Sony Michel" },
+    { "slot": "WR", "name": "Tyreek Hill" },
+    { "slot": "WR", "name": "Davante Adams" },
+    { "slot": "TE", "name": "George Kittle" },
+    { "slot": "FLEX", "name": "Rashaad Penny" },
+    { "slot": "D/ST", "name": "49ers D/ST" },
+    { "slot": "K", "name": "Jake Elliott" }
+  ],
+  "bench": [
+    { "slot": "QB", "name": "Lamar Jackson" },
+    { "slot": "RB", "name": "Jeff Wilson Jr." },
+    { "slot": "RB", "name": "Justin Jackson" },
+    { "slot": "WR", "name": "Chris Godwin" }
+  ]
+}

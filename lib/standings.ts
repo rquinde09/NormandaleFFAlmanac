@@ -19,6 +19,7 @@ export type Career = {
   // as the share of its weeks played so far (Luke's call, 2026-11-05)
   seasonWeight: number;
   titles: number;
+  lastPlaces: number; // the pancakes
   trades: number;
 };
 
@@ -120,6 +121,10 @@ export const VIEWS: View[] = [
     phoneMinis: [mini(GAME, "winpct", "Win %"), mini(GAME, "pf", "PF/G"), mini(GAME, "pa", "PA/G"), mini(GAME, "pdiff", "PDIFF/G"), RECORD],
   },
 ];
+
+// The view a bare /standings shows (the site owner, 2026-11-07). Every other view, All-time
+// included, has its own ?view= value.
+export const DEFAULT_VIEW: ViewKey = "game";
 
 export const qualifies = (view: View, c: Career) => !view.rate || c.seasons >= MIN_SEASONS;
 

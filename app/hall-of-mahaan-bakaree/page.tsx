@@ -74,6 +74,11 @@ function Details({ season, details: d, name }: { season: number; details: Champi
           <section>
             <Label>Championship game</Label>
             <div className="text-zinc-200">{versus(d.final)}</div>
+            {d.manual && (
+              <p className="mt-1 text-xs text-zinc-500">
+                Lineup entered by hand. ESPN has no player points for {season}.
+              </p>
+            )}
             {d.starters ? (
               <>
                 <Lineup players={d.starters} />
@@ -106,7 +111,9 @@ function Details({ season, details: d, name }: { season: number; details: Champi
               </div>
             </div>
           ) : (
-            <p className="text-xs text-zinc-500">ESPN doesn&apos;t have lineups for {season}.</p>
+            <p className="text-xs text-zinc-500">
+              {d.manual ? `ESPN has no player points for ${season}.` : `ESPN doesn't have lineups for ${season}.`}
+            </p>
           )}
         </section>
       </div>
@@ -125,7 +132,7 @@ function Lineup({ players, muted = false }: { players: LineupPlayer[]; muted?: b
         <li key={i} className={`flex items-baseline gap-3 ${muted ? "text-zinc-500" : "text-zinc-300"}`}>
           <span className="w-12 shrink-0 text-xs text-zinc-500">{p.slot}</span>
           <span className="min-w-0 flex-1 truncate">{p.name}</span>
-          <span className="shrink-0 tabular-nums">{score(p.points)}</span>
+          {p.points !== null && <span className="shrink-0 tabular-nums">{score(p.points)}</span>}
         </li>
       ))}
     </ul>
