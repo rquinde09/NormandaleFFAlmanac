@@ -160,7 +160,7 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   active manager fits on one phone screen. Retired managers sit in a collapsed "Retired" row
   (`<details>`) below (site owner, 2026-11-10).
 - Manager pages (the site owner's Round 2 spec, 2026-11-07, answers 2026-11-10; Round 3,
-  2026-11-14), top to bottom:
+  2026-11-14; Round 4, 2026-11-14), top to bottom:
   - First card: first name with stars and pancakes, Active/Retired, "Champion: years" and "Loser:
     years" (last place). No full name. The career numbers fold out under "Career stats": the
     all-time record, then Seasons, Win %, PF/G and Total PF, left to right. No rank, best finish
@@ -176,15 +176,21 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     1st, no pancake, no medal without a trade. Other ties share the place. `npm run check` tests
     the site owner's example: Randy's 2,241.1 PF gets 2024's PF gold, champion Jeremy's 2,208
     silver. Completed seasons only, since half a season's PF flattens the rest. No year picker or
-    season card (removed in Round 3).
+    season card (removed in Round 3). Tapping a point selects that season (Round 4): its year on
+    the x axis turns into a red pill, a faint band runs behind its column, and its number goes
+    bold. The selection stays when the tab changes; tapping the point again, or anywhere outside
+    the points and tabs, clears it. Each point's tap target is a 28 px button.
   - Opponents (`lib/manager.ts`, `components/Opponents.tsx`): head-to-head over every decided
     game, live season included, in seven tabs. Faced (most games), Easiest (most wins against),
     Toughest (most losses against), Most PF and Most PA (totals over every game against that
     opponent, not per game), Best win (most points in a win) and Worst loss (fewest points in a
-    loss). The first five show a ring and the opponent's name only (Round 3). The ring's middle
-    holds games, wins, losses, or the PF or PA total; its red arc is the win share (Faced,
-    Easiest), loss share (Toughest) or points share. Best win and Worst loss show the game.
-    Active is on by default and leaves out retired opponents.
+    loss). The first five show a ring and the opponent's name only (Round 3), centered in the box
+    (Round 4). The ring's middle holds games, wins, losses, or the PF or PA total; its red arc is
+    the win share (Faced, Easiest), loss share (Toughest) or points share. Best win and Worst loss
+    show the game, laid out as before. Retired opponents are always left out: Round 4 removed this
+    box's Active switch and kept it on (`opponents` filters them). Every manager, retired ones
+    included, still has active opponents on all seven tabs. The Active switches on Standings and
+    Records stay.
   - Achievements (`achievements` in `lib/manager.ts`, `components/Achievements.tsx`): two tabs,
     GOAT Tier and Pancake Tier, of emoji icons greyed out until earned in a completed season.
     Tapping one shows the site owner's description and the seasons earned. GOAT Tier: 🐐 The
@@ -290,7 +296,9 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    rule, and the hand-entered 2021 lineup. Round 3 (2026-11-14) is built: first names only,
    Compact standings with pancakes, the chart's Streak and Trades tabs with league-ranked medals,
    the trimmed Opponents box, and the GOAT and Pancake achievement tiers. The site owner accepted
-   every proposed answer to its 8 questions the same day (all recorded above). Next: the domain.
+   every proposed answer to its 8 questions the same day (all recorded above). Round 4
+   (2026-11-14) is built: tapping a chart point selects its season, the Opponents ring and name
+   are centered, and the Opponents box lost its Active switch (always active). Next: the domain.
 
 Later, not v1: head-to-head records, standings for each season, photos for the Hall.
 

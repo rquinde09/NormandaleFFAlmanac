@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ActiveSwitch } from "@/components/ActiveSwitch";
 import { Card, SectionLabel } from "@/components/ui";
 import { score } from "@/lib/format";
 import type { GameLine, OpponentKey, OpponentLine, Opponents as OpponentsData } from "@/lib/manager";
@@ -23,12 +22,10 @@ const KIND_LABEL = { regular: "", playoff: " · playoffs", placement: " · place
 
 // Head-to-head over every game, all seasons, one tab at a time: an opponent with a ring and just
 // their name (the site owner, 2026-11-14), or a single game. The ring's middle holds the number the
-// tab picks by: games, wins, losses, or the points over every game against them. Active on (the
-// default) leaves out retired opponents.
-export function Opponents({ all, active }: { all: OpponentsData; active: OpponentsData }) {
+// tab picks by: games, wins, losses, or the points over every game against them. Active opponents
+// only, with no switch (Round 4).
+export function Opponents({ data }: { data: OpponentsData }) {
   const [tab, setTab] = useState<Tab>("faced");
-  const [activeOnly, setActiveOnly] = useState(true);
-  const data = activeOnly ? active : all;
   const about = TABS.find((t) => t.key === tab)!.about;
   const game = tab === "best" ? data.bestWin : tab === "worst" ? data.worstLoss : undefined;
   const o = tab === "best" || tab === "worst" ? undefined : data.picks[tab];
@@ -37,11 +34,8 @@ export function Opponents({ all, active }: { all: OpponentsData; active: Opponen
     <section>
       <SectionLabel>Opponents</SectionLabel>
       <Card>
-        <div className="flex justify-end">
-          <ActiveSwitch checked={activeOnly} onChange={setActiveOnly} />
-        </div>
         {/* Four tabs to a row on a phone, the second row stretched; one row from sm up */}
-        <div role="radiogroup" aria-label="Opponent" className="mt-3 flex flex-wrap gap-0.5 rounded-xl border border-zinc-800 p-1">
+        <div role="radiogroup" aria-label="Opponent" className="flex flex-wrap gap-0.5 rounded-xl border border-zinc-800 p-1">
           {TABS.map((t) => (
             <button
               key={t.key}
@@ -82,8 +76,9 @@ function Pick({ o, tab }: { o: OpponentLine; tab: OpponentKey }) {
     pa: { share: o.pa / (o.pf + o.pa), value: Math.round(o.pa).toLocaleString("en-US"), label: "PA" },
   }[tab];
 
+  // Nothing else to show, so the ring and the name sit in the middle of the box (Round 4)
   return (
-    <div className="mt-4 flex items-center gap-5">
+    <div className="mt-4 flex items-center justify-center gap-5">
       <Ring {...ring} />
       <Link href={`/teams/${o.slug}`} className="block min-w-0 truncate text-xl font-semibold text-zinc-50 hover:text-white">
         {o.nickname}

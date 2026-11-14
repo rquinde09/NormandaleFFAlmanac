@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Segmented } from "@/components/Segmented";
 import { Card, SectionLabel } from "@/components/ui";
 import { ordinal } from "@/lib/format";
@@ -23,18 +23,37 @@ const MODES: { value: Mode; label: string; ranks: string }[] = [
 const MEDALS: Record<number, string> = { 1: "#fbbf24", 2: "#d4d4d8", 3: "#cd7f32" };
 const LINE = "#ef4444"; // red-500, the site's accent
 
+// Clicks inside these keep the selected season: the points themselves and the tabs
+const KEEP = "data-keeps-season";
+
 // One box (the site owner's "Manager Performance"): a year-by-year chart with a tab for each
 // stat. Each season's marker shows where it ranked in the league on that tab: gold, silver and
 // bronze for 1st–3rd, a pancake for last (Round 3, 2026-11-14). Completed seasons only.
+// Tapping a point selects its season: the year is highlighted on the axis and the point's number
+// goes bold (Round 4, 2026-11-14). The selection stays across tabs; tapping the point again, or
+// anywhere else on the page, clears it.
 export function ManagerPerformance({ seasons }: { seasons: SeasonPoint[] }) {
   const [mode, setMode] = useState<Mode>("finish");
+  const [selected, setSelected] = useState<number | null>(null);
   const ranks = MODES.find((m) => m.value === mode)!.ranks;
+
+  useEffect(() => {
+    if (selected === null) return;
+    const clear = (e: MouseEvent) => {
+      if (!(e.target instanceof Element && e.target.closest(`[${KEEP}]`))) setSelected(null);
+    };
+    document.addEventListener("click", clear);
+    return () => document.removeEventListener("click", clear);
+  }, [selected]);
+
   return (
     <section>
       <SectionLabel>Manager Performance</SectionLabel>
       <Card>
-        <Segmented label="Chart" options={MODES} value={mode} onChange={setMode} small />
-        <Chart seasons={seasons} mode={mode} />
+        <div {...{ [KEEP]: "" }}>
+          <Segmented label="Chart" options={MODES} value={mode} onChange={setMode} small />
+        </div>
+        <Chart seasons={seasons} mode={mode} selected={selected} onSelect={(s) => setSelected(s === selected ? null : s)} />
         <Legend ranks={ranks} pancake={mode !== "trades"} />
       </Card>
     </section>
@@ -70,8 +89,19 @@ function countAxis(values: number[]) {
 }
 
 // One line, one axis, which follows the tab. Markers are HTML positioned in percent over an SVG
-// drawn with non-scaling strokes, so text and dots keep their size at any width.
-function Chart({ seasons, mode }: { seasons: SeasonPoint[]; mode: Mode }) {
+// drawn with non-scaling strokes, so text and dots keep their size at any width. Each marker is a
+// 28 px button, under the ~30 px between seasons on a 375 px phone with nine seasons.
+function Chart({
+  seasons,
+  mode,
+  selected,
+  onSelect,
+}: {
+  seasons: SeasonPoint[];
+  mode: Mode;
+  selected: number | null;
+  onSelect: (season: number) => void;
+}) {
   if (seasons.length === 0) return <p className="py-10 text-center text-sm text-zinc-500">No finished seasons yet.</p>;
   const points: Point[] = seasons.map((s) => ({ s, v: s.values[mode] }));
   const values = points.map((p) => p.v);
@@ -109,6 +139,15 @@ function Chart({ seasons, mode }: { seasons: SeasonPoint[]; mode: Mode }) {
 
   return (
     <div className="relative mt-7 mr-2 mb-7 ml-10 h-44">
+      {/* A faint band behind the selected season, from its label down to its year */}
+      {selected !== null && points.some((p) => p.s.season === selected) && (
+        <div
+          className="pointer-events-none absolute -top-5 -bottom-7 w-7 -translate-x-1/2 rounded-lg bg-zinc-800/70"
+          style={{ left: `${x(selected)}%` }}
+          aria-hidden
+        />
+      )}
+
       {ticks.map((t) => (
         <div key={t} className={`absolute right-0 left-0 border-t ${t === 0 && mode === "streak" ? "border-zinc-600" : "border-zinc-800"}`} style={{ top: `${y(t)}%` }}>
           <span className="absolute right-full mr-2 -translate-y-1/2 text-[10px] tabular-nums whitespace-nowrap text-zinc-500">
@@ -137,12 +176,12 @@ function Chart({ seasons, mode }: { seasons: SeasonPoint[]; mode: Mode }) {
           const m = s.marks[mode];
           const medal = m.place !== null && !m.last ? MEDALS[m.place] : undefined;
           const rank = m.last ? "last" : m.place && m.place <= 3 ? ordinal(m.place) : null;
+          const on = s.season === selected;
           return (
             <li
               key={s.season}
               className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center"
               style={{ left: `${x(s.season)}%`, top: `${y(v)}%` }}
-              aria-label={`${s.season}: ${labelOf(v, mode)}${rank && mode !== "finish" ? `, ${rank} in the league` : ""}`}
             >
               {m.last ? (
                 <span className="text-[15px] leading-none">🥞</span>
@@ -153,23 +192,34 @@ function Chart({ seasons, mode }: { seasons: SeasonPoint[]; mode: Mode }) {
                 />
               )}
               <span
-                className={`absolute left-1/2 -translate-x-1/2 text-[9px] tabular-nums whitespace-nowrap text-zinc-400 ${
-                  below(i) ? "top-full mt-1" : "bottom-full mb-1"
-                }`}
+                className={`absolute left-1/2 -translate-x-1/2 tabular-nums whitespace-nowrap ${
+                  on ? "text-[11px] font-bold text-zinc-50" : "text-[9px] text-zinc-400"
+                } ${below(i) ? "top-full mt-1" : "bottom-full mb-1"}`}
                 aria-hidden
               >
                 {labelOf(v, mode)}
               </span>
+              {/* The tap target, centered on the marker */}
+              <button
+                type="button"
+                {...{ [KEEP]: "" }}
+                onClick={() => onSelect(s.season)}
+                aria-pressed={on}
+                aria-label={`${s.season}: ${labelOf(v, mode)}${rank && mode !== "finish" ? `, ${rank} in the league` : ""}`}
+                className="absolute top-1/2 left-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-zinc-400"
+              />
             </li>
           );
         })}
       </ul>
 
-      {/* Years along the bottom */}
+      {/* Years along the bottom; the selected one is highlighted */}
       {points.map(({ s }) => (
         <span
           key={s.season}
-          className="absolute top-full mt-2 -translate-x-1/2 text-[10px] tabular-nums text-zinc-500"
+          className={`absolute top-full mt-2 -translate-x-1/2 rounded px-1 text-[10px] tabular-nums ${
+            s.season === selected ? "bg-red-500 font-semibold text-white" : "text-zinc-500"
+          }`}
           style={{ left: `${x(s.season)}%` }}
           aria-hidden
         >

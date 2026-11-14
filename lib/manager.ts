@@ -36,9 +36,10 @@ export type Opponents = {
 
 const winPct = (o: OpponentLine) => (o.games ? (o.w + o.t / 2) / o.games : 0);
 
-// Every decided game counts, the season in progress included. `counts` limits the opponents (the
-// Active switch, on by default: the site owner, 2026-11-10).
-export function opponents(league: League, person: string, counts: (opponent: string) => boolean = () => true): Opponents {
+// Every decided game counts, the season in progress included. Only games against active managers
+// count: the Active switch was on by default (the site owner, 2026-11-10), and Round 4
+// (2026-11-14) removed the switch and kept it on.
+export function opponents(league: League, person: string): Opponents {
   const lines = new Map<string, OpponentLine>();
   let bestWin: GameLine | null = null;
   let worstLoss: GameLine | null = null;
@@ -49,7 +50,7 @@ export function opponents(league: League, person: string, counts: (opponent: str
     if (!side) continue;
     const me = g[side];
     const them = g[side === "home" ? "away" : "home"];
-    if (!counts(them.person)) continue;
+    if (!managerBySlug(league, them.person)?.active) continue;
     const result = g.winner === "TIE" ? "T" : g.winner === side.toUpperCase() ? "W" : "L";
     const o = lines.get(them.person) ?? { slug: them.person, nickname: nickname(them.person), games: 0, w: 0, l: 0, t: 0, pf: 0, pa: 0 };
     o.games += 1;

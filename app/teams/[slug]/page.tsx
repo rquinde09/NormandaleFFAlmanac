@@ -80,7 +80,7 @@ export default async function ManagerPage({ params }: Params) {
       </Card>
 
       <ManagerPerformance seasons={performance(league, slug)} />
-      <Opponents all={opponents(league, slug)} active={opponents(league, slug, (p) => !!managerBySlug(league, p)?.active)} />
+      <Opponents data={opponents(league, slug)} />
       <Achievements list={achievements(league, slug)} />
     </div>
   );
