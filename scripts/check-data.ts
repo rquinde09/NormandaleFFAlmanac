@@ -7,12 +7,14 @@
 // - championship lineups against the final scores, and the hand-entered 2021 one
 // - last place against the 2024 pancake news post
 // - the Active records rule against the site owner's example
+// - the Manager Performance medals against the site owner's 2024 PF example, and the awards
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
 import { careerTotals, champions, gameRecords, getLeague, seasonRecords, type League } from "../lib/league";
 import { VIEWS, rankOrder } from "../lib/standings";
-import { championDetails } from "../lib/champions";
+import { championDetails, topStarters } from "../lib/champions";
+import { achievements, performance } from "../lib/manager";
 
 const THROUGH = 2025;
 const SHEET = path.join(process.cwd(), "data", "reference", "google-sheet-through-2025.csv");
@@ -160,6 +162,28 @@ const blowWinner = activeBlowout.winner === "AWAY" ? activeBlowout.away : active
 const blowLoser = activeBlowout.winner === "AWAY" ? activeBlowout.home : activeBlowout.away;
 check(blowWinner.person === "luke" && blowLoser.person === "suny", "Active @$$-Whooping is Luke def. Suny",
   `${blowWinner.person} def. ${blowLoser.person} in ${activeBlowout.season}`);
+
+// 9. Manager Performance medals rank each tab against the league that season. The site owner's
+// example: in 2024 Randy's 2,241.1 PF led the league, so he gets gold on the PF tab, while Jeremy,
+// that year's champion, gets gold only on Finish.
+const point = (person: string, season: number) => performance(league, person).find((p) => p.season === season)!;
+const randy24 = point("randy", 2024);
+const jeremy24 = point("jeremy", 2024);
+check(randy24.marks.pf.place === 1 && close(randy24.values.pf, 2241.1, 0.05) && jeremy24.marks.pf.place !== 1 && jeremy24.marks.finish.place === 1,
+  "2024 PF gold is Randy's 2,241.1, not champion Jeremy's",
+  `Randy ${randy24.values.pf.toFixed(2)} place ${randy24.marks.pf.place}; Jeremy ${jeremy24.values.pf.toFixed(2)} place ${jeremy24.marks.pf.place}`);
+// The PF tab's gold and pancake agree with the Manager of the Year and Below Zero awards, the PA
+// tab's pancake with It Was Only A Dream
+const people = league.managers.map((m) => m.slug);
+const award = (key: string) => people.flatMap((p) => achievements(league, p).find((a) => a.key === key)!.seasons.map((s) => `${s.season} ${p}`)).sort();
+const tab = (pick: (m: { place: number | null; last: boolean }) => boolean, mode: "pf" | "pa") =>
+  people.flatMap((p) => performance(league, p).filter((s) => pick(s.marks[mode])).map((s) => `${s.season} ${p}`)).sort();
+check(award("moty").join() === tab((m) => m.place === 1, "pf").join() && award("below-zero").join() === tab((m) => m.last, "pf").join() &&
+  award("dream").join() === tab((m) => m.last, "pa").join(), "PF and PA medals match the season awards", award("moty").join(", "));
+// MVFP: one per season with lineups; ESPN kept none for 2021
+const mvfp = topStarters(league);
+check([...mvfp.keys()].sort().join() === "2017,2018,2019,2020,2022,2023,2024,2025" && [...mvfp.values()].every((v) => v.length === 1),
+  "MVFP in every season but 2021", [...mvfp.values()].flat().map((v) => `${v.season} ${v.person} ${v.name} ${v.points.toFixed(1)}`).join("; "));
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

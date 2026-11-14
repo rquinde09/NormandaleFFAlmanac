@@ -1,6 +1,9 @@
-// What a manager's page shows beyond the standings: head-to-head numbers against each opponent and
-// the achievements (the site owner's Round 2 notes, 2026-11-07). Counting rules are in CLAUDE.md.
-import { type Game, type Kind, type League, managerBySlug } from "@/lib/league";
+// What a manager's page shows beyond the standings: the Manager Performance chart, head-to-head
+// numbers against each opponent and the achievements (the site owner's Round 2 and Round 3 notes,
+// 2026-11-07 and 2026-11-14). Counting rules are in CLAUDE.md.
+import { topStarters } from "@/lib/champions";
+import { pts } from "@/lib/format";
+import { type Game, type Kind, type League, type TeamSeason, managerBySlug } from "@/lib/league";
 
 export type OpponentLine = {
   slug: string;
@@ -86,44 +89,131 @@ export function opponents(league: League, person: string, counts: (opponent: str
   };
 }
 
+// ---- Manager Performance chart ----
+
+export type ChartMode = "finish" | "wins" | "pf" | "pa" | "streak" | "trades";
+
+// Where a season ranked in the league on one tab: 1–3 earn a medal, `last` the pancake
+export type Mark = { place: number | null; last: boolean };
+
+export type SeasonPoint = {
+  season: number;
+  teams: number;
+  values: Record<ChartMode, number>;
+  marks: Record<ChartMode, Mark>;
+};
+
+// The longer of the season's longest winning and losing streaks, the winning one on a tie: a
+// winning streak counts up from zero (W6 = 6), a losing one down (L4 = −4)
+export const signedStreak = (t: TeamSeason) => (t.longestLossStreak > t.longestWinStreak ? -t.longestLossStreak : t.longestWinStreak);
+
+const cents = (n: number) => Math.round(n * 100); // compares points without float noise
+
+// How each tab ranks a season against the rest of the league that season (the site owner,
+// 2026-11-14: Randy's 2,241.1 PF led 2024, so he gets gold on the PF tab). `better` is strictly
+// better, so ties share a place. Finish uses the final standings as they are.
+type Ranking = {
+  value: (t: TeamSeason) => number;
+  better?: (a: TeamSeason, b: TeamSeason) => boolean;
+  pancake: boolean; // whether the last place gets the pancake
+  medals?: (t: TeamSeason) => boolean; // whether this season can earn a medal at all
+};
+
+const RANKINGS: Record<ChartMode, Ranking> = {
+  finish: { value: (t) => t.finalRank!, pancake: true },
+  // Most wins, ties broken by PF as in the standings
+  wins: { value: (t) => t.all.w, better: (a, b) => a.all.w > b.all.w || (a.all.w === b.all.w && cents(a.all.pf) > cents(b.all.pf)), pancake: true },
+  pf: { value: (t) => t.all.pf, better: (a, b) => cents(a.all.pf) > cents(b.all.pf), pancake: true },
+  // Fewest PA is best: most PA is the "It Was Only A Dream" award
+  pa: { value: (t) => t.all.pa, better: (a, b) => cents(a.all.pa) < cents(b.all.pa), pancake: true },
+  // Longest winning streak is best, longest losing streak last
+  streak: { value: signedStreak, better: (a, b) => signedStreak(a) > signedStreak(b), pancake: true },
+  // Most trades is best; no pancake for not trading, and no medal without a trade
+  trades: { value: (t) => t.trades, better: (a, b) => a.trades > b.trades, pancake: false, medals: (t) => t.trades > 0 },
+};
+
+function mark(mode: ChartMode, t: TeamSeason, field: TeamSeason[]): Mark {
+  if (mode === "finish") return { place: t.finalRank, last: t.lastPlace };
+  const r = RANKINGS[mode];
+  if (r.medals && !r.medals(t)) return { place: null, last: false };
+  const place = 1 + field.filter((o) => r.better!(o, t)).length;
+  const last = r.pancake && !field.some((o) => r.better!(t, o));
+  return { place, last };
+}
+
+// One point per completed season. The season in progress stays off the chart: half a season's
+// PF would flatten the rest.
+export function performance(league: League, person: string): SeasonPoint[] {
+  const complete = new Map(league.seasons.filter((s) => s.complete).map((s) => [s.season, s]));
+  const modes = Object.keys(RANKINGS) as ChartMode[];
+  return league.teamSeasons
+    .filter((t) => t.person === person && complete.has(t.season))
+    .sort((a, b) => a.season - b.season)
+    .map((t) => {
+      const field = league.teamSeasons.filter((o) => o.season === t.season);
+      return {
+        season: t.season,
+        teams: complete.get(t.season)!.teams,
+        values: Object.fromEntries(modes.map((m) => [m, RANKINGS[m].value(t)])) as Record<ChartMode, number>,
+        marks: Object.fromEntries(modes.map((m) => [m, mark(m, t, field)])) as Record<ChartMode, Mark>,
+      };
+    });
+}
+
+// ---- Achievements ----
+
+export type Tier = "goat" | "pancake";
+
 export type Achievement = {
   key: string;
+  tier: Tier;
   icon: string;
   title: string;
-  detail: string; // what earns it
+  detail: string; // shown when tapped: what earns it, in the site owner's words (2026-11-14)
+  fine?: string; // how it's counted
   earned: boolean;
-  note?: string; // under the icon once earned: the seasons ("’18 ’23"), or a count ("12 trades")
+  note?: string; // under the icon once earned: the seasons ("’18 ’23")
+  seasons: { season: number; extra?: string }[]; // shown when tapped
 };
 
 const short = (seasons: number[]) => (seasons.length ? seasons.map((s) => `’${String(s).slice(2)}`).join(" ") : undefined);
-const bySeasons = (seasons: number[]) => ({ earned: seasons.length > 0, note: short(seasons) });
+const bySeasons = (seasons: number[]) => ({ earned: seasons.length > 0, note: short(seasons), seasons: seasons.map((season) => ({ season })) });
 
-// Earned in any one season lights the icon. Finishes, seeds and season PF/PA count completed
-// seasons only; a trade counts as soon as it's made.
+// Two tiers, switched by tabs (the site owner, 2026-11-14). Earned in any completed season lights
+// the icon; season PF and PA count every game that season, and ties share an award.
 export function achievements(league: League, person: string): Achievement[] {
   const complete = new Set(league.seasons.filter((s) => s.complete).map((s) => s.season));
-  const mine = league.teamSeasons.filter((t) => t.person === person).sort((a, b) => a.season - b.season);
-  const done = mine.filter((t) => complete.has(t.season));
-  const years = (pick: (t: (typeof mine)[number]) => boolean, from = done) => from.filter(pick).map((t) => t.season);
+  const done = league.teamSeasons.filter((t) => t.person === person && complete.has(t.season)).sort((a, b) => a.season - b.season);
+  const years = (pick: (t: TeamSeason) => boolean) => done.filter(pick).map((t) => t.season);
 
-  // Best in the league that season, every game counted (CLAUDE.md); ties share it
-  const leads = (value: (t: (typeof mine)[number]) => number, most: boolean) =>
+  // Best (or worst) in the league that season
+  const leads = (value: (t: TeamSeason) => number, most: boolean) =>
     years((t) => {
-      const field = league.teamSeasons.filter((x) => x.season === t.season).map(value);
-      return value(t) === (most ? Math.max(...field) : Math.min(...field));
+      const field = league.teamSeasons.filter((x) => x.season === t.season).map((x) => cents(value(x)));
+      return cents(value(t)) === (most ? Math.max(...field) : Math.min(...field));
     });
 
-  const trades = mine.reduce((n, t) => n + t.trades, 0);
+  const mvfp = [...topStarters(league).values()].flat().filter((p) => p.person === person).sort((a, b) => a.season - b.season);
+  const EVERY_GAME = "In one season, every game counted: regular season and playoffs.";
 
   return [
-    { key: "goat", icon: "🐐", title: "The Mahaan Bakaree", detail: "Goat Award: won the championship", ...bySeasons(years((t) => t.finalRank === 1)) },
-    { key: "pancake", icon: "🥞", title: "The Pancake House", detail: "Pancake Award: finished last", ...bySeasons(years((t) => t.lastPlace)) },
-    { key: "smoked", icon: "🔥", title: "Smoked the Competition", detail: "Most points for in a season, regular season and playoffs", ...bySeasons(leads((t) => t.all.pf, true)) },
-    { key: "choke", icon: "🧑‍🎨", title: "The Choke Artist", detail: "Runner-up", ...bySeasons(years((t) => t.finalRank === 2)) },
-    { key: "below-zero", icon: "🥶", title: "The Below Zero", detail: "Fewest points against in a season, regular season and playoffs", ...bySeasons(leads((t) => t.all.pa, false)) },
-    { key: "seed", icon: "🥇", title: "The #1 Seed", detail: "1st place in the regular season", ...bySeasons(years((t) => t.seed === 1)) },
-    { key: "trade", icon: "🤝", title: "Trade", detail: "Made a trade", earned: trades > 0, note: trades ? `${trades} trade${trades === 1 ? "" : "s"}` : undefined },
-    // Kept by hand in managers.json: ESPN data doesn't say who ran the league
-    { key: "commish", icon: "🫡", title: "The Commish", detail: "Commissioner of the league", earned: !!managerBySlug(league, person)?.commish },
+    { key: "goat", tier: "goat", icon: "🐐", title: "The Mahaan Bakaree", detail: "Won a Championship", ...bySeasons(years((t) => t.finalRank === 1)) },
+    { key: "moty", tier: "goat", icon: "🔥", title: "Manager of the Year", detail: "Scored the Most Points For", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, true)) },
+    { key: "seed", tier: "goat", icon: "🥇", title: "The #1 Seed", detail: "1st Place in the Regular Season", ...bySeasons(years((t) => t.seed === 1)) },
+    {
+      key: "mvfp",
+      tier: "goat",
+      icon: "💪",
+      title: "MVFP",
+      detail: "Had the highest scoring player in the league",
+      fine: "Most points by one player in a team's starting lineup that season, playoffs included. ESPN has no 2021 lineups.",
+      earned: mvfp.length > 0,
+      note: short([...new Set(mvfp.map((p) => p.season))]),
+      seasons: mvfp.map((p) => ({ season: p.season, extra: `${p.name}, ${pts(p.points)} pts` })),
+    },
+    { key: "pancake", tier: "pancake", icon: "🥞", title: "The Pancake House", detail: "Last Place", ...bySeasons(years((t) => t.lastPlace)) },
+    { key: "choke", tier: "pancake", icon: "🧑‍🎨", title: "The Choke Artist", detail: "Runner Up", ...bySeasons(years((t) => t.finalRank === 2)) },
+    { key: "below-zero", tier: "pancake", icon: "🥶", title: "Below Zero", detail: "Scored the Least Points For", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, false)) },
+    { key: "dream", tier: "pancake", icon: "😢", title: "It Was Only A Dream", detail: "Most Points Against in a Season", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pa, true)) },
   ];
 }

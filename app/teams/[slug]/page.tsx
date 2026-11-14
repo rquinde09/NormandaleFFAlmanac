@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Achievements } from "@/components/Achievements";
-import { ManagerPerformance, type SeasonRow } from "@/components/ManagerPerformance";
+import { ManagerPerformance } from "@/components/ManagerPerformance";
 import { Opponents } from "@/components/Opponents";
 import { Card, Pancakes, Stars, Stat } from "@/components/ui";
 import { pct, pts, record } from "@/lib/format";
 import { careerTotals, getLeague, managerBySlug, winPct } from "@/lib/league";
-import { achievements, opponents } from "@/lib/manager";
+import { achievements, opponents, performance } from "@/lib/manager";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -28,22 +28,9 @@ export default async function ManagerPage({ params }: Params) {
   if (!manager) notFound();
 
   const career = careerTotals(league).get(slug)!;
-  const seasons = league.teamSeasons.filter((ts) => ts.person === slug).sort((a, b) => b.season - a.season);
-  const titleYears = seasons.filter((s) => s.finalRank === 1).map((s) => s.season).reverse();
-  const lastYears = seasons.filter((s) => s.lastPlace).map((s) => s.season).reverse();
-  const info = new Map(league.seasons.map((s) => [s.season, s]));
-  const rows: SeasonRow[] = seasons.map((s) => ({
-    season: s.season,
-    teamName: s.teamName,
-    finalRank: s.finalRank,
-    lastPlace: s.lastPlace,
-    live: !info.get(s.season)!.complete,
-    teams: info.get(s.season)!.teams,
-    all: s.all,
-    trades: s.trades,
-    longestWinStreak: s.longestWinStreak,
-    longestLossStreak: s.longestLossStreak,
-  }));
+  const seasons = league.teamSeasons.filter((ts) => ts.person === slug).sort((a, b) => a.season - b.season);
+  const titleYears = seasons.filter((s) => s.finalRank === 1).map((s) => s.season);
+  const lastYears = seasons.filter((s) => s.lastPlace).map((s) => s.season);
 
   return (
     <div className="space-y-4">
@@ -54,12 +41,9 @@ export default async function ManagerPage({ params }: Params) {
       {/* Name, titles and status up front; the career numbers fold out (the site owner, 2026-11-07) */}
       <Card>
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-50">
-              {manager.nickname} <Stars count={career.titles} /> <Pancakes count={career.lastPlaces} />
-            </h1>
-            <p className="text-sm text-zinc-400">{manager.name}</p>
-          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-50">
+            {manager.nickname} <Stars count={career.titles} /> <Pancakes count={career.lastPlaces} />
+          </h1>
           <span
             className={`shrink-0 rounded-lg border px-2 py-1 text-xs ${
               manager.active ? "border-emerald-900 text-emerald-400" : "border-zinc-700 text-zinc-400"
@@ -95,7 +79,7 @@ export default async function ManagerPage({ params }: Params) {
         </details>
       </Card>
 
-      <ManagerPerformance seasons={rows} />
+      <ManagerPerformance seasons={performance(league, slug)} />
       <Opponents all={opponents(league, slug)} active={opponents(league, slug, (p) => !!managerBySlug(league, p)?.active)} />
       <Achievements list={achievements(league, slug)} />
     </div>

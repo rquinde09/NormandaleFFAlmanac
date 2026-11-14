@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ActiveSwitch } from "@/components/ActiveSwitch";
+import { ActiveSwitch, CheckSwitch } from "@/components/ActiveSwitch";
 import { Segmented } from "@/components/Segmented";
-import { Bar, RankChange, Stars } from "@/components/ui";
+import { Bar, Pancakes, RankChange, Stars } from "@/components/ui";
 import type { StandingsRow } from "@/lib/league";
 import { DEFAULT_VIEW, MIN_SEASONS, VIEWS, qualifies, rankOrder, type Career, type Stat } from "@/lib/standings";
 import { updateParams } from "@/lib/url";
@@ -27,15 +27,16 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
   const stats = view.stats.filter((s) => hasTies || !s.tiesOnly);
   const col = stats.find((s) => s.key === params.get("sort")) ?? stats.find((s) => s.key === view.rankStat)!;
   const dir = params.get("dir") === "asc" ? "asc" : "desc";
-  const query = params.get("q") ?? "";
   const activeOnly = params.get("active") !== "0"; // on unless switched off
+  // One line per manager on a phone (the site owner, 2026-11-14), on unless switched off
+  const compact = params.get("compact") !== "0";
 
   const update = (next: Record<string, string | null>) => updateParams(pathname, next);
   const setSort = (key: string) =>
     update({ sort: key === view.rankStat ? null : key, dir: key === col.key && dir === "desc" ? "asc" : null });
 
   // Everyone this view covers. Positions and Rank Δ are counted within it, so the Active switch
-  // renumbers them and searching doesn't.
+  // renumbers them.
   const pool: Entry[] = rows.filter((r) => !activeOnly || r.active).map((row) => ({ row, now: row.now, prev: row.prev }));
 
   const ok = (e: Entry) => qualifies(view, e.now);
@@ -58,8 +59,7 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
   const hi = Math.max(...values);
   const barValue = (e: Entry) => (ok(e) && hi > lo ? (col.value(e.now) - lo) / (hi - lo) : 0);
 
-  const needle = query.trim().toLowerCase();
-  const shown = sorted.filter((e) => !needle || `${e.row.name} ${e.row.nickname}`.toLowerCase().includes(needle));
+  const shown = sorted;
   const firstUnranked = view.rate ? shown.findIndex((e) => !ok(e)) : -1;
 
   const live = meta.latestComplete ? "" : ` ${meta.latest} through week ${meta.throughWeek}.`;
@@ -83,7 +83,8 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
           onChange={(key) => update({ view: key === DEFAULT_VIEW ? null : key, sort: null, dir: null })}
         />
         <p className="text-sm text-zinc-400">
-          {describe} Rank Δ is the change since the end of {since}.
+          {describe}{" "}
+          <span className={compact ? "hidden md:inline" : ""}>Rank Δ is the change since the end of {since}.</span>
         </p>
         <div className="md:hidden">
           <Segmented
@@ -94,14 +95,6 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
           />
         </div>
         <div className="flex items-center gap-2">
-          <input
-            type="search"
-            defaultValue={query}
-            onChange={(e) => update({ q: e.target.value })}
-            placeholder="Search names"
-            aria-label="Search names"
-            className="min-w-0 flex-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none"
-          />
           <button
             onClick={() => update({ dir: dir === "desc" ? "asc" : null })}
             aria-label={dir === "desc" ? "Sorted high to low" : "Sorted low to high"}
@@ -109,14 +102,35 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
           >
             {dir === "desc" ? "↓ High" : "↑ Low"}
           </button>
+          <div className="flex-1" />
+          <CheckSwitch label="Compact" checked={compact} onChange={(on) => update({ compact: on ? null : "0" })} className="md:hidden" />
           <ActiveSwitch checked={activeOnly} onChange={(on) => update({ active: on ? null : "0" })} />
         </div>
       </div>
 
-      {shown.length === 0 && <p className="py-6 text-center text-sm text-zinc-500">No managers match.</p>}
+      {/* Phone, compact: one line each, "1. Jeremy ★★ 58.8%", the number being the sorted stat */}
+      {compact && (
+        <ol className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 md:hidden">
+          {shown.map((e, i) => (
+            <li key={e.row.slug} className="border-zinc-800 not-first:border-t">
+              {i === firstUnranked && <Unranked inList />}
+              <Link href={`/teams/${e.row.slug}`} className="flex items-baseline gap-2 px-4 py-2.5 active:bg-zinc-800">
+                <span className="w-6 shrink-0 text-right text-sm tabular-nums text-zinc-500">
+                  {ok(e) ? `${position.get(e.row.slug)}.` : "–"}
+                </span>
+                <span className="min-w-0 flex-1 truncate font-semibold text-zinc-50">
+                  {e.row.nickname} <Stars count={e.row.now.titles} /> <Pancakes count={e.row.now.lastPlaces} />
+                  {!e.row.active && <span className="ml-1 text-xs font-normal text-zinc-500">retired</span>}
+                </span>
+                <span className="shrink-0 font-semibold tabular-nums text-zinc-50">{col.show(e.now)}</span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+      )}
 
       {/* Phone: cards */}
-      <ol className="space-y-2 md:hidden">
+      <ol className={`space-y-2 md:hidden ${compact ? "hidden" : ""}`}>
         {shown.map((e, i) => (
           <li key={e.row.slug}>
             {i === firstUnranked && <Unranked />}
@@ -131,11 +145,11 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
                   </span>
                   <div className="min-w-0">
                     <div className="truncate font-semibold text-zinc-50">
-                      {e.row.nickname} <Stars count={e.row.now.titles} />
+                      {e.row.nickname} <Stars count={e.row.now.titles} /> <Pancakes count={e.row.now.lastPlaces} />
                     </div>
                     <div className="truncate text-xs text-zinc-500">
-                      {e.row.name}
-                      {!e.row.active && " · retired"} · {e.now.seasons} season{e.now.seasons === 1 ? "" : "s"}
+                      {e.now.seasons} season{e.now.seasons === 1 ? "" : "s"}
+                      {!e.row.active && " · retired"}
                     </div>
                   </div>
                 </div>
@@ -181,8 +195,9 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
                 <td className="sticky left-0 z-10 bg-zinc-900 px-3 py-2.5">
                   <Link href={`/teams/${e.row.slug}`} className="flex items-baseline gap-3 whitespace-nowrap hover:text-white">
                     <span className="w-5 text-right text-zinc-500">{ok(e) ? position.get(e.row.slug) : "–"}</span>
-                    <span className="font-medium text-zinc-100">{e.row.name}</span>
+                    <span className="font-medium text-zinc-100">{e.row.nickname}</span>
                     <Stars count={e.row.now.titles} />
+                    <Pancakes count={e.row.now.lastPlaces} />
                     {!e.row.active && <span className="text-xs text-zinc-500">retired</span>}
                   </Link>
                 </td>
@@ -215,9 +230,9 @@ function Mini({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Unranked() {
+function Unranked({ inList = false }: { inList?: boolean }) {
   return (
-    <div className="px-1 pt-2 pb-2 text-xs font-medium uppercase tracking-wider text-zinc-500">
+    <div className={`pb-2 text-xs font-medium uppercase tracking-wider text-zinc-500 ${inList ? "px-4 pt-3" : "px-1 pt-2"}`}>
       Fewer than {MIN_SEASONS} seasons
     </div>
   );

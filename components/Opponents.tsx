@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ActiveSwitch } from "@/components/ActiveSwitch";
 import { Card, SectionLabel } from "@/components/ui";
-import { pct, pts, record, score } from "@/lib/format";
+import { score } from "@/lib/format";
 import type { GameLine, OpponentKey, OpponentLine, Opponents as OpponentsData } from "@/lib/manager";
 
 type Tab = OpponentKey | "best" | "worst";
@@ -21,10 +21,10 @@ const TABS: { key: Tab; label: string; about: string }[] = [
 
 const KIND_LABEL = { regular: "", playoff: " · playoffs", placement: " · placement", consolation: " · consolation" };
 
-// Head-to-head over every game, all seasons, one tab at a time (the site owner, 2026-11-10): an
-// opponent with a ring for the record (Win % in the middle) or the points (that total, over every
-// game against them, in the middle), or a single game. Active on (the default) leaves out retired
-// opponents.
+// Head-to-head over every game, all seasons, one tab at a time: an opponent with a ring and just
+// their name (the site owner, 2026-11-14), or a single game. The ring's middle holds the number the
+// tab picks by: games, wins, losses, or the points over every game against them. Active on (the
+// default) leaves out retired opponents.
 export function Opponents({ all, active }: { all: OpponentsData; active: OpponentsData }) {
   const [tab, setTab] = useState<Tab>("faced");
   const [activeOnly, setActiveOnly] = useState(true);
@@ -37,8 +37,7 @@ export function Opponents({ all, active }: { all: OpponentsData; active: Opponen
     <section>
       <SectionLabel>Opponents</SectionLabel>
       <Card>
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xs text-zinc-500">Every game, all seasons</p>
+        <div className="flex justify-end">
           <ActiveSwitch checked={activeOnly} onChange={setActiveOnly} />
         </div>
         {/* Four tabs to a row on a phone, the second row stretched; one row from sm up */}
@@ -59,7 +58,7 @@ export function Opponents({ all, active }: { all: OpponentsData; active: Opponen
         </div>
 
         {o ? (
-          <Pick o={o} tab={tab as OpponentKey} about={about} />
+          <Pick o={o} tab={tab as OpponentKey} />
         ) : game ? (
           <OneGame g={game} about={about} />
         ) : (
@@ -70,28 +69,25 @@ export function Opponents({ all, active }: { all: OpponentsData; active: Opponen
   );
 }
 
-function Pick({ o, tab, about }: { o: OpponentLine; tab: OpponentKey; about: string }) {
-  const points = tab === "pf" || tab === "pa";
+// The red arc is the share of the games (wins on Faced and Easiest, losses on Toughest) or of the
+// points in those games (PF or PA)
+function Pick({ o, tab }: { o: OpponentLine; tab: OpponentKey }) {
   const winShare = o.games ? (o.w + o.t / 2) / o.games : 0;
-  const share = !points ? winShare : tab === "pf" ? o.pf / (o.pf + o.pa) : o.pa / (o.pf + o.pa);
-  const center = !points ? pct(winShare) : Math.round(tab === "pf" ? o.pf : o.pa).toLocaleString("en-US");
-  const centerLabel = !points ? "Win %" : tab === "pf" ? "PF" : "PA";
+  const plural = (n: number, one: string, many: string) => (n === 1 ? one : many);
+  const ring = {
+    faced: { share: winShare, value: String(o.games), label: plural(o.games, "game", "games") },
+    easiest: { share: winShare, value: String(o.w), label: plural(o.w, "win", "wins") },
+    toughest: { share: o.games ? o.l / o.games : 0, value: String(o.l), label: plural(o.l, "loss", "losses") },
+    pf: { share: o.pf / (o.pf + o.pa), value: Math.round(o.pf).toLocaleString("en-US"), label: "PF" },
+    pa: { share: o.pa / (o.pf + o.pa), value: Math.round(o.pa).toLocaleString("en-US"), label: "PA" },
+  }[tab];
 
   return (
     <div className="mt-4 flex items-center gap-5">
-      <Ring share={share} value={center} label={centerLabel} />
-      <div className="min-w-0 text-sm">
-        <div className="text-xs text-zinc-500">{about}</div>
-        <Link href={`/teams/${o.slug}`} className="block truncate text-xl font-semibold text-zinc-50 hover:text-white">
-          {o.nickname}
-        </Link>
-        <div className="mt-1 tabular-nums text-zinc-300">
-          {record(o)} in {o.games} game{o.games === 1 ? "" : "s"}
-        </div>
-        <div className="tabular-nums text-zinc-500">
-          PF {pts(o.pf)} · PA {pts(o.pa)}
-        </div>
-      </div>
+      <Ring {...ring} />
+      <Link href={`/teams/${o.slug}`} className="block min-w-0 truncate text-xl font-semibold text-zinc-50 hover:text-white">
+        {o.nickname}
+      </Link>
     </div>
   );
 }

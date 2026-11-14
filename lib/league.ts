@@ -17,11 +17,10 @@ const KINDS: Record<string, Kind> = {
 
 export type Manager = {
   slug: string;
-  name: string;
-  nickname: string;
+  name: string; // full name: matches the Sheet copies in `npm run check`, never shown on the site
+  nickname: string; // the first name the site shows
   active: boolean;
   espnIds: string[];
-  commish?: boolean; // has been the league's commissioner, kept by hand (ESPN data doesn't say)
 };
 
 export type Side = { person: string; teamId: number; points: number };
@@ -266,10 +265,10 @@ export function careerTotals(league: League, through?: number) {
 }
 
 // Each person's career for the standings page, live (`now`) and at the end of the previous
-// season (`prev`, for Rank Δ). All three views count the season in progress.
+// season (`prev`, for Rank Δ). All three views count the season in progress. The site shows
+// first names only (the site owner, 2026-11-14), so the full name isn't sent to the page.
 export type StandingsRow = {
   slug: string;
-  name: string;
   nickname: string;
   active: boolean;
   now: Career;
@@ -284,7 +283,6 @@ export function standingsRows(league: League): StandingsRow[] {
     .filter((m) => now.has(m.slug))
     .map((m) => ({
       slug: m.slug,
-      name: m.name,
       nickname: m.nickname,
       active: m.active,
       now: now.get(m.slug)!,

@@ -75,6 +75,40 @@ const player = (p: RawPlayer, slot: string): LineupPlayer => ({
   points: p.appliedStatTotal ?? 0,
 });
 
+export type TopStarter = { season: number; person: string; name: string; points: number };
+
+// The MVFP award (the site owner, 2026-11-14): each completed season's player who scored the most
+// points for one team while in its starting lineup, every game counted, playoffs included. Ties
+// share it. A season without lineups (2021) has none.
+let topStartersCache: Map<number, TopStarter[]> | null = null;
+export function topStarters(league: League): Map<number, TopStarter[]> {
+  if (topStartersCache) return topStartersCache;
+  const out = new Map<number, TopStarter[]>();
+  for (const info of league.seasons.filter((s) => s.complete)) {
+    const lineups = readLineups(info.season);
+    const person = new Map(league.teamSeasons.filter((t) => t.season === info.season).map((t) => [t.teamId, t.person]));
+    const totals = new Map<string, TopStarter>();
+    for (const week of lineups?.weeks ?? []) {
+      for (const g of week.games) {
+        for (const side of [g.home, g.away]) {
+          for (const p of side?.lineup ?? []) {
+            if (BENCH.has(p.lineupSlotId)) continue;
+            const key = `${side.teamId}:${p.playerId}`;
+            const row = totals.get(key) ?? { season: info.season, person: person.get(side.teamId)!, name: p.fullName ?? `Player ${p.playerId}`, points: 0 };
+            row.points += p.appliedStatTotal ?? 0;
+            totals.set(key, row);
+          }
+        }
+      }
+    }
+    const cents = (n: number) => Math.round(n * 100);
+    const best = Math.max(0, ...[...totals.values()].map((r) => cents(r.points)));
+    if (best > 0) out.set(info.season, [...totals.values()].filter((r) => cents(r.points) === best));
+  }
+  topStartersCache = out;
+  return out;
+}
+
 export function championDetails(league: League, champ: TeamSeason): ChampionDetails {
   const games = league.games
     .filter((g) => g.season === champ.season && (g.home.teamId === champ.teamId || g.away.teamId === champ.teamId))

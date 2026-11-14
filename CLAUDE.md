@@ -19,8 +19,9 @@ without new evidence.
   records, champions). Client components get only derived rows. Python only fetches. There is
   one implementation of the counting rules, in TypeScript.
 - `data/managers.json` (hand-edited) maps ESPN owner IDs to people: `slug` (the URL,
-  `/teams/<slug>`, matching the old site), `name`, `nickname`, `active`, `espnIds`, and an
-  optional `commish: true` for The Commish achievement. Stats
+  `/teams/<slug>`, matching the old site), `name`, `nickname`, `active` and `espnIds`. The site
+  shows only `nickname` (the first name). `name` is the full name, never shown (site owner,
+  2026-11-14), kept because `npm run check` matches the Sheet copies by it. Stats
   aggregate by person, not by ESPN team (team names change every year). A team whose owners
   aren't in `managers.json` fails the build on purpose, and Vercel then keeps the last good
   deploy. A new manager means adding them here.
@@ -94,6 +95,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - Tie rule is `NONE` (ties stand). There were no ties and no score adjustments in 2017–2025, and
   every playoff matchup was one week long.
 - `rankCalculatedFinal` gives each team's final place (1 = champion).
+- `transactionCounter.trades` is 0 for every team in 2024 and 2025. The site owner confirmed
+  there were no trades those years (2026-11-14), so the zeros are real.
 - Player lineups (fetched for 2017–2025 on 2026-11-05): views `mMatchupScore` + `mScoreboard`
   with `scoringPeriodId` and an `x-fantasy-filter` on the matchup period return each side's
   `rosterForCurrentScoringPeriod` (whole roster, with `lineupSlotId` and points) for 2018+, and
@@ -143,40 +146,57 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   its numbers match the old Leaderboard page), and Per game averages (Win %, PF, PA, PDIFF per
   game). Per game is the default (`DEFAULT_VIEW`, site owner 2026-11-07); All-time is
   `?view=all`. All three count live. Each ends with Rank Δ: the change in that view's ranking since the
-  end of the previous season, counted among the managers shown, so the Active switch renumbers and
-  search doesn't. Active only is on by default (`active=0` turns it off). View, sort, direction,
-  search and Active live in the URL, updated with `window.history.replaceState` (`lib/url.ts`),
-  which Next keeps in sync with `useSearchParams`. Per season and Per game rank only managers with
-  `MIN_SEASONS` (3, a placeholder) seasons; shorter careers list after them.
+  end of the previous season, counted among the managers shown, so the Active switch renumbers.
+  Active only is on by default (`active=0` turns it off). First names only, with stars and
+  pancakes (site owner, 2026-11-14). "No last names" covers how the site shows managers; the old
+  news posts keep their wording and the record "The Vega" keeps its name. On a phone, Compact (on by default, `compact=0` turns it off)
+  replaced the name search: one line per manager, "1. Jeremy ★★ 🥞 58.8%", the number being the
+  sorted stat. Rank Δ and the small stats show only with Compact off. The desktop table has no
+  Compact switch. View, sort, direction, Compact and Active live in the URL, updated with
+  `window.history.replaceState` (`lib/url.ts`), which Next keeps in sync with `useSearchParams`.
+  Per season and Per game rank only managers with `MIN_SEASONS` (3, a placeholder) seasons;
+  shorter careers list after them.
 - Teams page: name, stars, pancakes and seasons only, no rank or record, in two columns so every
   active manager fits on one phone screen. Retired managers sit in a collapsed "Retired" row
   (`<details>`) below (site owner, 2026-11-10).
-- Manager pages (the site owner's Round 2 spec, 2026-11-07, answers 2026-11-10), top to bottom:
-  - First card: nickname with stars and pancakes, Active/Retired, "Champion: years" and "Loser:
-    years" (last place). The career numbers fold out under "Career stats": the all-time record,
-    then Seasons, Win %, PF/G and Total PF, left to right. No rank, best finish or PDIFF.
-  - Manager Performance (`components/ManagerPerformance.tsx`): one red line, with tabs for
-    Finish, Wins, PF and PA, and one y axis that follows the tab (Finish has 1st at the top). On
-    every tab, 1st–3rd are gold, silver and bronze dots and last place is a pancake. The season
-    in progress stays off the chart, since half a season's PF flattens the rest. Below it, the
-    year picker (tapping the chart picks a year too, newest first) and the picked season's
-    team, finish, PF/G, PA/G, streak and trades. The streak is the longer of the longest winning
-    and losing streaks, with the winning one on a tie.
+- Manager pages (the site owner's Round 2 spec, 2026-11-07, answers 2026-11-10; Round 3,
+  2026-11-14), top to bottom:
+  - First card: first name with stars and pancakes, Active/Retired, "Champion: years" and "Loser:
+    years" (last place). No full name. The career numbers fold out under "Career stats": the
+    all-time record, then Seasons, Win %, PF/G and Total PF, left to right. No rank, best finish
+    or PDIFF.
+  - Manager Performance (`components/ManagerPerformance.tsx`, `performance` in `lib/manager.ts`):
+    one red line, with tabs for Finish, Wins, PF, PA, Streak and Trades, and one y axis that
+    follows the tab (Finish has 1st at the top). Every point is labeled. Each season's marker
+    shows where that season ranked in the league on that tab: gold, silver and bronze for 1st–3rd
+    and a pancake for last. Finish uses the final standings. Wins: most is 1st, ties broken by PF.
+    PF: most is 1st. PA: fewest is 1st, most is last. Streak plots the longer of the season's
+    longest winning and losing streaks (the winning one on a tie) as +W / −L around a zero line;
+    the league's longest winning streak is 1st, its longest losing streak last. Trades: most is
+    1st, no pancake, no medal without a trade. Other ties share the place. `npm run check` tests
+    the site owner's example: Randy's 2,241.1 PF gets 2024's PF gold, champion Jeremy's 2,208
+    silver. Completed seasons only, since half a season's PF flattens the rest. No year picker or
+    season card (removed in Round 3).
   - Opponents (`lib/manager.ts`, `components/Opponents.tsx`): head-to-head over every decided
     game, live season included, in seven tabs. Faced (most games), Easiest (most wins against),
     Toughest (most losses against), Most PF and Most PA (totals over every game against that
     opponent, not per game), Best win (most points in a win) and Worst loss (fewest points in a
-    loss). Each shows a ring with Win %, that points total or that game's score in the middle.
+    loss). The first five show a ring and the opponent's name only (Round 3). The ring's middle
+    holds games, wins, losses, or the PF or PA total; its red arc is the win share (Faced,
+    Easiest), loss share (Toughest) or points share. Best win and Worst loss show the game.
     Active is on by default and leaves out retired opponents.
-  - Achievements (`achievements` in `lib/manager.ts`): eight emoji icons, greyed out until earned
-    in any season: 🐐 The Mahaan Bakaree (title), 🥞 The Pancake House (last place), 🔥 Smoked the
-    Competition (most PF in the league that season), 🧑‍🎨 The Choke Artist (runner-up), 🥶 The
-    Below Zero (fewest PA in the league that season), 🥇 The #1 Seed (`playoffSeed` 1), 🤝 Trade
-    (any trade, live season included) and 🫡 The Commish (`"commish": true` in `managers.json`,
-    kept by hand: Jeremy and Randy, site owner 2026-11-10). Season PF and PA count every game
-    that season, so a playoff bye's missing game is part of the game (site owner); ties share
-    the award. Everything but trades counts completed seasons only. The Below Zero award isn't
-    the "Below Zero" season record (fewest wins).
+  - Achievements (`achievements` in `lib/manager.ts`, `components/Achievements.tsx`): two tabs,
+    GOAT Tier and Pancake Tier, of emoji icons greyed out until earned in a completed season.
+    Tapping one shows the site owner's description and the seasons earned. GOAT Tier: 🐐 The
+    Mahaan Bakaree (Won a Championship), 🔥 Manager of the Year (Scored the Most Points For),
+    🥇 The #1 Seed (`playoffSeed` 1), 💪 MVFP (had the league's highest scoring player: the most
+    points one player scored for one team while in its starting lineup that season, playoffs
+    included; `topStarters` in `lib/champions.ts`; none for 2021, which has no lineups).
+    Pancake Tier: 🥞 The Pancake House (Last Place), 🧑‍🎨 The Choke Artist (Runner Up), 🥶 Below
+    Zero (fewest PF in the league that season) and 😢 It Was Only A Dream (most PA). Season PF
+    and PA count every game that season, so a playoff bye's missing game is part of the game
+    (site owner); ties share the award. The Trade and Commish awards were removed in Round 3.
+    The Below Zero award isn't the "Below Zero" season record (fewest wins).
 - Champions page (`/hall-of-mahaan-bakaree`): each title expands (`<details>`) to the
   championship game's lineup with the bench, the season's best game (the champion's highest
   score), and the best player (most points while in the starting lineup, playoffs included).
@@ -233,9 +253,11 @@ Copy the food logger (https://food-logger-rust.vercel.app/): page `#09090b`, car
 progress bars, PWA manifest. Mobile first: nothing should need a rotated phone.
 
 ## Standings UX
-- Phone: cards with a sort control (four stats per view) and an up/down toggle.
+- Phone: a sort control (four stats per view), an up/down toggle, and Compact (one line each,
+  on by default) or cards.
 - Desktop: a table whose name column stays put while the other columns scroll.
-- Name search box and an "Active only" switch. Sort and filter state live in the URL.
+- An "Active only" switch. No name search (removed in Round 3). Sort and filter state live in
+  the URL.
 - Rate views need a minimum-seasons rule (threshold TBD, placeholder 3), or a 2-season 22-12
   manager outranks a 9-season 90-61 one.
 
@@ -265,7 +287,10 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    posts). He withdrew the Leaderboard-page request and doesn't want the old photos for now.
    Round 2 (2026-11-07, answers 2026-11-10) is built: home label, Per game default, Teams page,
    manager page boxes (Manager Performance, Opponents, Achievements), records fold-out and Active
-   rule, and the hand-entered 2021 lineup. Next: the domain.
+   rule, and the hand-entered 2021 lineup. Round 3 (2026-11-14) is built: first names only,
+   Compact standings with pancakes, the chart's Streak and Trades tabs with league-ranked medals,
+   the trimmed Opponents box, and the GOAT and Pancake achievement tiers. The site owner accepted
+   every proposed answer to its 8 questions the same day (all recorded above). Next: the domain.
 
 Later, not v1: head-to-head records, standings for each season, photos for the Hall.
 
