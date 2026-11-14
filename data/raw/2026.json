@@ -4129,10 +4129,10 @@
       2025
     ],
     "requestedMatchupPeriodId": 10,
-    "standingsUpdateDate": 1794559181897,
+    "standingsUpdateDate": 1794644096827,
     "teamsJoined": 14,
     "transactionScoringPeriod": 10,
-    "waiverLastExecutionDate": 1794559181801,
+    "waiverLastExecutionDate": 1794644096623,
     "waiverProcessStatus": {
       "2026-08-28T07:08:41.999+00:00": 3,
       "2026-08-31T07:09:32.025+00:00": 1,
@@ -4261,7 +4261,7 @@
           "9": 1
         },
         "misc": 0,
-        "moveToActive": 51,
+        "moveToActive": 52,
         "moveToIR": 6,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4404,7 +4404,7 @@
           "9": 4
         },
         "misc": 0,
-        "moveToActive": 60,
+        "moveToActive": 61,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4604,7 +4604,7 @@
     },
     {
       "abbrev": "AAT",
-      "currentProjectedRank": 5,
+      "currentProjectedRank": 4,
       "divisionId": 0,
       "draftDayProjectedRank": 3,
       "eliminated": false,
@@ -4826,7 +4826,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 83,
+        "moveToActive": 85,
         "moveToIR": 6,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4967,7 +4967,7 @@
           "9": 6
         },
         "misc": 0,
-        "moveToActive": 75,
+        "moveToActive": 76,
         "moveToIR": 7,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5529,7 +5529,7 @@
           "9": 5
         },
         "misc": 0,
-        "moveToActive": 54,
+        "moveToActive": 55,
         "moveToIR": 5,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5816,7 +5816,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 93,
+        "moveToActive": 94,
         "moveToIR": 8,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5874,7 +5874,7 @@
     },
     {
       "abbrev": "AMON",
-      "currentProjectedRank": 4,
+      "currentProjectedRank": 5,
       "divisionId": 0,
       "draftDayProjectedRank": 5,
       "eliminated": false,
@@ -6096,7 +6096,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 69,
+        "moveToActive": 77,
         "moveToIR": 4,
         "paid": 0.0,
         "teamCharges": 0.0,
