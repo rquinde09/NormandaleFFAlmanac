@@ -8,13 +8,15 @@
 // - last place against the 2024 pancake news post
 // - the Active records rule against the site owner's example
 // - the Manager Performance medals against the site owner's 2024 PF example, and the awards
+// - luck, bench numbers, playoff brackets and the Pancake Watch's premise
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
-import { careerTotals, champions, gameRecords, getLeague, seasonRecords, type League } from "../lib/league";
+import { careerTotals, champions, gameRecords, getLeague, luck, seasonRecords, type League } from "../lib/league";
 import { VIEWS, rankOrder } from "../lib/standings";
 import { championDetails, topStarters } from "../lib/champions";
 import { achievements, performance } from "../lib/manager";
+import { rounds } from "../lib/seasons";
 
 const THROUGH = 2025;
 const SHEET = path.join(process.cwd(), "data", "reference", "google-sheet-through-2025.csv");
@@ -26,6 +28,8 @@ const league: League = {
   seasons: full.seasons.filter((s) => s.season <= THROUGH),
   teamSeasons: full.teamSeasons.filter((t) => t.season <= THROUGH),
   games: full.games.filter((g) => g.season <= THROUGH),
+  bracket: full.bracket.filter((b) => b.season <= THROUGH),
+  bench: full.bench.filter((b) => b.season <= THROUGH),
 };
 
 let failures = 0;
@@ -169,9 +173,11 @@ check(blowWinner.person === "luke" && blowLoser.person === "suny", "Active @$$-W
 const point = (person: string, season: number) => performance(league, person).find((p) => p.season === season)!;
 const randy24 = point("randy", 2024);
 const jeremy24 = point("jeremy", 2024);
-check(randy24.marks.pf.place === 1 && close(randy24.values.pf, 2241.1, 0.05) && jeremy24.marks.pf.place !== 1 && jeremy24.marks.finish.place === 1,
+const randyPf = randy24.values.pf ?? NaN;
+const jeremyPf = jeremy24.values.pf ?? NaN;
+check(randy24.marks.pf.place === 1 && close(randyPf, 2241.1, 0.05) && jeremy24.marks.pf.place !== 1 && jeremy24.marks.finish.place === 1,
   "2024 PF gold is Randy's 2,241.1, not champion Jeremy's",
-  `Randy ${randy24.values.pf.toFixed(2)} place ${randy24.marks.pf.place}; Jeremy ${jeremy24.values.pf.toFixed(2)} place ${jeremy24.marks.pf.place}`);
+  `Randy ${randyPf.toFixed(2)} place ${randy24.marks.pf.place}; Jeremy ${jeremyPf.toFixed(2)} place ${jeremy24.marks.pf.place}`);
 // The PF tab's gold and pancake agree with the Manager of the Year and Below Zero awards, the PA
 // tab's pancake with It Was Only A Dream
 const people = league.managers.map((m) => m.slug);
@@ -184,6 +190,38 @@ check(award("moty").join() === tab((m) => m.place === 1, "pf").join() && award("
 const mvfp = topStarters(league);
 check([...mvfp.keys()].sort().join() === "2017,2018,2019,2020,2022,2023,2024,2025" && [...mvfp.values()].every((v) => v.length === 1),
   "MVFP in every season but 2021", [...mvfp.values()].flat().map((v) => `${v.season} ${v.person} ${v.name} ${v.points.toFixed(1)}`).join("; "));
+
+// 10. Luck, bench, brackets and the Pancake Watch (Luke, 2026-11-15)
+// All-play hands out exactly as many expected wins each week as there are games, so luck adds up
+// to zero over each season's teams.
+const luckSums = league.seasons.map((s) => league.teamSeasons.filter((t) => t.season === s.season).reduce((n, t) => n + luck(t), 0));
+check(luckSums.every((n) => Math.abs(n) < 1e-6), "luck adds up to zero in every season", luckSums.map((n) => n.toFixed(6)).join(" "));
+// Bench numbers exist for the seasons whose lineups include the bench, one row per team per game.
+// The starters add up to the team's score, and the best lineup is never below the one started.
+const benchSeasons = [...new Set(league.bench.map((b) => b.season))].sort();
+check(benchSeasons.join() === "2018,2019,2020,2022,2023,2024,2025", "bench numbers for 2018–2025 except 2021", benchSeasons.join());
+const scoreOf = new Map(league.games.flatMap((g) => [g.home, g.away].map((s) => [`${g.season}:${g.week}:${s.teamId}`, s.points] as const)));
+const benchRows = league.bench.length;
+const gamesInBenchSeasons = league.games.filter((g) => benchSeasons.includes(g.season)).length * 2;
+check(benchRows === gamesInBenchSeasons && league.bench.every((b) => close(b.actual, scoreOf.get(`${b.season}:${b.week}:${b.teamId}`) ?? NaN, 0.011)),
+  "bench rows match every game, starters add up to the score", `${benchRows} rows, ${gamesInBenchSeasons} team-games`);
+check(league.bench.every((b) => b.best >= b.actual - 0.005), "best lineup is never below the one started",
+  `${league.bench.filter((b) => b.best < b.actual - 0.005).length} below`);
+// The Bench tab's pancakes agree with the Benchwarmer award
+check(award("benchwarmer").join() === people.flatMap((p) => performance(league, p).filter((s) => s.marks.bench.last).map((s) => `${s.season} ${p}`)).sort().join(),
+  "Bench pancakes match the Benchwarmer award", award("benchwarmer").join(", "));
+// Each season's final is in its last week, and its winner is the champion
+const finalsOk = league.seasons.filter((s) => s.complete).filter((s) => {
+  const final = rounds(league, s, "playoff").at(-1)!;
+  const g = final.games[0];
+  const winner = g.winner === "HOME" ? g.home : g.away!;
+  return final.label === "Final" && final.games.length === 1 && winner.person === champions(league).find((c) => c.season === s.season)!.person;
+});
+check(finalsOk.length === league.seasons.filter((s) => s.complete).length, "each bracket's final is won by the champion", `${finalsOk.length} seasons`);
+// Pancake Watch counts everyone outside the playoff spots: every last-place team missed the playoffs
+const lastSeeds = league.teamSeasons.filter((t) => t.lastPlace).map((t) => ({ t, spots: league.seasons.find((s) => s.season === t.season)!.playoffTeams }));
+check(lastSeeds.every(({ t, spots }) => t.seed > spots), "every last-place team missed the playoffs",
+  lastSeeds.map(({ t, spots }) => `${t.season} seed ${t.seed}/${spots}`).join(", "));
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

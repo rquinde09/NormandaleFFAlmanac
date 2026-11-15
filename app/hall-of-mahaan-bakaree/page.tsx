@@ -20,7 +20,18 @@ export default function HallPage() {
 
   return (
     <>
-      <PageTitle sub="Every Normandale Nation champion">Hall of Mahaan Bakaree</PageTitle>
+      <PageTitle
+        sub={
+          <>
+            Every Normandale Nation champion ·{" "}
+            <Link href="/seasons" className="text-zinc-300 underline-offset-2 hover:underline">
+              Every season
+            </Link>
+          </>
+        }
+      >
+        Hall of Mahaan Bakaree
+      </PageTitle>
       <div className="mb-4 flex flex-wrap gap-2">
         {leaders.map(([slug, n]) => (
           <Link
@@ -39,7 +50,10 @@ export default function HallPage() {
             <li key={c.season}>
               <Card>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-3xl font-bold tabular-nums text-amber-400">{c.season}</span>
+                  {/* The year opens that season's standings and brackets */}
+                  <Link href={`/seasons/${c.season}`} className="text-3xl font-bold tabular-nums text-amber-400 hover:text-amber-300">
+                    {c.season}
+                  </Link>
                   <span className="text-sm tabular-nums text-zinc-400">
                     {record(c.all)} · {pts(c.all.pf)} PF
                   </span>

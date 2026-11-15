@@ -2,6 +2,7 @@
 // The counting rules live in CLAUDE.md; scripts/check-data.ts checks them against the old Sheet.
 import fs from "node:fs";
 import path from "node:path";
+import { benchGames, type BenchGame } from "@/lib/bench";
 import type { Career } from "@/lib/standings";
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -49,11 +50,28 @@ export type TeamSeason = {
   trades: number;
   longestWinStreak: number;
   longestLossStreak: number;
+  // All-play (Luke, 2026-11-15): each game counts as the share of the week's other teams this one
+  // outscored, summed over every decided game. `luck` is wins minus this.
+  expectedWins: number;
+  bench: number | null; // points left on the bench over the season; null without bench lineups
+};
+
+// A playoff-week schedule entry: the winners bracket, placement games or the consolation ladder.
+// Unlike `games` it keeps byes (no away side) and games not yet decided.
+export type BracketSide = { person: string; teamId: number; seed: number; points: number };
+export type BracketEntry = {
+  season: number;
+  week: number;
+  kind: Kind;
+  home: BracketSide;
+  away: BracketSide | null; // null: a bye
+  winner: Game["winner"] | null; // null until decided
 };
 
 export type SeasonInfo = {
   season: number;
   teams: number;
+  playoffTeams: number;
   regularWeeks: number;
   weeks: number; // every matchup period, playoffs included
   complete: boolean;
@@ -66,6 +84,8 @@ export type League = {
   seasons: SeasonInfo[];
   teamSeasons: TeamSeason[];
   games: Game[];
+  bracket: BracketEntry[];
+  bench: BenchGame[];
   updatedAt: string | null;
 };
 
@@ -93,8 +113,11 @@ type RawSeason = {
   seasonId: number;
   teams: RawTeam[];
   schedule: RawGame[];
-  // matchupPeriods lists every period of the season, even ones not yet on the schedule
-  settings: { scheduleSettings: { matchupPeriodCount: number; matchupPeriods: Record<string, number[]> } };
+  settings: {
+    // matchupPeriods lists every period of the season, even ones not yet on the schedule
+    scheduleSettings: { matchupPeriodCount: number; playoffTeamCount: number; matchupPeriods: Record<string, number[]> };
+    rosterSettings?: { lineupSlotCounts?: Record<string, number> };
+  };
 };
 
 const norm = (id: string) => id.trim().replace(/^\{|\}$/g, "").toUpperCase();
@@ -111,6 +134,11 @@ export function addGame(totals: Totals, scored: number, allowed: number, result:
 }
 
 export const winPct = (t: Totals) => (t.games ? (t.w + t.t / 2) / t.games : 0);
+
+// Wins above (or below) what the team's scores earned against the whole league each week
+export const luck = (t: TeamSeason) => t.all.w + t.all.t / 2 - t.expectedWins;
+
+const cents = (n: number) => Math.round(n * 100); // compares points without float noise
 
 function readJson<T>(file: string): T {
   return JSON.parse(fs.readFileSync(file, "utf8")) as T;
@@ -149,6 +177,8 @@ export function getLeague(): League {
   const seasons: SeasonInfo[] = [];
   const teamSeasons: TeamSeason[] = [];
   const games: Game[] = [];
+  const bracket: BracketEntry[] = [];
+  const bench: BenchGame[] = [];
 
   for (const s of raw) {
     // Each team-season goes to the one person in managers.json among its owner IDs.
@@ -181,11 +211,44 @@ export function getLeague(): League {
       .sort((a, b) => a.week - b.week);
     games.push(...seasonGames);
 
+    // All-play: each week, the share of the other teams that played that this team outscored
+    const expected = new Map<number, number>();
+    for (const week of new Set(seasonGames.map((g) => g.week))) {
+      const sides = seasonGames.filter((g) => g.week === week).flatMap((g) => [g.home, g.away]);
+      for (const me of sides) {
+        const others = sides.filter((o) => o !== me);
+        const beat = others.reduce((n, o) => n + (cents(me.points) > cents(o.points) ? 1 : cents(me.points) === cents(o.points) ? 0.5 : 0), 0);
+        expected.set(me.teamId, (expected.get(me.teamId) ?? 0) + (others.length ? beat / others.length : 0));
+      }
+    }
+
+    // Points left on the bench, for seasons whose lineups include the bench
+    const slots = Object.entries(s.settings.rosterSettings?.lineupSlotCounts ?? {})
+      .map(([slot, count]) => [Number(slot), count] as [number, number])
+      .filter(([slot, count]) => count > 0 && slot !== 20 && slot !== 21);
+    const seasonBench = benchGames(s.seasonId, slots, (teamId) => credit.get(teamId)!);
+    bench.push(...seasonBench);
+
+    // Playoff weeks as scheduled, byes and undecided games included, in ESPN's (bracket) order
+    const seed = new Map(s.teams.map((t) => [t.id, t.playoffSeed]));
+    const bracketSide = (r: RawSide): BracketSide => ({ person: credit.get(r.teamId)!, teamId: r.teamId, seed: seed.get(r.teamId)!, points: r.totalPoints });
+    for (const g of s.schedule.filter((x) => x.matchupPeriodId > regularWeeks)) {
+      bracket.push({
+        season: s.seasonId,
+        week: g.matchupPeriodId,
+        kind: KINDS[g.playoffTierType ?? "NONE"],
+        home: bracketSide(g.home),
+        away: g.away ? bracketSide(g.away) : null,
+        winner: g.away && (g.winner === "HOME" || g.winner === "AWAY" || g.winner === "TIE") ? g.winner : null,
+      });
+    }
+
     const weeks = Object.keys(s.settings.scheduleSettings.matchupPeriods).length;
     const throughWeek = Math.max(0, ...seasonGames.map((g) => g.week));
     seasons.push({
       season: s.seasonId,
       teams: s.teams.length,
+      playoffTeams: s.settings.scheduleSettings.playoffTeamCount,
       regularWeeks,
       weeks,
       complete,
@@ -220,6 +283,10 @@ export function getLeague(): League {
         trades: team.transactionCounter?.trades ?? 0,
         longestWinStreak: longestRun(results, "W"),
         longestLossStreak: longestRun(results, "L"),
+        expectedWins: expected.get(team.id) ?? 0,
+        bench: seasonBench.length
+          ? seasonBench.filter((b) => b.teamId === team.id).reduce((n, b) => n + cents(b.left), 0) / 100
+          : null,
       });
     }
   }
@@ -227,7 +294,7 @@ export function getLeague(): League {
   const metaFile = path.join(DATA_DIR, "meta.json");
   const updatedAt = fs.existsSync(metaFile) ? readJson<{ updatedAt: string }>(metaFile).updatedAt : null;
 
-  cached = { managers, seasons, teamSeasons, games, updatedAt };
+  cached = { managers, seasons, teamSeasons, games, bracket, bench, updatedAt };
   return cached;
 }
 
@@ -346,8 +413,9 @@ const flip = (w: Game["winner"]): Game["winner"] => (w === "HOME" ? "AWAY" : w =
 export function seasonRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<SeasonRecordEntry>[] {
   const complete = new Set(league.seasons.filter((s) => s.complete).map((s) => s.season));
   const rows = league.teamSeasons.filter((ts) => complete.has(ts.season) && counts(ts.person));
-  const pick = (value: (ts: TeamSeason) => number, compare: (a: TeamSeason, b: TeamSeason) => number) =>
-    [...rows].sort(compare).slice(0, top).map((teamSeason) => ({ teamSeason, value: value(teamSeason) }));
+  const pick = (value: (ts: TeamSeason) => number, compare: (a: TeamSeason, b: TeamSeason) => number, from = rows) =>
+    [...from].sort(compare).slice(0, top).map((teamSeason) => ({ teamSeason, value: value(teamSeason) }));
+  const benched = rows.filter((t) => t.bench !== null);
   return [
     { key: "best", title: "The Special One", subtitle: "Most wins in a season", unit: "wins",
       entries: pick((t) => t.all.w, (a, b) => b.all.w - a.all.w || b.all.pf - a.all.pf) },
@@ -365,6 +433,43 @@ export function seasonRecords(league: League, top = 5, counts: (person: string) 
       entries: pick((t) => t.longestLossStreak, (a, b) => b.longestLossStreak - a.longestLossStreak) },
     { key: "trades", title: "The Peaky Blinders", subtitle: "Most trades", unit: "trades",
       entries: pick((t) => t.trades, (a, b) => b.trades - a.trades) },
+    // Added by Luke, 2026-11-15. The names are placeholders until the site owner picks his own.
+    { key: "luckiest", title: "The Horseshoe", subtitle: "Most wins above expected", unit: "luck",
+      entries: pick(luck, (a, b) => luck(b) - luck(a)) },
+    { key: "unluckiest", title: "The Black Cat", subtitle: "Most wins below expected", unit: "luck",
+      entries: pick(luck, (a, b) => luck(a) - luck(b)) },
+    { key: "bench-season", title: "Asleep at the Wheel", subtitle: "Most points left on the bench", unit: "pts",
+      entries: pick((t) => t.bench!, (a, b) => b.bench! - a.bench!, benched) },
+  ];
+}
+
+// ---- Bench records (Luke, 2026-11-15) ----
+
+// The holder is on the home side of `game`, as in the other single-team records
+export type BenchRecordEntry = GameRecordEntry & { bench: BenchGame };
+
+// Same Active rule as the game records: both managers must count.
+export function benchRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<BenchRecordEntry>[] {
+  const gameOf = new Map<string, Game>();
+  for (const g of league.games) {
+    gameOf.set(`${g.season}:${g.week}:${g.home.teamId}`, g);
+    gameOf.set(`${g.season}:${g.week}:${g.away.teamId}`, { ...g, home: g.away, away: g.home, winner: flip(g.winner) });
+  }
+  const rows = league.bench
+    .map((bench) => ({ bench, game: gameOf.get(`${bench.season}:${bench.week}:${bench.teamId}`)! }))
+    .filter(({ game }) => game && counts(game.home.person) && counts(game.away.person));
+  const list = (from: typeof rows, value: (r: (typeof rows)[number]) => number) =>
+    from
+      .map((r) => ({ ...r, value: value(r) }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, top);
+  // Lost, though the best lineup would have outscored the opponent
+  const blown = rows.filter(({ game, bench }) => game.winner === "AWAY" && cents(bench.best) > cents(game.away.points));
+  return [
+    { key: "bench-game", title: "Riding the Pine", subtitle: "Most points left on the bench", unit: "pts",
+      entries: list(rows, (r) => r.bench.left) },
+    { key: "bench-loss", title: "Self-Inflicted", subtitle: "Lost, but the best lineup would have won by the most", unit: "pts",
+      entries: list(blown, (r) => r.bench.best - r.game.away.points) },
   ];
 }
 

@@ -115,8 +115,11 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   copy 23/23, plus the 13 record holders, the championship counts, the old Leaderboard's
   per-season averages and order 14/14, each championship lineup against the final score (and the
   hand-entered 2021 roster), last place against the pancake post, and the Active records example.
-  Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts` or
-  `lib/manager.ts`.
+  It also checks the extras: luck adds up to zero each season, the bench rows cover every game
+  of 2018–2025 except 2021 (starters add up to the score, the best lineup is never below the one
+  started), each bracket's final is won by the champion, and every last-place team missed the
+  playoffs. Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts`,
+  `lib/manager.ts`, `lib/bench.ts` or `lib/seasons.ts`.
 - Python lives in `.venv` (`python -m venv .venv`, then `.venv/Scripts/python -m pip install -r
   requirements.txt`). `scripts/check_env.py` checks `.env.local` without printing values.
   `scripts/probe.py [season ...]` prints a season summary, with owner IDs cut to 8 characters.
@@ -132,10 +135,13 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   `ESPN_S2`, `ESPN_SWID`. Collaborators on a personal repo can add them.
 
 ## Site
-- Routes: `/` (season status, the reigning champion under "Reigning Mahaan Bakaree Champion (The
-  Great Goat)", news), `/standings` (`?view=all|season`; no `view` is Per game), `/teams`,
-  `/teams/[slug]`, `/records` (`?view=season`), `/hall-of-mahaan-bakaree` (champions computed
-  from final ranks; the nav tab says "Champions"), `/news/[slug]`.
+- Routes: `/` (season status, Pancake Watch while a season is on, the reigning champion under
+  "Reigning Mahaan Bakaree Champion (The Great Goat)", news), `/standings` (`?view=all|season`;
+  no `view` is Per game), `/teams`, `/teams/[slug]`, `/records` (`?view=season`),
+  `/hall-of-mahaan-bakaree` (champions computed from final ranks; the nav tab says "Champions"),
+  `/seasons` and `/seasons/[year]`, `/news/[slug]`. Seasons has no nav tab (a sixth doesn't fit a
+  375 px phone): the home page's season card, the Champions page (each year and "Every season")
+  and the Standings page link to it.
 - Old Google Sites URLs redirect in `next.config.ts`: `/home`, `/league-history` (to
   `/standings?view=all`), `/leaderboard` (to `?view=season`), `/retired-teams`,
   `/records/game-records`, `/records/season-records`. `/teams/<name>` and
@@ -166,14 +172,17 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     all-time record, then Seasons, Win %, PF/G and Total PF, left to right. No rank, best finish
     or PDIFF.
   - Manager Performance (`components/ManagerPerformance.tsx`, `performance` in `lib/manager.ts`):
-    one red line, with tabs for Finish, Wins, PF, PA, Streak and Trades, and one y axis that
+    one red line, with tabs for Finish, Wins, PF, PA, Streak, Trades, Luck and Bench, and one y axis that
     follows the tab (Finish has 1st at the top). Every point is labeled. Each season's marker
     shows where that season ranked in the league on that tab: gold, silver and bronze for 1st–3rd
     and a pancake for last. Finish uses the final standings. Wins: most is 1st, ties broken by PF.
     PF: most is 1st. PA: fewest is 1st, most is last. Streak plots the longer of the season's
     longest winning and losing streaks (the winning one on a tie) as +W / −L around a zero line;
     the league's longest winning streak is 1st, its longest losing streak last. Trades: most is
-    1st, no pancake, no medal without a trade. Other ties share the place. `npm run check` tests
+    1st, no pancake, no medal without a trade. Luck (wins above expected, around a zero line):
+    luckiest is 1st, unluckiest last. Bench (points left on the bench): fewest is 1st, most last;
+    no point in 2017 or 2021, which have no bench lineups. Luck and Bench were added by Luke
+    (2026-11-15). Other ties share the place. `npm run check` tests
     the site owner's example: Randy's 2,241.1 PF gets 2024's PF gold, champion Jeremy's 2,208
     silver. Completed seasons only, since half a season's PF flattens the rest. No year picker or
     season card (removed in Round 3). Tapping a point selects that season (Round 4): its year on
@@ -199,7 +208,9 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     points one player scored for one team while in its starting lineup that season, playoffs
     included; `topStarters` in `lib/champions.ts`; none for 2021, which has no lineups).
     Pancake Tier: 🥞 The Pancake House (Last Place), 🧑‍🎨 The Choke Artist (Runner Up), 🥶 Below
-    Zero (fewest PF in the league that season) and 😢 It Was Only A Dream (most PA). Season PF
+    Zero (fewest PF in the league that season), 😢 It Was Only A Dream (most PA) and 🪑 The
+    Benchwarmer (most points left on the bench that season; Luke, 2026-11-15, its name a
+    placeholder for the site owner). Season PF
     and PA count every game that season, so a playoff bye's missing game is part of the game
     (site owner); ties share the award. The Trade and Commish awards were removed in Round 3.
     The Below Zero award isn't the "Below Zero" season record (fewest wins).
@@ -221,6 +232,41 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   (`<details>`). Active only is on by default. With it on, a game record counts only games between
   two active managers, so a record set against a retired manager drops out (site owner,
   2026-11-07: the @$$-Whooping becomes Luke def. Suny). Season records count the manager.
+  Luke added five more on 2026-11-15, each listed after the old site's: game records Riding the
+  Pine (most points left on the bench) and Self-Inflicted (a loss the best lineup would have won,
+  by the most), and season records The Horseshoe and The Black Cat (most wins above and below
+  expected) and Asleep at the Wheel (most points left on the bench). Their names are
+  placeholders until the site owner names them. The bench ones cover 2018–2025 except 2021.
+- Luck (`luck` and `TeamSeason.expectedWins` in `lib/league.ts`, Luke 2026-11-15): all-play
+  expected wins. Each week a team earns the share of the other teams that played that it
+  outscored (ties count half), over every decided game, as with W-L. Luck is wins (ties half)
+  minus that, so each season's luck adds up to zero.
+- Bench (`lib/bench.ts`, Luke 2026-11-15): each week's best possible lineup from the team's
+  players, minus the starters' points. One-position slots fill first with the best players, then
+  FLEX with the best left over (optimal for this league's QB, 2 RB, 2 WR, TE, FLEX, D/ST, K). A
+  player may also fill the slot he actually started in; IR players can't start. Slot counts come
+  from each season's `rosterSettings.lineupSlotCounts`. Only seasons whose lineups include the
+  bench count: 2018–2020 and 2022–2025. `lib/bench.ts` also reads the lineup files for
+  `lib/champions.ts`. The live season has no lineups until it's over, so no bench numbers.
+- Season pages (`lib/seasons.ts`, `components/Bracket.tsx`, Luke 2026-11-15). `/seasons` lists
+  every season with champion, runner-up and last place. `/seasons/[year]` has:
+  - the podium
+  - the standings table: final place, or the current seed while the season is on, with a line
+    under the last playoff spot. W-L, PF and PA count every game. Luck and Bench, plus PA and Seed
+    on wider screens.
+  - the playoff bracket: rounds named Quarterfinals, Semifinals, Final by weeks left, in ESPN's
+    schedule order, byes shown, the champion starred
+  - the pancake ladder (`LOSERS_CONSOLATION_LADDER`)
+
+  `league.bracket` keeps every playoff-week schedule entry, byes and undecided games included.
+- Pancake Watch (`pancakeWatch` in `lib/seasons.ts`, `components/PancakeWatch.tsx`, home page,
+  only while a season is on). Last place isn't the worst regular-season team: every team that
+  misses the playoffs plays the consolation ladder for it (2019's 7 seed and 2018's and 2021's
+  first teams out finished last). So the watch lists everyone below the playoff line, worst first:
+  regular-season W-L, games behind the last playoff spot ("Tied, out on points" when level), and
+  "No playoffs" once a team can't catch enough teams to make it (ties at equal wins count as
+  catchable). Seeds are ESPN's live `playoffSeed`, which breaks ties on total points. After the
+  regular season it shows the ladder.
 - PWA: `app/manifest.ts`, with icons generated by `app/icon.tsx` and `app/apple-icon.tsx`.
 
 ## Counting rules (settled 2026-11-01: they reproduce the Sheet exactly for all 23 managers)
@@ -298,8 +344,11 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    the trimmed Opponents box, and the GOAT and Pancake achievement tiers. The site owner accepted
    every proposed answer to its 8 questions the same day (all recorded above). Round 4
    (2026-11-14) is built: tapping a chart point selects its season, the Opponents ring and name
-   are centered, and the Opponents box lost its Active switch (always active). Next: the domain.
+   are centered, and the Opponents box lost its Active switch (always active). Luke's extras
+   (2026-11-15) are built: luck, points left on the bench, Pancake Watch and season pages.
+   Next: the domain.
 
-Later, not v1: head-to-head records, standings for each season, photos for the Hall.
+Later, not v1: head-to-head records, photos for the Hall, bench numbers for the live season
+(would need weekly lineup fetches).
 
 Don't overbuild v1. Build the stage in front of you.

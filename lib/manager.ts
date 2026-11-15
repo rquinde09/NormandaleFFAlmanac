@@ -3,7 +3,7 @@
 // 2026-11-07 and 2026-11-14). Counting rules are in CLAUDE.md.
 import { topStarters } from "@/lib/champions";
 import { pts } from "@/lib/format";
-import { type Game, type Kind, type League, type TeamSeason, managerBySlug } from "@/lib/league";
+import { type Game, type Kind, type League, type TeamSeason, luck, managerBySlug } from "@/lib/league";
 
 export type OpponentLine = {
   slug: string;
@@ -92,7 +92,7 @@ export function opponents(league: League, person: string): Opponents {
 
 // ---- Manager Performance chart ----
 
-export type ChartMode = "finish" | "wins" | "pf" | "pa" | "streak" | "trades";
+export type ChartMode = "finish" | "wins" | "pf" | "pa" | "streak" | "trades" | "luck" | "bench";
 
 // Where a season ranked in the league on one tab: 1–3 earn a medal, `last` the pancake
 export type Mark = { place: number | null; last: boolean };
@@ -100,7 +100,7 @@ export type Mark = { place: number | null; last: boolean };
 export type SeasonPoint = {
   season: number;
   teams: number;
-  values: Record<ChartMode, number>;
+  values: Record<ChartMode, number | null>; // null: no number that season (Bench without lineups)
   marks: Record<ChartMode, Mark>;
 };
 
@@ -114,7 +114,7 @@ const cents = (n: number) => Math.round(n * 100); // compares points without flo
 // 2026-11-14: Randy's 2,241.1 PF led 2024, so he gets gold on the PF tab). `better` is strictly
 // better, so ties share a place. Finish uses the final standings as they are.
 type Ranking = {
-  value: (t: TeamSeason) => number;
+  value: (t: TeamSeason) => number | null;
   better?: (a: TeamSeason, b: TeamSeason) => boolean;
   pancake: boolean; // whether the last place gets the pancake
   medals?: (t: TeamSeason) => boolean; // whether this season can earn a medal at all
@@ -131,12 +131,17 @@ const RANKINGS: Record<ChartMode, Ranking> = {
   streak: { value: signedStreak, better: (a, b) => signedStreak(a) > signedStreak(b), pancake: true },
   // Most trades is best; no pancake for not trading, and no medal without a trade
   trades: { value: (t) => t.trades, better: (a, b) => a.trades > b.trades, pancake: false, medals: (t) => t.trades > 0 },
+  // Luke, 2026-11-15. Luck: most wins above expected is best. Bench: fewest points left on the
+  // bench is best, most is last (the Benchwarmer award).
+  luck: { value: luck, better: (a, b) => cents(luck(a)) > cents(luck(b)), pancake: true },
+  bench: { value: (t) => t.bench, better: (a, b) => cents(a.bench!) < cents(b.bench!), pancake: true },
 };
 
-function mark(mode: ChartMode, t: TeamSeason, field: TeamSeason[]): Mark {
+function mark(mode: ChartMode, t: TeamSeason, everyone: TeamSeason[]): Mark {
   if (mode === "finish") return { place: t.finalRank, last: t.lastPlace };
   const r = RANKINGS[mode];
-  if (r.medals && !r.medals(t)) return { place: null, last: false };
+  if (r.value(t) === null || (r.medals && !r.medals(t))) return { place: null, last: false };
+  const field = everyone.filter((o) => r.value(o) !== null);
   const place = 1 + field.filter((o) => r.better!(o, t)).length;
   const last = r.pancake && !field.some((o) => r.better!(t, o));
   return { place, last };
@@ -155,7 +160,7 @@ export function performance(league: League, person: string): SeasonPoint[] {
       return {
         season: t.season,
         teams: complete.get(t.season)!.teams,
-        values: Object.fromEntries(modes.map((m) => [m, RANKINGS[m].value(t)])) as Record<ChartMode, number>,
+        values: Object.fromEntries(modes.map((m) => [m, RANKINGS[m].value(t)])) as Record<ChartMode, number | null>,
         marks: Object.fromEntries(modes.map((m) => [m, mark(m, t, field)])) as Record<ChartMode, Mark>,
       };
     });
@@ -216,5 +221,20 @@ export function achievements(league: League, person: string): Achievement[] {
     { key: "choke", tier: "pancake", icon: "🧑‍🎨", title: "The Choke Artist", detail: "Runner Up", ...bySeasons(years((t) => t.finalRank === 2)) },
     { key: "below-zero", tier: "pancake", icon: "🥶", title: "Below Zero", detail: "Scored the Least Points For", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, false)) },
     { key: "dream", tier: "pancake", icon: "😢", title: "It Was Only A Dream", detail: "Most Points Against in a Season", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pa, true)) },
+    // Luke, 2026-11-15
+    {
+      key: "benchwarmer",
+      tier: "pancake",
+      icon: "🪑",
+      title: "The Benchwarmer",
+      detail: "Left the Most Points on the Bench",
+      fine: "In one season, every game counted: the best possible lineup each week minus the one started. ESPN has bench lineups for 2018–2025, except 2021.",
+      ...bySeasons(
+        years((t) => {
+          const field = league.teamSeasons.filter((x) => x.season === t.season && x.bench !== null).map((x) => cents(x.bench!));
+          return t.bench !== null && cents(t.bench) === Math.max(...field);
+        }),
+      ),
+    },
   ];
 }

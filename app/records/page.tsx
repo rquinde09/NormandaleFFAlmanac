@@ -3,10 +3,12 @@ import { PageTitle } from "@/components/ui";
 import { RecordsView, type RecordCard, type RecordEntry, type RecordSet } from "@/components/RecordsView";
 import { pts, record, score } from "@/lib/format";
 import {
+  benchRecords,
   gameRecords,
   getLeague,
   managerBySlug,
   seasonRecords,
+  type BenchRecordEntry,
   type Game,
   type GameRecordEntry,
   type League,
@@ -45,10 +47,27 @@ function gameEntry(league: League, key: string, { game: g, value }: GameRecordEn
   };
 }
 
+// The bench records: the holder is on the home side
+function benchEntry(league: League, { game: g, bench: b, value }: BenchRecordEntry): RecordEntry {
+  const name = (slug: string) => managerBySlug(league, slug)!.nickname;
+  const result = g.winner === "HOME" ? "Won" : g.winner === "AWAY" ? "Lost" : "Tied";
+  return {
+    who: name(g.home.person),
+    value: `${score(value)} pts`,
+    detail: `${result} ${score(g.home.points)}–${score(g.away.points)}, best lineup ${score(b.best)} · vs ${name(g.away.person)} · ${when(g)}`,
+  };
+}
+
+const plusMinus = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n).toFixed(1)}`;
+
 function seasonEntry(league: League, def: RecordDef<SeasonRecordEntry>, { teamSeason: t, value }: SeasonRecordEntry): RecordEntry {
+  const who = managerBySlug(league, t.person)!.nickname;
+  if (def.unit === "luck") {
+    return { who, value: `${plusMinus(value)} wins`, detail: `${t.season} · ${t.teamName} · ${record(t.all)}, ${t.expectedWins.toFixed(1)} wins expected` };
+  }
   const isPoints = def.unit === "pts";
   return {
-    who: managerBySlug(league, t.person)!.nickname,
+    who,
     value: isPoints ? `${pts(value)} pts` : `${value} ${value === 1 ? SINGULAR[def.unit] ?? def.unit : def.unit}`,
     detail: `${t.season} · ${t.teamName} · ${record(t.all)}`,
   };
@@ -61,7 +80,10 @@ function toCard<E>(def: RecordDef<E>, entry: (e: E) => RecordEntry): RecordCard 
 
 function recordSet(league: League, counts?: (person: string) => boolean): RecordSet {
   return {
-    game: gameRecords(league, 5, counts).map((d) => toCard(d, (e) => gameEntry(league, d.key, e))),
+    game: [
+      ...gameRecords(league, 5, counts).map((d) => toCard(d, (e) => gameEntry(league, d.key, e))),
+      ...benchRecords(league, 5, counts).map((d) => toCard(d, (e) => benchEntry(league, e))),
+    ],
     season: seasonRecords(league, 5, counts).map((d) => toCard(d, (e) => seasonEntry(league, d, e))),
   };
 }
@@ -77,6 +99,11 @@ export default function RecordsPage() {
       <Suspense>
         <RecordsView all={recordSet(league)} active={recordSet(league, (p) => active.has(p))} />
       </Suspense>
+      <p className="mt-4 text-xs text-zinc-500">
+        Expected wins: each week, the share of the league a team outscored, added up over the season. Bench: each week&apos;s
+        best possible lineup minus the one started, from ESPN&apos;s lineups for 2018–2025 (none for 2021, and 2017 lists starters
+        only).
+      </p>
     </>
   );
 }

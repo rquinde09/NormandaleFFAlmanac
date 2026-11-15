@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { PageTitle } from "@/components/ui";
 import { StandingsView } from "@/components/StandingsView";
@@ -17,7 +18,15 @@ export default function StandingsPage() {
   };
   return (
     <>
-      <PageTitle>Standings</PageTitle>
+      <PageTitle
+        sub={
+          <Link href="/seasons" className="text-zinc-300 underline-offset-2 hover:underline">
+            Standings for each season →
+          </Link>
+        }
+      >
+        Standings
+      </PageTitle>
       <Suspense>
         <StandingsView rows={standingsRows(league)} meta={meta} />
       </Suspense>

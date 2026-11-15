@@ -18,6 +18,16 @@ const MODES: { value: Mode; label: string; ranks: string }[] = [
     ranks: "The season's longest winning (W) or losing (L) streak, whichever is longer. The league's longest winning streak that season is 1st, its longest losing streak last.",
   },
   { value: "trades", label: "Trades", ranks: "Rank in the league that season: most trades is 1st." },
+  {
+    value: "luck",
+    label: "Luck",
+    ranks: "Wins above or below expected. Expected wins: each week, the share of the league this team outscored. Luckiest that season is 1st, unluckiest last.",
+  },
+  {
+    value: "bench",
+    label: "Bench",
+    ranks: "Points left on the bench: each week's best possible lineup minus the one started. Fewest that season is 1st. ESPN has bench lineups for 2018–2025, except 2021.",
+  },
 ];
 
 const MEDALS: Record<number, string> = { 1: "#fbbf24", 2: "#d4d4d8", 3: "#cd7f32" };
@@ -60,15 +70,22 @@ export function ManagerPerformance({ seasons }: { seasons: SeasonPoint[] }) {
   );
 }
 
+// Points tabs: a free axis around the values, labels rounded to whole points
+const POINTS = new Set<Mode>(["pf", "pa", "bench"]);
+const plusMinus = (v: number, digits: number) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(digits)}`;
+
 const labelOf = (v: number, mode: Mode) =>
   mode === "finish"
     ? ordinal(v)
     : mode === "streak"
       ? v > 0 ? `W${v}` : v < 0 ? `L${-v}` : "0"
-      : mode === "pf" || mode === "pa"
-        ? String(Math.round(v))
-        : String(v);
-const tickOf = (v: number, mode: Mode) => (mode === "pf" || mode === "pa" ? Math.round(v).toLocaleString("en-US") : labelOf(v, mode));
+      : mode === "luck"
+        ? plusMinus(v, 1)
+        : POINTS.has(mode)
+          ? String(Math.round(v))
+          : String(v);
+const tickOf = (v: number, mode: Mode) =>
+  POINTS.has(mode) ? Math.round(v).toLocaleString("en-US") : mode === "luck" ? plusMinus(v, 0) : labelOf(v, mode);
 
 type Point = { s: SeasonPoint; v: number };
 
@@ -103,7 +120,9 @@ function Chart({
   onSelect: (season: number) => void;
 }) {
   if (seasons.length === 0) return <p className="py-10 text-center text-sm text-zinc-500">No finished seasons yet.</p>;
-  const points: Point[] = seasons.map((s) => ({ s, v: s.values[mode] }));
+  // Bench has no number for seasons without bench lineups (2017, 2021)
+  const points: Point[] = seasons.flatMap((s) => (s.values[mode] === null ? [] : [{ s, v: s.values[mode]! }]));
+  if (points.length === 0) return <p className="py-10 text-center text-sm text-zinc-500">ESPN has no bench lineups for these seasons.</p>;
   const values = points.map((p) => p.v);
 
   // y: 0 at the top, 100 at the bottom, in percent
@@ -113,7 +132,7 @@ function Chart({
     const worst = Math.max(...seasons.map((s) => s.teams));
     y = (rank) => ((rank - 1) / Math.max(1, worst - 1)) * 100;
     ticks = [1, Math.round((1 + worst) / 2), worst];
-  } else if (mode === "pf" || mode === "pa") {
+  } else if (POINTS.has(mode)) {
     const pad = Math.max((Math.max(...values) - Math.min(...values)) * 0.15, 50);
     const lo = Math.floor((Math.min(...values) - pad) / 100) * 100;
     const hi = Math.ceil((Math.max(...values) + pad) / 100) * 100;
@@ -149,7 +168,7 @@ function Chart({
       )}
 
       {ticks.map((t) => (
-        <div key={t} className={`absolute right-0 left-0 border-t ${t === 0 && mode === "streak" ? "border-zinc-600" : "border-zinc-800"}`} style={{ top: `${y(t)}%` }}>
+        <div key={t} className={`absolute right-0 left-0 border-t ${t === 0 && (mode === "streak" || mode === "luck") ? "border-zinc-600" : "border-zinc-800"}`} style={{ top: `${y(t)}%` }}>
           <span className="absolute right-full mr-2 -translate-y-1/2 text-[10px] tabular-nums whitespace-nowrap text-zinc-500">
             {tickOf(t, mode)}
           </span>

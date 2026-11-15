@@ -5,6 +5,7 @@
 // site owner (data/manual/lineups-2021.json), without points.
 import fs from "node:fs";
 import path from "node:path";
+import { BENCH, readLineups, type RawLineups, type RawPlayer } from "@/lib/bench";
 import type { Game, League, TeamSeason } from "@/lib/league";
 
 type ManualPlayer = { slot: string; name: string };
@@ -17,23 +18,10 @@ function readManual(season: number): ManualLineup | null {
   return fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, "utf8")) as ManualLineup) : null;
 }
 
-type RawPlayer = {
-  playerId: number;
-  fullName: string | null;
-  defaultPositionId: number | null;
-  lineupSlotId: number;
-  appliedStatTotal: number | null;
-};
-type RawSide = { teamId: number; totalPoints: number; lineup: RawPlayer[] };
-type RawLineups = { seasonId: number; weeks: { matchupPeriodId: number; games: { home: RawSide; away: RawSide }[] }[] };
-
-const LINEUP_DIR = path.join(process.cwd(), "data", "raw", "lineups");
-
 // lineupSlotId → label, in lineup order. 20 is the bench, 21 IR.
 const SLOTS: [number, string][] = [
   [0, "QB"], [2, "RB"], [3, "RB/WR"], [4, "WR"], [5, "WR/TE"], [6, "TE"], [23, "FLEX"], [7, "OP"], [16, "D/ST"], [17, "K"],
 ];
-const BENCH = new Set([20, 21]);
 // defaultPositionId → label, in lineup order
 const POSITIONS: [number, string][] = [[1, "QB"], [2, "RB"], [3, "WR"], [4, "TE"], [16, "D/ST"], [5, "K"]];
 const positionOf = (p: RawPlayer) => POSITIONS.find(([id]) => id === p.defaultPositionId)?.[1] ?? "";
@@ -48,11 +36,6 @@ export type ChampionDetails = {
   bestPlayer: { name: string; position: string; points: number; starts: number } | null;
 };
 
-function readLineups(season: number): RawLineups | null {
-  const file = path.join(LINEUP_DIR, `${season}.json`);
-  return fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, "utf8")) as RawLineups) : null;
-}
-
 // Puts this team on the home side, so details read "champion vs opponent"
 function asHome(g: Game, teamId: number): Game {
   if (g.home.teamId === teamId) return g;
@@ -64,7 +47,7 @@ function sideIn(lineups: RawLineups | null, week: number, teamId: number) {
   const games = lineups?.weeks.find((w) => w.matchupPeriodId === week)?.games ?? [];
   for (const g of games) {
     if (g.home.teamId === teamId) return g.home;
-    if (g.away.teamId === teamId) return g.away;
+    if (g.away?.teamId === teamId) return g.away;
   }
   return null;
 }
@@ -91,7 +74,8 @@ export function topStarters(league: League): Map<number, TopStarter[]> {
     for (const week of lineups?.weeks ?? []) {
       for (const g of week.games) {
         for (const side of [g.home, g.away]) {
-          for (const p of side?.lineup ?? []) {
+          if (!side) continue;
+          for (const p of side.lineup) {
             if (BENCH.has(p.lineupSlotId)) continue;
             const key = `${side.teamId}:${p.playerId}`;
             const row = totals.get(key) ?? { season: info.season, person: person.get(side.teamId)!, name: p.fullName ?? `Player ${p.playerId}`, points: 0 };
@@ -118,7 +102,7 @@ export function championDetails(league: League, champ: TeamSeason): ChampionDeta
   const bestGame = games.length ? games.reduce((a, b) => (b.home.points > a.home.points ? b : a)) : null;
 
   const lineups = readLineups(champ.season);
-  const hasLineups = !!lineups?.weeks.some((w) => w.games.some((g) => g.home.lineup.length || g.away.lineup.length));
+  const hasLineups = !!lineups?.weeks.some((w) => w.games.some((g) => g.home.lineup.length || g.away?.lineup.length));
   const finalSide = final && hasLineups ? sideIn(lineups, final.week, champ.teamId) : null;
   // 2017 lists starters only, every one in slot 0, so those are labeled by position instead
   const slotsKnown = !!finalSide?.lineup.some((p) => p.lineupSlotId !== 0);
