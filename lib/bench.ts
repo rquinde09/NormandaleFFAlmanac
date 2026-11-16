@@ -1,7 +1,7 @@
-// Weekly lineups from data/raw/lineups/{season}.json (fetched once a season is over), and the points
-// each team left on its bench (Luke, 2026-11-15): every week's best possible lineup from the
-// players it had, minus the lineup it started. 2017 lists starters only and ESPN has no 2021
-// lineups, so those seasons have no bench numbers.
+// Weekly lineups from data/raw/lineups/{season}.json (a finished season's fetched once; the season in
+// progress gains each week once it's decided), and the points each team left on its bench (Luke,
+// 2026-11-15): every week's best possible lineup from the players it had, minus the lineup it
+// started. 2017 lists starters only, so it has no bench numbers.
 import fs from "node:fs";
 import path from "node:path";
 
@@ -11,19 +11,37 @@ export type RawPlayer = {
   defaultPositionId: number | null;
   lineupSlotId: number;
   appliedStatTotal: number | null;
+  projectedTotal?: number | null; // ESPN's projection for that week: 2018 on, none for 2017
 };
 export type RawSide = { teamId: number; totalPoints: number; lineup: RawPlayer[] };
-export type RawLineups = { seasonId: number; weeks: { matchupPeriodId: number; games: { home: RawSide; away: RawSide | null }[] }[] };
+export type RawWeek = { matchupPeriodId: number; scoringPeriodId: number; games: { home: RawSide; away: RawSide | null }[] };
+export type RawLineups = { seasonId: number; weeks: RawWeek[] };
 
 const LINEUP_DIR = path.join(process.cwd(), "data", "raw", "lineups");
 
 // lineupSlotId 20 is the bench, 21 IR
 export const BENCH = new Set([20, 21]);
 
+const cache = new Map<number, RawLineups | null>();
 export function readLineups(season: number): RawLineups | null {
-  const file = path.join(LINEUP_DIR, `${season}.json`);
-  return fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, "utf8")) as RawLineups) : null;
+  if (!cache.has(season)) {
+    const file = path.join(LINEUP_DIR, `${season}.json`);
+    cache.set(season, fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, "utf8")) as RawLineups) : null);
+  }
+  return cache.get(season)!;
 }
+
+// Every team's lineup in every week of the file, without byes or empty lineups
+export function lineupSides(lineups: RawLineups | null) {
+  return (lineups?.weeks ?? []).flatMap((w) =>
+    w.games
+      .flatMap((g) => [g.home, g.away])
+      .filter((s): s is RawSide => !!s?.lineup.length)
+      .map((side) => ({ week: w.matchupPeriodId, scoringPeriod: w.scoringPeriodId, side })),
+  );
+}
+
+export const isStarter = (p: RawPlayer) => !BENCH.has(p.lineupSlotId);
 
 // Starting slot → the positions (defaultPositionId: 1 QB, 2 RB, 3 WR, 4 TE, 5 K, 16 D/ST) that fill it
 const FILLS: Record<number, number[]> = {
@@ -72,10 +90,7 @@ export type BenchGame = {
 // One row per team per week, for a season whose lineups include the bench. `slots` are the season's
 // starting slots ([lineupSlotId, count]), from its settings.
 export function benchGames(season: number, slots: [number, number][], person: (teamId: number) => string): BenchGame[] {
-  const lineups = readLineups(season);
-  const sides = (lineups?.weeks ?? []).flatMap((w) =>
-    w.games.flatMap((g) => [g.home, g.away]).filter((s): s is RawSide => !!s?.lineup.length).map((side) => ({ week: w.matchupPeriodId, side })),
-  );
+  const sides = lineupSides(readLineups(season));
   if (!sides.some(({ side }) => side.lineup.some((p) => p.lineupSlotId === 20))) return [];
   return sides.map(({ week, side }) => {
     const actual = side.lineup.filter((p) => !BENCH.has(p.lineupSlotId)).reduce((n, p) => n + cents(p.appliedStatTotal ?? 0), 0) / 100;

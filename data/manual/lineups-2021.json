@@ -1,5 +1,5 @@
 {
-  "note": "ESPN returns no lineups for 2021. Entered by hand from the site owner, 2026-11-07; slots checked against ESPN's box score of the week 17 final, 2026-11-10. ESPN shows no player points for 2021.",
+  "note": "Entered by hand from the site owner, 2026-11-07, before ESPN's 2021 lineups were fetched; slots checked against ESPN's box score of the week 17 final, 2026-11-10. ESPN's lineup (fetched 2026-11-15) matches it slot for slot and is the one shown; npm run check compares them.",
   "season": 2021,
   "person": "robel",
   "starters": [

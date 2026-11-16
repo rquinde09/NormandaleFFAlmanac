@@ -1,0 +1,2485 @@
+{
+  "players": [
+    {
+      "defaultPositionId": 16,
+      "fullName": "Texans D/ST",
+      "playerId": -16034,
+      "points": 133.0,
+      "projected": 106.49734245
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Ravens D/ST",
+      "playerId": -16033,
+      "points": 131.0,
+      "projected": 108.36747975
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Jaguars D/ST",
+      "playerId": -16030,
+      "points": 109.0,
+      "projected": 121.9608284
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Panthers D/ST",
+      "playerId": -16029,
+      "points": 76.0,
+      "projected": 96.69901314
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Redskins D/ST",
+      "playerId": -16028,
+      "points": 97.0,
+      "projected": 88.59168197
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Seahawks D/ST",
+      "playerId": -16026,
+      "points": 98.0,
+      "projected": 77.24638737
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "49ers D/ST",
+      "playerId": -16025,
+      "points": 49.0,
+      "projected": 68.51284093
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Chargers D/ST",
+      "playerId": -16024,
+      "points": 105.0,
+      "projected": 103.16210602
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Steelers D/ST",
+      "playerId": -16023,
+      "points": 110.0,
+      "projected": 93.41962052
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Cardinals D/ST",
+      "playerId": -16022,
+      "points": 85.0,
+      "projected": 103.47461352
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Eagles D/ST",
+      "playerId": -16021,
+      "points": 66.0,
+      "projected": 113.31155856
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Jets D/ST",
+      "playerId": -16020,
+      "points": 82.0,
+      "projected": 69.10813446
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Saints D/ST",
+      "playerId": -16018,
+      "points": 98.0,
+      "projected": 84.89942836
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Patriots D/ST",
+      "playerId": -16017,
+      "points": 113.0,
+      "projected": 107.33522384
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Vikings D/ST",
+      "playerId": -16016,
+      "points": 125.0,
+      "projected": 109.01625916
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Dolphins D/ST",
+      "playerId": -16015,
+      "points": 85.0,
+      "projected": 85.19970346
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Rams D/ST",
+      "playerId": -16014,
+      "points": 131.0,
+      "projected": 107.06821883
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Raiders D/ST",
+      "playerId": -16013,
+      "points": 21.0,
+      "projected": 72.24910704
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Chiefs D/ST",
+      "playerId": -16012,
+      "points": 91.0,
+      "projected": 80.87090582
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Colts D/ST",
+      "playerId": -16011,
+      "points": 101.0,
+      "projected": 72.90131746
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Titans D/ST",
+      "playerId": -16010,
+      "points": 108.0,
+      "projected": 107.33508174
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Packers D/ST",
+      "playerId": -16009,
+      "points": 74.0,
+      "projected": 86.7475105
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Lions D/ST",
+      "playerId": -16008,
+      "points": 85.0,
+      "projected": 93.17814002
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Broncos D/ST",
+      "playerId": -16007,
+      "points": 108.0,
+      "projected": 101.79751957
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Cowboys D/ST",
+      "playerId": -16006,
+      "points": 90.0,
+      "projected": 87.96043981
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Browns D/ST",
+      "playerId": -16005,
+      "points": 69.0,
+      "projected": 79.45876057
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Bears D/ST",
+      "playerId": -16003,
+      "points": 188.0,
+      "projected": 95.58609991
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Bills D/ST",
+      "playerId": -16002,
+      "points": 111.0,
+      "projected": 85.43938781
+    },
+    {
+      "defaultPositionId": 16,
+      "fullName": "Falcons D/ST",
+      "playerId": -16001,
+      "points": 51.0,
+      "projected": 82.58724737
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Adam Vinatieri",
+      "playerId": 1097,
+      "points": 122.0,
+      "projected": 127.06367814
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Sebastian Janikowski",
+      "playerId": 2148,
+      "points": 123.0,
+      "projected": 119.6518765
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Tom Brady",
+      "playerId": 2330,
+      "points": 281.3,
+      "projected": 313.79518973
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Drew Brees",
+      "playerId": 2580,
+      "points": 304.98,
+      "projected": 269.33513892
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Matt Bryant",
+      "playerId": 4333,
+      "points": 107.0,
+      "projected": 140.31976139
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Antonio Gates",
+      "playerId": 5362,
+      "points": 75.3,
+      "projected": 121.03297641
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Eli Manning",
+      "playerId": 5526,
+      "points": 239.96,
+      "projected": 237.73256646
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Larry Fitzgerald",
+      "playerId": 5528,
+      "points": 185.68,
+      "projected": 241.8969873
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Philip Rivers",
+      "playerId": 5529,
+      "points": 285.02,
+      "projected": 271.29104211
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Ben Roethlisberger",
+      "playerId": 5536,
+      "points": 341.86,
+      "projected": 274.09162772
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Benjamin Watson",
+      "playerId": 5557,
+      "points": 87.0,
+      "projected": 121.44026771
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Alex Smith",
+      "playerId": 8416,
+      "points": 138.0,
+      "projected": 285.9501898
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Aaron Rodgers",
+      "playerId": 8439,
+      "points": 312.58,
+      "projected": 313.32330049
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Frank Gore",
+      "playerId": 8479,
+      "points": 102.6,
+      "projected": 91.83921461
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Darren Sproles",
+      "playerId": 8544,
+      "points": 61.0,
+      "projected": 95.28109868
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Ryan Fitzpatrick",
+      "playerId": 8664,
+      "points": 165.84,
+      "projected": 48.97032955
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Robbie Gould",
+      "playerId": 9354,
+      "points": 138.0,
+      "projected": 135.64213712
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Vernon Davis",
+      "playerId": 9592,
+      "points": 75.7,
+      "projected": 69.95317062
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Stephen Gostkowski",
+      "playerId": 9704,
+      "points": 133.0,
+      "projected": 145.78655915
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Brandon Marshall",
+      "playerId": 9705,
+      "points": 30.6,
+      "projected": 102.3756649
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Delanie Walker",
+      "playerId": 9761,
+      "points": 9.2,
+      "projected": -0.77784253
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Adrian Peterson",
+      "playerId": 10452,
+      "points": 189.0,
+      "projected": 142.48535584
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Ted Ginn Jr.",
+      "playerId": 10453,
+      "points": 52.5,
+      "projected": 119.10237405
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Marshawn Lynch",
+      "playerId": 10456,
+      "points": 79.0,
+      "projected": 176.4946403
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Greg Olsen",
+      "playerId": 10475,
+      "points": 80.1,
+      "projected": -0.19009196
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Mason Crosby",
+      "playerId": 10636,
+      "points": 138.0,
+      "projected": 123.07478197
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Matt Prater",
+      "playerId": 11122,
+      "points": 125.32,
+      "projected": 139.44718618
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Matt Ryan",
+      "playerId": 11237,
+      "points": 354.96,
+      "projected": 270.37369207
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Joe Flacco",
+      "playerId": 11252,
+      "points": 137.1,
+      "projected": 198.98224287
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Jordy Nelson",
+      "playerId": 11270,
+      "points": 156.7,
+      "projected": 184.92523467
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "DeSean Jackson",
+      "playerId": 11283,
+      "points": 151.3,
+      "projected": 138.14951395
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Jamaal Charles",
+      "playerId": 11307,
+      "points": 3.4,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Pierre Garcon",
+      "playerId": 11439,
+      "points": 58.6,
+      "projected": 189.52350071
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Danny Amendola",
+      "playerId": 11674,
+      "points": 127.42,
+      "projected": 138.14549138
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Graham Gano",
+      "playerId": 12460,
+      "points": 80.0,
+      "projected": 131.72099915
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Matthew Stafford",
+      "playerId": 12483,
+      "points": 212.18,
+      "projected": 273.73173557
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "LeSean McCoy",
+      "playerId": 12514,
+      "points": 127.2,
+      "projected": 251.81402889
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Jared Cook",
+      "playerId": 12537,
+      "points": 193.6,
+      "projected": 123.83653528
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Michael Crabtree",
+      "playerId": 12563,
+      "points": 132.7,
+      "projected": 194.93696987
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Brandon LaFell",
+      "playerId": 12576,
+      "points": 37.5,
+      "projected": 92.07855264
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Mike Wallace",
+      "playerId": 12601,
+      "points": 0,
+      "projected": 121.79273109
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Julian Edelman",
+      "playerId": 12649,
+      "points": 207.42,
+      "projected": 159.4149937
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Ryan Succop",
+      "playerId": 12731,
+      "points": 113.0,
+      "projected": 125.76449396
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Colt McCoy",
+      "playerId": 13199,
+      "points": 27.18,
+      "projected": 1.09972447
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "LeGarrette Blount",
+      "playerId": 13213,
+      "points": 86.5,
+      "projected": 82.16217146
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Dez Bryant",
+      "playerId": 13215,
+      "points": 0,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Demaryius Thomas",
+      "playerId": 13216,
+      "points": 156.7,
+      "projected": 227.16130644
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Golden Tate",
+      "playerId": 13217,
+      "points": 182.9,
+      "projected": 215.85689013
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Rob Gronkowski",
+      "playerId": 13229,
+      "points": 131.2,
+      "projected": 251.12117728
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Jimmy Graham",
+      "playerId": 13232,
+      "points": 130.6,
+      "projected": 166.61307805
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Ed Dickson",
+      "playerId": 13272,
+      "points": 45.2,
+      "projected": 33.1670986
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Emmanuel Sanders",
+      "playerId": 13295,
+      "points": 198.22,
+      "projected": 191.10310701
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Chris Ivory",
+      "playerId": 13587,
+      "points": 78.0,
+      "projected": 85.08536521
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Antonio Brown",
+      "playerId": 13934,
+      "points": 323.7,
+      "projected": 321.87570854
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Mark Ingram II",
+      "playerId": 13981,
+      "points": 142.5,
+      "projected": 174.80801099
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Julio Jones",
+      "playerId": 13982,
+      "points": 325.9,
+      "projected": 291.6688175
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "A.J. Green",
+      "playerId": 13983,
+      "points": 149.4,
+      "projected": 266.33342809
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Cam Newton",
+      "playerId": 13994,
+      "points": 282.6,
+      "projected": 299.10194794
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Andy Dalton",
+      "playerId": 14012,
+      "points": 174.54,
+      "projected": 252.47962186
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Randall Cobb",
+      "playerId": 14053,
+      "points": 86.3,
+      "projected": 169.78110537
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Kyle Rudolph",
+      "playerId": 14054,
+      "points": 151.4,
+      "projected": 163.52342501
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Bilal Powell",
+      "playerId": 14129,
+      "points": 60.3,
+      "projected": 145.96796685
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Charles Clay",
+      "playerId": 14145,
+      "points": 37.4,
+      "projected": 135.26772109
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Niles Paul",
+      "playerId": 14156,
+      "points": 19.5,
+      "projected": 17.72886197
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Tyrod Taylor",
+      "playerId": 14163,
+      "points": 41.42,
+      "projected": 240.42589574
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Aldrick Robinson",
+      "playerId": 14164,
+      "points": 70.1,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Dion Lewis",
+      "playerId": 14198,
+      "points": 160.7,
+      "projected": 171.63931346
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Doug Baldwin",
+      "playerId": 14221,
+      "points": 141.8,
+      "projected": 224.21709688
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Dontrelle Inman",
+      "playerId": 14269,
+      "points": 76.4,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Dan Bailey",
+      "playerId": 14322,
+      "points": 92.0,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Chris Hogan",
+      "playerId": 14402,
+      "points": 106.2,
+      "projected": 198.53301617
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Terrelle Pryor",
+      "playerId": 14851,
+      "points": 53.1,
+      "projected": 88.16679881
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Andrew Luck",
+      "playerId": 14874,
+      "points": 327.92,
+      "projected": 284.37302389
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Ryan Tannehill",
+      "playerId": 14876,
+      "points": 142.96,
+      "projected": 248.89953116
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Nick Foles",
+      "playerId": 14877,
+      "points": 76.22,
+      "projected": 17.59812343
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Brock Osweiler",
+      "playerId": 14879,
+      "points": 67.98,
+      "projected": 1.06032407
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Kirk Cousins",
+      "playerId": 14880,
+      "points": 283.12,
+      "projected": 271.60706388
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Russell Wilson",
+      "playerId": 14881,
+      "points": 299.42,
+      "projected": 289.34017809
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Doug Martin",
+      "playerId": 14885,
+      "points": 119.9,
+      "projected": 105.28904656
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Lamar Miller",
+      "playerId": 14886,
+      "points": 172.6,
+      "projected": 171.11388919
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Alshon Jeffery",
+      "playerId": 14912,
+      "points": 185.3,
+      "projected": 168.58208624
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Jarius Wright",
+      "playerId": 14918,
+      "points": 97.6,
+      "projected": 15.07482374
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Mohamed Sanu",
+      "playerId": 14922,
+      "points": 182.4,
+      "projected": 172.14925767
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "T.Y. Hilton",
+      "playerId": 14924,
+      "points": 239.0,
+      "projected": 241.12331852
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Greg Zuerlein",
+      "playerId": 14993,
+      "points": 124.0,
+      "projected": 147.66778253
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Rhett Ellison",
+      "playerId": 15003,
+      "points": 60.2,
+      "projected": 28.43657286
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Alfred Morris",
+      "playerId": 15009,
+      "points": 68.1,
+      "projected": 153.81470676
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Marvin Jones Jr.",
+      "playerId": 15072,
+      "points": 115.8,
+      "projected": 204.75657608
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Randy Bullock",
+      "playerId": 15091,
+      "points": 102.0,
+      "projected": 115.27730515
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Rishard Matthews",
+      "playerId": 15102,
+      "points": 7.4,
+      "projected": 144.21087809
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Case Keenum",
+      "playerId": 15168,
+      "points": 214.9,
+      "projected": 246.42079842
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Giorgio Tavecchio",
+      "playerId": 15245,
+      "points": 29.0,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Cole Beasley",
+      "playerId": 15349,
+      "points": 150.2,
+      "projected": 122.33547475
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Jermaine Kearse",
+      "playerId": 15428,
+      "points": 80.1,
+      "projected": 97.91867868
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Justin Tucker",
+      "playerId": 15683,
+      "points": 156.0,
+      "projected": 138.28307498
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Josh Gordon",
+      "playerId": 15705,
+      "points": 138.7,
+      "projected": 199.95865122
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Tavon Austin",
+      "playerId": 15786,
+      "points": 39.5,
+      "projected": 63.82227489
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Tyler Eifert",
+      "playerId": 15788,
+      "points": 38.9,
+      "projected": 117.03989115
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "DeAndre Hopkins",
+      "playerId": 15795,
+      "points": 333.5,
+      "projected": 281.28424766
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Keenan Allen",
+      "playerId": 15818,
+      "points": 260.1,
+      "projected": 278.74671582
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Le'Veon Bell",
+      "playerId": 15825,
+      "points": 0,
+      "projected": 283.71405383
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Giovani Bernard",
+      "playerId": 15826,
+      "points": 95.9,
+      "projected": 124.31043597
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Zach Ertz",
+      "playerId": 15835,
+      "points": 280.3,
+      "projected": 212.11163067
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Marquise Goodwin",
+      "playerId": 15839,
+      "points": 87.4,
+      "projected": 189.707853
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Travis Kelce",
+      "playerId": 15847,
+      "points": 294.6,
+      "projected": 217.25466515
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Vance McDonald",
+      "playerId": 15853,
+      "points": 133.0,
+      "projected": 122.70127152
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Christine Michael",
+      "playerId": 15855,
+      "points": 0.9,
+      "projected": 15.86060211
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Jordan Reed",
+      "playerId": 15860,
+      "points": 119.8,
+      "projected": 180.70385055
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Terrance Williams",
+      "playerId": 15878,
+      "points": 3.8,
+      "projected": 110.50114796
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Robert Woods",
+      "playerId": 15880,
+      "points": 265.6,
+      "projected": 189.91552523
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Caleb Sturgis",
+      "playerId": 15918,
+      "points": 35.0,
+      "projected": 118.62430902
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Latavius Murray",
+      "playerId": 15920,
+      "points": 131.9,
+      "projected": 106.21147498
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Kenjon Barner",
+      "playerId": 15921,
+      "points": 8.4,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Dustin Hopkins",
+      "playerId": 15965,
+      "points": 118.0,
+      "projected": 122.62936581
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Chris Thompson",
+      "playerId": 15966,
+      "points": 91.6,
+      "projected": 156.06497822
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Rex Burkhead",
+      "playerId": 15971,
+      "points": 49.7,
+      "projected": 170.96061999
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Theo Riddick",
+      "playerId": 15994,
+      "points": 116.5,
+      "projected": 133.85244782
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Kyle Juszczyk",
+      "playerId": 16002,
+      "points": 67.4,
+      "projected": 103.80781272
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Kenny Stills",
+      "playerId": 16016,
+      "points": 134.42,
+      "projected": 178.69149811
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Spencer Ware",
+      "playerId": 16020,
+      "points": 79.0,
+      "projected": 45.35385939
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "C.J. Anderson",
+      "playerId": 16040,
+      "points": 67.4,
+      "projected": 101.11336768
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Adam Thielen",
+      "playerId": 16460,
+      "points": 307.3,
+      "projected": 235.95488287
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Brett Maher",
+      "playerId": 16486,
+      "points": 131.0,
+      "projected": 118.27258482
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Jack Doyle",
+      "playerId": 16504,
+      "points": 60.5,
+      "projected": 166.12094911
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Blake Bortles",
+      "playerId": 16724,
+      "points": 173.22,
+      "projected": 248.67204076
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Sammy Watkins",
+      "playerId": 16725,
+      "points": 115.1,
+      "projected": 187.37742137
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Kelvin Benjamin",
+      "playerId": 16730,
+      "points": 69.0,
+      "projected": 178.13185237
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Brandin Cooks",
+      "playerId": 16731,
+      "points": 243.2,
+      "projected": 196.29787811
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Eric Ebron",
+      "playerId": 16732,
+      "points": 222.2,
+      "projected": 120.82736206
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Odell Beckham Jr.",
+      "playerId": 16733,
+      "points": 230.34,
+      "projected": 275.78270434
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Mike Evans",
+      "playerId": 16737,
+      "points": 290.4,
+      "projected": 231.75772279
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Derek Carr",
+      "playerId": 16757,
+      "points": 216.76,
+      "projected": 245.8369454
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Jimmy Garoppolo",
+      "playerId": 16760,
+      "points": 48.02,
+      "projected": 261.8227073
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Carlos Hyde",
+      "playerId": 16777,
+      "points": 98.4,
+      "projected": 145.31462004
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Paul Richardson",
+      "playerId": 16781,
+      "points": 59.1,
+      "projected": 147.11772156
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Jarvis Landry",
+      "playerId": 16790,
+      "points": 217.12,
+      "projected": 209.22231762
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Donte Moncrief",
+      "playerId": 16791,
+      "points": 130.8,
+      "projected": 126.85696079
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Austin Seferian-Jenkins",
+      "playerId": 16795,
+      "points": 26.0,
+      "projected": 121.86655455
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Allen Robinson",
+      "playerId": 16799,
+      "points": 153.3,
+      "projected": 222.17553343
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Davante Adams",
+      "playerId": 16800,
+      "points": 329.6,
+      "projected": 251.5288342
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Jeremy Hill",
+      "playerId": 16803,
+      "points": 4.1,
+      "projected": -0.79713707
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "John Brown",
+      "playerId": 16804,
+      "points": 143.9,
+      "projected": 118.7768858
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Ryan Grant",
+      "playerId": 16845,
+      "points": 74.4,
+      "projected": 128.60454924
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Martavis Bryant",
+      "playerId": 16886,
+      "points": 45.9,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Quincy Enunwa",
+      "playerId": 16899,
+      "points": 86.9,
+      "projected": 117.56777278
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "James White",
+      "playerId": 16913,
+      "points": 276.6,
+      "projected": 145.99699989
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Alfred Blue",
+      "playerId": 16921,
+      "points": 97.3,
+      "projected": 63.47883138
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Devonta Freeman",
+      "playerId": 16944,
+      "points": 14.1,
+      "projected": 233.05906771
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Bruce Ellington",
+      "playerId": 16946,
+      "points": 59.6,
+      "projected": 35.84552918
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Kapri Bibbs",
+      "playerId": 16969,
+      "points": 61.8,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Trey Burton",
+      "playerId": 16974,
+      "points": 147.1,
+      "projected": 141.75556332
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Albert Wilson",
+      "playerId": 17051,
+      "points": 96.78,
+      "projected": 124.19183769
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Cody Parkey",
+      "playerId": 17082,
+      "points": 115.0,
+      "projected": 121.89120584
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Isaiah Crowell",
+      "playerId": 17133,
+      "points": 140.7,
+      "projected": 162.27580046
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Allen Hurns",
+      "playerId": 17177,
+      "points": 61.5,
+      "projected": 159.79958345
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Willie Snead IV",
+      "playerId": 17258,
+      "points": 134.4,
+      "projected": 119.47391114
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Damien Williams",
+      "playerId": 17359,
+      "points": 98.6,
+      "projected": 36.85763489
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Chris Boswell",
+      "playerId": 17372,
+      "points": 86.08,
+      "projected": 147.77612903
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Seth Roberts",
+      "playerId": 17402,
+      "points": 106.9,
+      "projected": 73.5257438
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Cairo Santos",
+      "playerId": 17427,
+      "points": 63.0,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Taylor Gabriel",
+      "playerId": 17437,
+      "points": 151.9,
+      "projected": 92.69961233
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Cameron Brate",
+      "playerId": 17453,
+      "points": 92.9,
+      "projected": 114.96827247
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Jason Myers",
+      "playerId": 2473037,
+      "points": 148.0,
+      "projected": 104.99660049
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "David Johnson",
+      "playerId": 2508176,
+      "points": 246.6,
+      "projected": 323.51781993
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Rod Smith",
+      "playerId": 2512197,
+      "points": 33.7,
+      "projected": 50.86513328
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Corey Grant",
+      "playerId": 2515934,
+      "points": 19.7,
+      "projected": 57.00651129
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Cameron Meredith",
+      "playerId": 2520698,
+      "points": 24.4,
+      "projected": 120.58023261
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Zach Zenner",
+      "playerId": 2521161,
+      "points": 57.1,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Carson Wentz",
+      "playerId": 2573079,
+      "points": 193.66,
+      "projected": 278.76844282
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Jay Ajayi",
+      "playerId": 2573300,
+      "points": 43.4,
+      "projected": 168.28035079
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "C.J. Uzomah",
+      "playerId": 2574576,
+      "points": 104.9,
+      "projected": 9.14400945
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Robby Anderson",
+      "playerId": 2574808,
+      "points": 156.4,
+      "projected": 187.08914381
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Rob Kelley",
+      "playerId": 2575408,
+      "points": 0.8,
+      "projected": 41.87919196
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Josh Doctson",
+      "playerId": 2576019,
+      "points": 109.2,
+      "projected": 170.00702829
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Jeff Heuerman",
+      "playerId": 2576389,
+      "points": 71.1,
+      "projected": 48.89266992
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Nick Vannett",
+      "playerId": 2576399,
+      "points": 73.9,
+      "projected": 60.1688002
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Raheem Mostert",
+      "playerId": 2576414,
+      "points": 38.6,
+      "projected": 40.61112173
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Melvin Gordon",
+      "playerId": 2576434,
+      "points": 275.5,
+      "projected": 264.43575197
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Adam Humphries",
+      "playerId": 2576491,
+      "points": 188.7,
+      "projected": 94.01482181
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "DeVante Parker",
+      "playerId": 2576623,
+      "points": 60.9,
+      "projected": 149.6583435
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Jamison Crowder",
+      "playerId": 2576716,
+      "points": 82.8,
+      "projected": 185.12010313
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Maurice Harris",
+      "playerId": 2576868,
+      "points": 59.4,
+      "projected": 3.30401634
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Marcus Mariota",
+      "playerId": 2576980,
+      "points": 175.92,
+      "projected": 266.82341788
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Ty Montgomery",
+      "playerId": 2577134,
+      "points": 71.3,
+      "projected": 136.21529876
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Javorius Allen",
+      "playerId": 2577253,
+      "points": 93.6,
+      "projected": 117.19770059
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Tyler Lockett",
+      "playerId": 2577327,
+      "points": 222.4,
+      "projected": 154.83308758
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Dak Prescott",
+      "playerId": 2577417,
+      "points": 285.9,
+      "projected": 250.4026255
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Chris Conley",
+      "playerId": 2578533,
+      "points": 91.4,
+      "projected": 51.68223116
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Phillip Dorsett",
+      "playerId": 2579604,
+      "points": 81.9,
+      "projected": 74.91340178
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Sam Ficken",
+      "playerId": 2582139,
+      "points": 11.0,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Tyrell Williams",
+      "playerId": 2587819,
+      "points": 137.8,
+      "projected": 110.29521697
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Jameis Winston",
+      "playerId": 2969939,
+      "points": 195.78,
+      "projected": 227.37731097
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Duke Johnson Jr.",
+      "playerId": 2969962,
+      "points": 132.0,
+      "projected": 165.93900316
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Ka'imi Fairbairn",
+      "playerId": 2971573,
+      "points": 165.0,
+      "projected": 112.95038685
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Nelson Agholor",
+      "playerId": 2971618,
+      "points": 165.4,
+      "projected": 169.20958709
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Kenneth Dixon",
+      "playerId": 2971888,
+      "points": 54.4,
+      "projected": 87.70068914
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Jalen Richard",
+      "playerId": 2972091,
+      "points": 156.6,
+      "projected": 52.4661831
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Kenny Golladay",
+      "playerId": 2974858,
+      "points": 207.1,
+      "projected": 158.44885486
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Stefon Diggs",
+      "playerId": 2976212,
+      "points": 266.3,
+      "projected": 227.37914726
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Michael Thomas",
+      "playerId": 2976316,
+      "points": 315.5,
+      "projected": 278.11182668
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Amari Cooper",
+      "playerId": 2976499,
+      "points": 215.5,
+      "projected": 221.69432136
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "T.J. Yeldon",
+      "playerId": 2976516,
+      "points": 173.1,
+      "projected": 96.56675386
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Sterling Shepard",
+      "playerId": 2976592,
+      "points": 182.5,
+      "projected": 187.5328397
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Cooper Kupp",
+      "playerId": 2977187,
+      "points": 135.1,
+      "projected": 184.73002755
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Devin Funchess",
+      "playerId": 2977609,
+      "points": 122.9,
+      "projected": 186.25377023
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Todd Gurley II",
+      "playerId": 2977644,
+      "points": 372.1,
+      "projected": 325.27106485
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Tevin Coleman",
+      "playerId": 2979477,
+      "points": 193.6,
+      "projected": 162.93517559
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "C.J. Beathard",
+      "playerId": 2979520,
+      "points": 74.98,
+      "projected": 1.1028599
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Jesse James",
+      "playerId": 2979590,
+      "points": 84.3,
+      "projected": 50.78436437
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Kenyan Drake",
+      "playerId": 2979843,
+      "points": 206.2,
+      "projected": 200.10597772
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Jamaal Williams",
+      "playerId": 2980453,
+      "points": 114.4,
+      "projected": 135.2004865
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Chester Rogers",
+      "playerId": 2983209,
+      "points": 117.1,
+      "projected": 101.94060836
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Wil Lutz",
+      "playerId": 2985659,
+      "points": 149.0,
+      "projected": 131.02925458
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Josh Lambo",
+      "playerId": 2998120,
+      "points": 85.0,
+      "projected": 122.75901214
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Dwayne Washington",
+      "playerId": 3002265,
+      "points": 15.4,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Mike Davis",
+      "playerId": 3025433,
+      "points": 136.8,
+      "projected": 9.83114665
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Mitchell Trubisky",
+      "playerId": 3039707,
+      "points": 263.02,
+      "projected": 260.6829677
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "George Kittle",
+      "playerId": 3040151,
+      "points": 258.7,
+      "projected": 123.12477571
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Wendell Smallwood",
+      "playerId": 3042429,
+      "points": 117.4,
+      "projected": 8.91243876
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Kevin White",
+      "playerId": 3042435,
+      "points": 13.2,
+      "projected": 23.17044505
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Elijah McGuire",
+      "playerId": 3042494,
+      "points": 85.9,
+      "projected": 45.43088372
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Aaron Jones",
+      "playerId": 3042519,
+      "points": 171.4,
+      "projected": 91.3470003
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Corey Davis",
+      "playerId": 3042778,
+      "points": 183.6,
+      "projected": 196.83288727
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Derrick Henry",
+      "playerId": 3043078,
+      "points": 201.36,
+      "projected": 181.93849369
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "O.J. Howard",
+      "playerId": 3043080,
+      "points": 120.5,
+      "projected": 104.94248956
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Austin Hooper",
+      "playerId": 3043275,
+      "points": 163.0,
+      "projected": 119.28805552
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Mike Williams",
+      "playerId": 3045138,
+      "points": 180.2,
+      "projected": 118.38567598
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Tyler Boyd",
+      "playerId": 3045144,
+      "points": 221.1,
+      "projected": 94.80437038
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "James Conner",
+      "playerId": 3045147,
+      "points": 280.0,
+      "projected": 64.16350024
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Corey Clement",
+      "playerId": 3045260,
+      "points": 81.1,
+      "projected": 103.83228927
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Kendrick Bourne",
+      "playerId": 3045523,
+      "points": 114.7,
+      "projected": 29.68633139
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Alex Collins",
+      "playerId": 3046409,
+      "points": 108.6,
+      "projected": 190.90109709
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Geoff Swaim",
+      "playerId": 3046704,
+      "points": 56.2,
+      "projected": 42.53539482
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Jared Goff",
+      "playerId": 3046779,
+      "points": 310.32,
+      "projected": 255.96361683
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Matt Breida",
+      "playerId": 3049916,
+      "points": 162.5,
+      "projected": 148.99574481
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Jake Elliott",
+      "playerId": 3050478,
+      "points": 117.0,
+      "projected": 133.0039049
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Anthony Miller",
+      "playerId": 3050487,
+      "points": 120.22,
+      "projected": 138.31449377
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Ezekiel Elliott",
+      "playerId": 3051392,
+      "points": 329.1,
+      "projected": 301.51771587
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Marquez Valdes-Scantling",
+      "playerId": 3051738,
+      "points": 111.0,
+      "projected": 26.96640413
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Ricky Seals-Jones",
+      "playerId": 3051806,
+      "points": 74.3,
+      "projected": 115.72703338
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Evan Engram",
+      "playerId": 3051876,
+      "points": 126.3,
+      "projected": 183.64195104
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Jordan Wilkins",
+      "playerId": 3051891,
+      "points": 60.1,
+      "projected": 92.05586389
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Peyton Barber",
+      "playerId": 3051902,
+      "points": 150.3,
+      "projected": 140.73146753
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Daniel Carlson",
+      "playerId": 3051909,
+      "points": 86.0,
+      "projected": 127.48295567
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Gus Edwards",
+      "playerId": 3051926,
+      "points": 89.8,
+      "projected": null
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Phillip Lindsay",
+      "playerId": 3052117,
+      "points": 222.8,
+      "projected": 73.5103427
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "John Ross",
+      "playerId": 3052177,
+      "points": 84.9,
+      "projected": 146.96208959
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Baker Mayfield",
+      "playerId": 3052587,
+      "points": 240.1,
+      "projected": 45.53849346
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Will Fuller V",
+      "playerId": 3052876,
+      "points": 106.3,
+      "projected": 174.17330274
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Jonnu Smith",
+      "playerId": 3054212,
+      "points": 63.8,
+      "projected": 42.26654176
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Robert Foster",
+      "playerId": 3054845,
+      "points": 99.1,
+      "projected": 7.5272707
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Alvin Kamara",
+      "playerId": 3054850,
+      "points": 354.2,
+      "projected": 292.30401582
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Harrison Butker",
+      "playerId": 3055899,
+      "points": 144.0,
+      "projected": 134.95943765
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "DaeSean Hamilton",
+      "playerId": 3057987,
+      "points": 66.3,
+      "projected": 45.84927392
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Zay Jones",
+      "playerId": 3059722,
+      "points": 165.2,
+      "projected": 89.7012764
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Taywan Taylor",
+      "playerId": 3059760,
+      "points": 87.6,
+      "projected": 114.77626594
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Kareem Hunt",
+      "playerId": 3059915,
+      "points": 230.2,
+      "projected": 257.96727068
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Michael Roberts",
+      "playerId": 3059945,
+      "points": 37.0,
+      "projected": 19.67410677
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Nick Mullens",
+      "playerId": 3059989,
+      "points": 123.48,
+      "projected": null
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Jordan Howard",
+      "playerId": 3060022,
+      "points": 180.0,
+      "projected": 202.93634752
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Tarik Cohen",
+      "playerId": 3066158,
+      "points": 233.94,
+      "projected": 161.20003481
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Austin Ekeler",
+      "playerId": 3068267,
+      "points": 168.8,
+      "projected": 98.54861815
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Aldrick Rosas",
+      "playerId": 3068939,
+      "points": 140.0,
+      "projected": 116.13713144
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Keelan Cole",
+      "playerId": 3071572,
+      "points": 89.1,
+      "projected": 152.74255466
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Josh Reynolds",
+      "playerId": 3115306,
+      "points": 100.0,
+      "projected": 31.7156205
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Leonard Fournette",
+      "playerId": 3115364,
+      "points": 120.4,
+      "projected": 261.05800202
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Geronimo Allison",
+      "playerId": 3115913,
+      "points": 62.3,
+      "projected": 90.28792687
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Justin Jackson",
+      "playerId": 3116136,
+      "points": 61.1,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Mike Gesicki",
+      "playerId": 3116164,
+      "points": 40.2,
+      "projected": 118.33556651
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Chris Godwin",
+      "playerId": 3116165,
+      "points": 185.2,
+      "projected": 136.91936001
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Joe Mixon",
+      "playerId": 3116385,
+      "points": 243.4,
+      "projected": 205.44401937
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Samaje Perine",
+      "playerId": 3116389,
+      "points": 6.7,
+      "projected": 18.50355003
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Tyreek Hill",
+      "playerId": 3116406,
+      "points": 334.0,
+      "projected": 231.31711149
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Dalvin Cook",
+      "playerId": 3116593,
+      "points": 152.0,
+      "projected": 262.04585985
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Jaylen Samuels",
+      "playerId": 3116721,
+      "points": 89.5,
+      "projected": 40.26342989
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Christian McCaffrey",
+      "playerId": 3117251,
+      "points": 385.5,
+      "projected": 259.67709705
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Chase Edmonds",
+      "playerId": 3119195,
+      "points": 63.1,
+      "projected": 58.81124843
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "JuJu Smith-Schuster",
+      "playerId": 3120348,
+      "points": 296.9,
+      "projected": 200.10332563
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Dallas Goedert",
+      "playerId": 3121023,
+      "points": 90.4,
+      "projected": 62.29232622
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Curtis Samuel",
+      "playerId": 3121427,
+      "points": 136.8,
+      "projected": 76.63091228
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "James Washington",
+      "playerId": 3122449,
+      "points": 43.7,
+      "projected": 117.30895667
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Royce Freeman",
+      "playerId": 3122672,
+      "points": 101.3,
+      "projected": 203.60951113
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Deshaun Watson",
+      "playerId": 3122840,
+      "points": 331.7,
+      "projected": 274.59705127
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Devontae Booker",
+      "playerId": 3122866,
+      "points": 87.8,
+      "projected": 110.37366615
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Jeff Wilson Jr.",
+      "playerId": 3122976,
+      "points": 44.4,
+      "projected": null
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Chris Herndon",
+      "playerId": 3123050,
+      "points": 113.2,
+      "projected": 60.95974453
+    },
+    {
+      "defaultPositionId": 5,
+      "fullName": "Mike Badgley",
+      "playerId": 3123052,
+      "points": 78.0,
+      "projected": null
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "David Njoku",
+      "playerId": 3123076,
+      "points": 143.9,
+      "projected": 128.14531332
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Ito Smith",
+      "playerId": 3123969,
+      "points": 97.7,
+      "projected": 19.12281067
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "D'Onta Foreman",
+      "playerId": 3125116,
+      "points": 10.7,
+      "projected": 71.08442526
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Brian Hill",
+      "playerId": 3125403,
+      "points": 15.6,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Will Dissly",
+      "playerId": 3127292,
+      "points": 35.6,
+      "projected": 36.3934779
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Dante Pettis",
+      "playerId": 3127306,
+      "points": 103.5,
+      "projected": 46.11975353
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Courtland Sutton",
+      "playerId": 3128429,
+      "points": 136.3,
+      "projected": 121.05625511
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Tre'Quan Smith",
+      "playerId": 3128451,
+      "points": 100.7,
+      "projected": 59.79977799
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Nick Chubb",
+      "playerId": 3128720,
+      "points": 194.5,
+      "projected": 57.69490664
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Sony Michel",
+      "playerId": 3128721,
+      "points": 139.1,
+      "projected": 114.69654742
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Kalen Ballage",
+      "playerId": 3128774,
+      "points": 37.7,
+      "projected": 30.14869409
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Tim Patrick",
+      "playerId": 3134353,
+      "points": 60.2,
+      "projected": 4.50321819
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Patrick Mahomes",
+      "playerId": 3139477,
+      "points": 417.08,
+      "projected": 272.95390018
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Marlon Mack",
+      "playerId": 3139605,
+      "points": 178.1,
+      "projected": 136.64615897
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Rashaad Penny",
+      "playerId": 3139925,
+      "points": 70.4,
+      "projected": 141.24698167
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Dede Westbrook",
+      "playerId": 3892889,
+      "points": 179.5,
+      "projected": 113.15292852
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Christian Kirk",
+      "playerId": 3895856,
+      "points": 123.5,
+      "projected": 124.86331186
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Damion Ratley",
+      "playerId": 3895857,
+      "points": 27.4,
+      "projected": 3.99313916
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Sam Darnold",
+      "playerId": 3912547,
+      "points": 168.4,
+      "projected": 207.84452403
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Ronald Jones",
+      "playerId": 3912550,
+      "points": 20.7,
+      "projected": 123.79462885
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Antonio Callaway",
+      "playerId": 3915097,
+      "points": 132.3,
+      "projected": 73.82979571
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "John Kelly",
+      "playerId": 3915381,
+      "points": 12.1,
+      "projected": 49.81343551
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "DJ Moore",
+      "playerId": 3915416,
+      "points": 157.0,
+      "projected": 124.71929724
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Keke Coutee",
+      "playerId": 3915823,
+      "points": 62.7,
+      "projected": 65.87973643
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Lamar Jackson",
+      "playerId": 3916387,
+      "points": 157.54,
+      "projected": 33.35851996
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Nyheim Hines",
+      "playerId": 3916430,
+      "points": 160.9,
+      "projected": 91.31082677
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Kerryon Johnson",
+      "playerId": 3916925,
+      "points": 139.4,
+      "projected": 150.4034517
+    },
+    {
+      "defaultPositionId": 1,
+      "fullName": "Josh Allen",
+      "playerId": 3918298,
+      "points": 208.06,
+      "projected": 144.22660859
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Gerald Everett",
+      "playerId": 3918639,
+      "points": 86.6,
+      "projected": 74.77254477
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Chris Carson",
+      "playerId": 3919596,
+      "points": 201.4,
+      "projected": 137.30509716
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Calvin Ridley",
+      "playerId": 3925357,
+      "points": 206.8,
+      "projected": 123.22772953
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Saquon Barkley",
+      "playerId": 3929630,
+      "points": 385.8,
+      "projected": 280.81584244
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Josh Adams",
+      "playerId": 3932420,
+      "points": 81.9,
+      "projected": 0.0
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Jordan Thomas",
+      "playerId": 4035379,
+      "points": 65.5,
+      "projected": 17.92401116
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "Michael Gallup",
+      "playerId": 4036348,
+      "points": 97.7,
+      "projected": 111.53412445
+    },
+    {
+      "defaultPositionId": 4,
+      "fullName": "Ian Thomas",
+      "playerId": 4045305,
+      "points": 81.3,
+      "projected": 12.91766254
+    },
+    {
+      "defaultPositionId": 3,
+      "fullName": "David Moore",
+      "playerId": 4212909,
+      "points": 101.0,
+      "projected": 39.35856835
+    },
+    {
+      "defaultPositionId": 2,
+      "fullName": "Trenton Cannon",
+      "playerId": 4261020,
+      "points": 48.7,
+      "projected": 18.36628887
+    }
+  ],
+  "seasonId": 2018,
+  "throughScoringPeriod": 17,
+  "weekly": true
+}

@@ -1,0 +1,189 @@
+{
+  "available": true,
+  "seasonId": 2019,
+  "trades": [
+    {
+      "id": "b16e1817-68d8-4d45-b988-ceaaa141f9a2",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": -16030,
+          "toTeamId": 3
+        },
+        {
+          "fromTeamId": 3,
+          "playerId": -16033,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1568325010784,
+      "scoringPeriodId": 2
+    },
+    {
+      "id": "45120ad0-0970-4d29-8c66-6523e2dfb9d2",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 14922,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 3052876,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1568395548235,
+      "scoringPeriodId": 2
+    },
+    {
+      "id": "808f7ce8-d83d-4cbd-a220-4783d8442442",
+      "legs": [
+        {
+          "fromTeamId": 4,
+          "playerId": 13981,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 2976499,
+          "toTeamId": 4
+        }
+      ],
+      "processDate": 1568406861321,
+      "scoringPeriodId": 2
+    },
+    {
+      "id": "296646fe-52cd-49bd-bf5a-00e60d3dcc2d",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 2573079,
+          "toTeamId": 14
+        },
+        {
+          "fromTeamId": 2,
+          "playerId": 3121427,
+          "toTeamId": 14
+        },
+        {
+          "fromTeamId": 14,
+          "playerId": 14053,
+          "toTeamId": 2
+        },
+        {
+          "fromTeamId": 14,
+          "playerId": 14881,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1569460915781,
+      "scoringPeriodId": 4
+    },
+    {
+      "id": "ffecd682-748c-461d-b5f5-dd26e0dcf840",
+      "legs": [
+        {
+          "fromTeamId": 1,
+          "playerId": 14912,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 1,
+          "playerId": 2576925,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 1,
+          "playerId": 3068267,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 15818,
+          "toTeamId": 1
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 3126486,
+          "toTeamId": 1
+        }
+      ],
+      "processDate": 1571251954652,
+      "scoringPeriodId": 7
+    },
+    {
+      "id": "ca11f712-a82c-4b6c-bef1-5c70e29befc9",
+      "legs": [
+        {
+          "fromTeamId": 3,
+          "playerId": 16777,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 17359,
+          "toTeamId": 3
+        }
+      ],
+      "processDate": 1571252856740,
+      "scoringPeriodId": 7
+    },
+    {
+      "id": "cdd4c0ac-6f2b-45f7-85b6-003e597a4f5d",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 2976212,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 12,
+          "playerId": 2576434,
+          "toTeamId": 2
+        },
+        {
+          "fromTeamId": 12,
+          "playerId": 2974858,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1571262748570,
+      "scoringPeriodId": 7
+    },
+    {
+      "id": "99bbdc24-1125-41cd-ac7a-744fc49f99e1",
+      "legs": [
+        {
+          "fromTeamId": 3,
+          "playerId": 3115364,
+          "toTeamId": 14
+        },
+        {
+          "fromTeamId": 14,
+          "playerId": 15795,
+          "toTeamId": 3
+        }
+      ],
+      "processDate": 1571882719707,
+      "scoringPeriodId": 8
+    },
+    {
+      "id": "cf8baf5e-7ccb-4f61-bb2b-5c5d71d2cffb",
+      "legs": [
+        {
+          "fromTeamId": 4,
+          "playerId": 2998120,
+          "toTeamId": 11
+        },
+        {
+          "fromTeamId": 11,
+          "playerId": 15683,
+          "toTeamId": 4
+        }
+      ],
+      "processDate": 1573236910890,
+      "scoringPeriodId": 10
+    }
+  ]
+}

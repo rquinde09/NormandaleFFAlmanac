@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Achievements } from "@/components/Achievements";
-import { ManagerPerformance } from "@/components/ManagerPerformance";
+import { ManagerCharts } from "@/components/ManagerCharts";
 import { Opponents } from "@/components/Opponents";
 import { Card, Pancakes, Stars, Stat } from "@/components/ui";
 import { pct, pts, record } from "@/lib/format";
@@ -79,7 +79,7 @@ export default async function ManagerPage({ params }: Params) {
         </details>
       </Card>
 
-      <ManagerPerformance seasons={performance(league, slug)} />
+      <ManagerCharts seasons={performance(league, slug)} />
       <Opponents data={opponents(league, slug)} />
       <Achievements list={achievements(league, slug)} />
     </div>

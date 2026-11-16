@@ -58,12 +58,19 @@ function benchEntry(league: League, { game: g, bench: b, value }: BenchRecordEnt
   };
 }
 
-const plusMinus = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n).toFixed(1)}`;
+const plusMinus = (n: number, digits = 1) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n).toFixed(digits)}`;
 
 function seasonEntry(league: League, def: RecordDef<SeasonRecordEntry>, { teamSeason: t, value }: SeasonRecordEntry): RecordEntry {
   const who = managerBySlug(league, t.person)!.nickname;
-  if (def.unit === "luck") {
-    return { who, value: `${plusMinus(value)} wins`, detail: `${t.season} · ${t.teamName} · ${record(t.all)}, ${t.expectedWins.toFixed(1)} wins expected` };
+  // Odds: wins above or below what ESPN's projections expected (Round 5)
+  if (def.unit === "odds") {
+    const projected = t.projectedWins!;
+    const wins = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
+    return {
+      who,
+      value: `${plusMinus(value, Number.isInteger(value) ? 0 : 1)} wins`,
+      detail: `${t.season} · ${t.teamName} · ${record(t.all)}, ESPN projected ${wins(projected)}-${wins(t.all.games - projected)}`,
+    };
   }
   const isPoints = def.unit === "pts";
   return {
@@ -100,9 +107,9 @@ export default function RecordsPage() {
         <RecordsView all={recordSet(league)} active={recordSet(league, (p) => active.has(p))} />
       </Suspense>
       <p className="mt-4 text-xs text-zinc-500">
-        Expected wins: each week, the share of the league a team outscored, added up over the season. Bench: each week&apos;s
-        best possible lineup minus the one started, from ESPN&apos;s lineups for 2018–2025 (none for 2021, and 2017 lists starters
-        only).
+        Season projection: in each game, ESPN&apos;s favorite was the starting lineup with the higher projected score, so a team was
+        projected to win the games it was favored in. ESPN has projections from 2018 on (none for 2017). Bench: each
+        week&apos;s best possible lineup minus the one started, from ESPN&apos;s lineups for 2018 on (2017 lists starters only).
       </p>
     </>
   );

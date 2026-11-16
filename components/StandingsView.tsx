@@ -83,8 +83,7 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
           onChange={(key) => update({ view: key === DEFAULT_VIEW ? null : key, sort: null, dir: null })}
         />
         <p className="text-sm text-zinc-400">
-          {describe}{" "}
-          <span className={compact ? "hidden md:inline" : ""}>Rank Δ is the change since the end of {since}.</span>
+          {describe} Rank Δ is the change since the end of {since}.
         </p>
         <div className="md:hidden">
           <Segmented
@@ -108,7 +107,8 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
         </div>
       </div>
 
-      {/* Phone, compact: one line each, "1. Jeremy ★★ 58.8%", the number being the sorted stat */}
+      {/* Phone, compact: one line each, "1. Jeremy ★★ ▲2 58.8%", the number being the sorted stat and
+          ▲2 the view's Rank Δ (the site owner's Round 5) */}
       {compact && (
         <ol className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 md:hidden">
           {shown.map((e, i) => (
@@ -122,6 +122,11 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
                   {e.row.nickname} <Stars count={e.row.now.titles} /> <Pancakes count={e.row.now.lastPlaces} />
                   {!e.row.active && <span className="ml-1 text-xs font-normal text-zinc-500">retired</span>}
                 </span>
+                {ok(e) && (
+                  <span className="w-8 shrink-0 text-right">
+                    <RankChange change={rankChange(e.row.slug)} />
+                  </span>
+                )}
                 <span className="shrink-0 font-semibold tabular-nums text-zinc-50">{col.show(e.now)}</span>
               </Link>
             </li>

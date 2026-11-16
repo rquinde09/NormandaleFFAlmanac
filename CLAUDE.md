@@ -14,6 +14,9 @@ without new evidence.
   data, showing "data as of …".
 - Past seasons are fetched once and kept in the repo. Never overwrite a completed season's data
   with an empty or failed fetch.
+- The one runtime exception: the Roster box's player photos load from ESPN's image CDN
+  (`a.espncdn.com` headshots and D/ST team logos) in the visitor's browser, with initials if one
+  fails. Luke OK'd it (2026-11-15). No image is stored in the repo, and no ESPN data API is called.
 - Raw ESPN JSON stays in the repo and is never shipped to the browser. `lib/league.ts` reads
   `data/raw/*.json` and `data/managers.json` at build time and computes everything (standings,
   records, champions). Client components get only derived rows. Python only fetches. There is
@@ -97,13 +100,36 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - `rankCalculatedFinal` gives each team's final place (1 = champion).
 - `transactionCounter.trades` is 0 for every team in 2024 and 2025. The site owner confirmed
   there were no trades those years (2026-11-14), so the zeros are real.
+- 2017 and 2018 had two divisions (one since). ESPN seeds the division winners first, then
+  everyone by wins and total points (`playoffSeedingRule` `TOTAL_POINTS_SCORED`). Replaying the
+  regular season that way gives ESPN's `playoffSeed` for every team in 2017–2025.
+- Checked 2026-11-15 with the current cookies:
+  - Weekly player projections (stats with `statSourceId` 1, `statSplitTypeId` 1, the week's
+    `scoringPeriodId`) come back in box scores for 2018–2026, not 2017 (leagueHistory, starters
+    with season totals only). A lineup's starters' projections add up to ESPN's own
+    `totalProjectedPoints` (2026 week 1: 14/14 to the cent).
+  - Drafts (`mDraftDetail`) exist for every season. Player `-1` is a pick nobody entered (the last
+    round of 2017's offline draft); D/ST player IDs are −16000 − `proTeamId`.
+  - Trades with their players: `mTransactions2` leaves other teams' legs out and the
+    `communication` endpoint returns nothing for past seasons, but player cards
+    (`kona_playercard`) list every executed `TRADE_ACCEPT` with its `TRADE` legs from 2019 on.
+    2018's trades are executed `TRADE_UPHOLD` rows, which only `mTransactions2` returns (one
+    duplicate). leagueHistory gives no trade details (2017, and 2021 read that way). Per-team counts match
+    `transactionCounter.trades` in every season with details. Rebuilding trades from roster
+    changes doesn't work: waiver swaps look like trades.
+  - `kona_player_info` gives each player's weekly and season points (and ESPN's preseason
+    projection) for the seasons endpoint; leagueHistory seasons give season totals only.
+  - The seasons endpoint 401s for 2021 with the site's cookies, which then fall back to
+    leagueHistory: no lineups, projections, weekly points or trade details. A 2021 league
+    member's cookies read it (2026-11-15) and gave all of them, all 21 trades included.
 - Player lineups (fetched for 2017–2025 on 2026-11-05): views `mMatchupScore` + `mScoreboard`
   with `scoringPeriodId` and an `x-fantasy-filter` on the matchup period return each side's
   `rosterForCurrentScoringPeriod` (whole roster, with `lineupSlotId` and points) for 2018+, and
   only `rosterForMatchupPeriod` for 2017: starters only, every one with `lineupSlotId` 0. 2021
-  returns no lineups at all; `mRoster` there gives only the end-of-season roster. ESPN's own
-  2021 box score pages show the slots, but 0.0 points for every player (team totals are right). In every other
-  season, every lineup's starters add up to the team score. `lineupSlotId` 20 = bench, 21 = IR,
+  through leagueHistory returns no lineups at all (`mRoster` there gives only the end-of-season
+  roster); through the seasons endpoint it returns whole rosters, but with 0.0 points for every
+  player, as ESPN's own 2021 box score pages show. The week's actual stat rows have the points
+  (fetched 2026-11-15). In every season, every lineup's starters add up to the team score. `lineupSlotId` 20 = bench, 21 = IR,
   23 = FLEX. `defaultPositionId`: 1 QB, 2 RB, 3 WR, 4 TE, 5 K, 16 D/ST.
 - `fetch_seasons.py` drops personal settings, team-private lists and live/projection fields
   (`DROP_KEYS`) before saving, so the repo holds no private data and unchanged days don't commit.
@@ -114,22 +140,46 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - `npm run check` (`scripts/check-data.ts`): through 2025, all-time totals must match the Sheet
   copy 23/23, plus the 13 record holders, the championship counts, the old Leaderboard's
   per-season averages and order 14/14, each championship lineup against the final score (and the
-  hand-entered 2021 roster), last place against the pancake post, and the Active records example.
+  hand-entered 2021 lineup against ESPN's, slot for slot), last place against the pancake post,
+  and the Active records example.
   It also checks the extras: luck adds up to zero each season, the bench rows cover every game
-  of 2018–2025 except 2021 (starters add up to the score, the best lineup is never below the one
+  of 2018–2025 (starters add up to the score, the best lineup is never below the one
   started), each bracket's final is won by the champion, and every last-place team missed the
-  playoffs. Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts`,
-  `lib/manager.ts`, `lib/bench.ts` or `lib/seasons.ts`.
+  playoffs. Round 5 adds: projections cover 2018–2025 and Odds adds up to zero each
+  season; trade details for every season but 2017, per-team counts match ESPN's, and
+  trade points add up to zero; the regular-season replay gives ESPN's seeds and the best-lineup
+  seed is never worse; each MVFP is his team's Best Player; the Roster box has every pick its
+  data allows. Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts`,
+  `lib/manager.ts`, `lib/bench.ts`, `lib/seasons.ts`, `lib/playcalls.ts` or `lib/roster.ts`.
 - Python lives in `.venv` (`python -m venv .venv`, then `.venv/Scripts/python -m pip install -r
   requirements.txt`). `scripts/check_env.py` checks `.env.local` without printing values.
   `scripts/probe.py [season ...]` prints a season summary, with owner IDs cut to 8 characters.
-- `scripts/fetch_seasons.py [season ...] [--force]` writes `data/raw/{season}.json`. It skips
-  completed seasons that already have a file, and saves only responses that pass checks. Once a
-  season's last game is decided, it also fetches that season's weekly lineups (one request per
-  week) into `data/raw/lineups/{season}.json`, keeping only each player's ID, name, position,
-  slot and points (about 0.9 MB a season). That file is written once; 2021's is saved empty so
-  it isn't asked for again. It also writes `data/meta.json` (`updatedAt`, the last time data
-  changed), which the footer shows.
+- `scripts/fetch_seasons.py [season ...] [--force] [--force-extras] [--env FILE]` writes
+  `data/raw/{season}.json`. It skips completed seasons that already have a file, and saves only
+  responses that pass checks. Per season it also keeps (Round 5, 2026-11-15):
+  - `data/raw/lineups/{season}.json`: each week's lineups, keeping each player's ID, name,
+    position, slot, points and ESPN's projection for that week (`projectedTotal`; about 1.1 MB a
+    season). A finished season's file is written once (one ESPN gives no lineups for is saved
+    empty, so it isn't asked for again). While a season is on, each week is added once all its games are decided (one
+    request), and fetched again if ESPN later corrects a score. If a player's points come back
+    0.0, the week's actual stat row fills them in (2021); starters must still add
+    up to the team score.
+  - `data/raw/drafts/{season}.json`: the picks, once.
+  - `data/raw/players/{season}.json`: every drafted or rostered player's name, position, points
+    over the fantasy season's weeks (ESPN's season total where only that exists: 2017) and
+    preseason projection. Once a season is over; weekly while on.
+  - `data/raw/trades/{season}.json`: executed trades with every player (`available: false` for
+    2017). Once a season is over; while it's on, whenever ESPN's trade count changes. A
+    completed season's per-team counts must match `transactionCounter.trades`.
+  `--force-extras` refetches those four files without touching the season files, and never
+  replaces one with an emptier one (no lineups, season totals only, no trade details), so a run
+  with the site's cookies keeps 2021's. `--env FILE` reads cookies from another file
+  (environment variables still win). It also writes
+  `data/meta.json` (`updatedAt`, the last time data changed), which the footer shows.
+- 2021's lineups, players and trades came from a one-off run (2026-11-15) with a 2021 league
+  member's cookies in a separate gitignored env file: `fetch_seasons.py 2021 --force-extras --env
+  FILE`, after `python scripts/check_env.py FILE`. The 2021 season file stayed as it was. Those
+  cookies never go in the Actions secrets.
 - `.github/workflows/fetch-espn.yml` runs the fetch daily at 10:00 UTC, September–January (plus
   manual runs). It commits `data/` only when something changed. Secrets: `ESPN_LEAGUE_ID`,
   `ESPN_S2`, `ESPN_SWID`. Collaborators on a personal repo can add them.
@@ -156,8 +206,9 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   Active only is on by default (`active=0` turns it off). First names only, with stars and
   pancakes (site owner, 2026-11-14). "No last names" covers how the site shows managers; the old
   news posts keep their wording and the record "The Vega" keeps its name. On a phone, Compact (on by default, `compact=0` turns it off)
-  replaced the name search: one line per manager, "1. Jeremy ★★ 🥞 58.8%", the number being the
-  sorted stat. Rank Δ and the small stats show only with Compact off. The desktop table has no
+  replaced the name search: one line per manager, "1. Jeremy ★★ 🥞 ▲2 58.8%", the number being
+  the sorted stat and ▲2 the view's Rank Δ (Round 5, 2026-11-15). The small stats show only with
+  Compact off. The desktop table has no
   Compact switch. View, sort, direction, Compact and Active live in the URL, updated with
   `window.history.replaceState` (`lib/url.ts`), which Next keeps in sync with `useSearchParams`.
   Per season and Per game rank only managers with `MIN_SEASONS` (3, a placeholder) seasons;
@@ -166,29 +217,66 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   active manager fits on one phone screen. Retired managers sit in a collapsed "Retired" row
   (`<details>`) below (site owner, 2026-11-10).
 - Manager pages (the site owner's Round 2 spec, 2026-11-07, answers 2026-11-10; Round 3,
-  2026-11-14; Round 4, 2026-11-14), top to bottom:
+  2026-11-14; Round 4, 2026-11-14; Round 5, 2026-11-15, with Luke's answers the same day), top
+  to bottom:
   - First card: first name with stars and pancakes, Active/Retired, "Champion: years" and "Loser:
     years" (last place). No full name. The career numbers fold out under "Career stats": the
     all-time record, then Seasons, Win %, PF/G and Total PF, left to right. No rank, best finish
     or PDIFF.
-  - Manager Performance (`components/ManagerPerformance.tsx`, `performance` in `lib/manager.ts`):
-    one red line, with tabs for Finish, Wins, PF, PA, Streak, Trades, Luck and Bench, and one y axis that
-    follows the tab (Finish has 1st at the top). Every point is labeled. Each season's marker
-    shows where that season ranked in the league on that tab: gold, silver and bronze for 1st–3rd
-    and a pancake for last. Finish uses the final standings. Wins: most is 1st, ties broken by PF.
-    PF: most is 1st. PA: fewest is 1st, most is last. Streak plots the longer of the season's
-    longest winning and losing streaks (the winning one on a tie) as +W / −L around a zero line;
-    the league's longest winning streak is 1st, its longest losing streak last. Trades: most is
-    1st, no pancake, no medal without a trade. Luck (wins above expected, around a zero line):
-    luckiest is 1st, unluckiest last. Bench (points left on the bench): fewest is 1st, most last;
-    no point in 2017 or 2021, which have no bench lineups. Luck and Bench were added by Luke
-    (2026-11-15). Other ties share the place. `npm run check` tests
-    the site owner's example: Randy's 2,241.1 PF gets 2024's PF gold, champion Jeremy's 2,208
-    silver. Completed seasons only, since half a season's PF flattens the rest. No year picker or
-    season card (removed in Round 3). Tapping a point selects that season (Round 4): its year on
-    the x axis turns into a red pill, a faint band runs behind its column, and its number goes
-    bold. The selection stays when the tab changes; tapping the point again, or anywhere outside
-    the points and tabs, clears it. Each point's tap target is a 28 px button.
+  - Manager Performance (`components/ManagerPerformance.tsx`, `performance` in `lib/manager.ts`,
+    the shared axis in `components/ChartFrame.tsx`): one red line, with tabs for Finish, Wins, PF
+    and PA (Round 5 moved the rest to Manager Playcalls), and one y axis that follows the tab
+    (Finish has 1st at the top). Every point is labeled. Each season's marker shows where that
+    season ranked in the league on that tab: gold, silver and bronze for 1st–3rd and a pancake
+    for last. Finish uses the final standings. Wins: most is 1st, ties broken by PF. PF: most is
+    1st. PA: fewest is 1st, most is last. Other ties share the place. `npm run check` tests the
+    site owner's example: Randy's 2,241.1 PF gets 2024's PF gold, champion Jeremy's 2,208 silver.
+    Points for completed seasons only, since half a season's PF flattens the rest; the season in
+    progress has a column with no point. No year picker or season card (removed in Round 3).
+    Tapping a season selects it (Round 4): its year turns into a red pill, a faint band runs
+    behind its column, and its number goes bold. Each season's tap target is a 28 px column over
+    its point and year. The selection stays when the tab changes and is shared with Manager
+    Playcalls (`components/ManagerCharts.tsx`); tapping it again, or anywhere outside the points,
+    tabs and the boxes about the selection, clears it. Round 5: the page opens with the season in
+    progress selected (a retired manager's last season), and a line under the chart says where
+    the selected season ranked ("2019 · 7 wins (7-9) · 6th of 12"; the season in progress: "Season
+    in progress").
+  - Roster box (`lib/roster.ts`, `components/RosterBox.tsx`, Round 5, inspired by Luke): inside
+    Manager Performance, open while a season is selected. Four players side by side, title above,
+    photo, name and stat below. Best Player: most points in his starting lineup (the MVFP rule).
+    Best Drafted: the most points that fantasy season by one of his draft picks, wherever he
+    played. Inconsistent (Luke's pick over "Most Hated"): the starter furthest below ESPN's
+    weekly projections, added up over his starts there (2018–2025 and 2026; none for 2017).
+    Franchise Player: the most starts; a tie goes to ESPN's higher preseason projection. The
+    season in progress counts its decided weeks. 2017 has no Inconsistent (no projections).
+  - Manager Playcalls (`components/ManagerPlaycalls.tsx`, Round 5): "a breakdown of decisions
+    made by the manager", folded shut (`<details>`) under Manager Performance. Bar charts from
+    zero, completed seasons, tabs in the site owner's order with Luke's Odds after Luck:
+    - Luck: all-play wins above expected (`luck`). Green up if positive, red down if negative;
+      gold, silver and bronze dots in the bar for the league's three luckiest. No pancake.
+      (The site owner first asked to rename Luck to Odds; once he understood all-play he kept it,
+      2026-11-15.)
+    - Odds (`odds`, `projectedWins`): wins above or below what ESPN projected. Each game, ESPN's
+      favorite is the starting lineup with the higher projected score (a tie counts half); a
+      team's projected wins are the games it was favored in, over every decided game like W-L.
+      The site owner's example: projected 5-12, finished 9-8, so +4 ("ESPN doubted you"); −4 is
+      "false hope". Green/red like Luck, medals for the top three. No number for 2017.
+    - Roster IQ (was Bench): points left on the bench. Green if below that season's league
+      average, red if above, no medals. Selecting a bar draws a dashed line at the league average
+      and opens a small window: "179.8 pts left on the bench · league avg 246.6" and "Seed: 10th →
+      Best-lineup seed: 6th". The best-lineup seed (`optimizedSeeds` in `lib/playcalls.ts`, Luke's
+      pick of the site owner's "optimized finish"): the regular season replayed with this team's
+      best lineup every week and everyone else's actual scores, seeded as ESPN does (games
+      against it can change other teams' records too). No playoff replay.
+    - Trades: bar height is the number of trades. Green if they paid off, red if not, grey
+      without details (2017); the label is the net points. Net (`tradeNets`, Luke's pick of
+      the rule): every player received scores for his new team in the weeks he started there, from
+      the trade until he leaves its roster, playoffs included; the team that sent him is charged
+      the same points. Medals for the three most trades, none without a trade.
+    - Streak: the longer of the season's longest winning and losing streaks (the winning one on
+      a tie); green up for W, red down for L. Gold, silver and bronze dots for the league's three
+      longest winning streaks; the pancake on the bar for its longest losing streak.
+    Each tab has a line under the chart for the selected season, like Manager Performance's.
   - Opponents (`lib/manager.ts`, `components/Opponents.tsx`): head-to-head over every decided
     game, live season included, in seven tabs. Faced (most games), Easiest (most wins against),
     Toughest (most losses against), Most PF and Most PA (totals over every game against that
@@ -196,7 +284,9 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     loss). The first five show a ring and the opponent's name only (Round 3), centered in the box
     (Round 4). The ring's middle holds games, wins, losses, or the PF or PA total; its red arc is
     the win share (Faced, Easiest), loss share (Toughest) or points share. Best win and Worst loss
-    show the game, laid out as before. Retired opponents are always left out: Round 4 removed this
+    show the game. Round 5: on every tab the ring sits in the middle of the box with the name or
+    the game under it, and every tab is the same height. Retired opponents are always left out:
+    Round 4 removed this
     box's Active switch and kept it on (`opponents` filters them). Every manager, retired ones
     included, still has active opponents on all seven tabs. The Active switches on Standings and
     Records stay.
@@ -206,7 +296,7 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     Mahaan Bakaree (Won a Championship), 🔥 Manager of the Year (Scored the Most Points For),
     🥇 The #1 Seed (`playoffSeed` 1), 💪 MVFP (had the league's highest scoring player: the most
     points one player scored for one team while in its starting lineup that season, playoffs
-    included; `topStarters` in `lib/champions.ts`; none for 2021, which has no lineups).
+    included; `topStarters` in `lib/champions.ts`).
     Pancake Tier: 🥞 The Pancake House (Last Place), 🧑‍🎨 The Choke Artist (Runner Up), 🥶 Below
     Zero (fewest PF in the league that season), 😢 It Was Only A Dream (most PA) and 🪑 The
     Benchwarmer (most points left on the bench that season; Luke, 2026-11-15, its name a
@@ -218,13 +308,16 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   championship game's lineup with the bench, the season's best game (the champion's highest
   score), and the best player (most points while in the starting lineup, playoffs included).
   `lib/champions.ts` computes these from `data/raw/lineups/`. 2017 shows starters by position
-  with no bench. ESPN has no 2021 lineups, so that champion's final lineup was entered by hand from
-  the site owner (`data/manual/lineups-2021.json`, 2026-11-07) and its slots checked against
-  ESPN's box score of the week 17 final (2026-11-10: Trey Lance started at QB, Lamar Jackson was
-  on the bench). Starters and bench, no points, no best player. A new hand-entered lineup goes in
-  `data/manual/lineups-{season}.json` with the same shape, and is used only when ESPN has none
-  for that champion.
-- Records use the old site's 14 names. Game records count every decided game, live season
+  with no bench. Before ESPN's 2021 lineups were fetched, that champion's final lineup was
+  entered by hand from the site owner (`data/manual/lineups-2021.json`, 2026-11-07; Trey Lance
+  started at QB, Lamar Jackson was on the bench). ESPN's (2026-11-15) matches it slot for slot,
+  with points, and is shown; `npm run check` compares them. A hand-entered lineup
+  (`data/manual/lineups-{season}.json`, same shape) is used only when ESPN has none for that
+  champion.
+- Records use the old site's 14 names. On a phone, Compact (on by default, `compact=0` turns it
+  off; Round 5) shows one line per record: its name and description with the holder's number
+  beside them; tapping it shows who holds it ("Luke def. Suny") and the game or season. Without
+  Compact, and on wider screens, each card lists 1st to 5th (no fold-out). Game records count every decided game, live season
   included. Season records count completed seasons only. They're computed over all seasons,
   2017 included. The old hand-kept Records pages skipped most 2017 entries, so 6 holders differ
   from the old site, for example Cesar Vega's 33.72 in 2017 holds "The Vega".
@@ -233,21 +326,29 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   two active managers, so a record set against a retired manager drops out (site owner,
   2026-11-07: the @$$-Whooping becomes Luke def. Suny). Season records count the manager.
   Luke added five more on 2026-11-15, each listed after the old site's: game records Riding the
-  Pine (most points left on the bench) and Self-Inflicted (a loss the best lineup would have won,
-  by the most), and season records The Horseshoe and The Black Cat (most wins above and below
-  expected) and Asleep at the Wheel (most points left on the bench). Their names are
-  placeholders until the site owner names them. The bench ones cover 2018–2025 except 2021.
+  Pine (most points left on the bench) and Self-Inflicted, and season records The Horseshoe, The
+  Black Cat and Asleep at the Wheel (most points left on the bench). Their names are
+  placeholders until the site owner names them. The bench ones cover 2018 on.
+  Round 5 descriptions: Self-Inflicted "Lost, but the best lineup would have won them the game"
+  (ranked by how much it would have won by); The Horseshoe "Outperformed season projection" and
+  The Black Cat "Underperformed season projection", which therefore count Odds (2018–2025), not
+  all-play luck.
 - Luck (`luck` and `TeamSeason.expectedWins` in `lib/league.ts`, Luke 2026-11-15): all-play
   expected wins. Each week a team earns the share of the other teams that played that it
   outscored (ties count half), over every decided game, as with W-L. Luck is wins (ties half)
   minus that, so each season's luck adds up to zero.
+- Odds (`odds`, `TeamSeason.projectedWins`, `lib/playcalls.ts`; the site owner's Round 5 with
+  Luke, 2026-11-15): see Manager Playcalls. Each season's Odds add up to zero. The Horseshoe:
+  Luke 2025, 9-8 when ESPN projected 1-16 (+8).
 - Bench (`lib/bench.ts`, Luke 2026-11-15): each week's best possible lineup from the team's
   players, minus the starters' points. One-position slots fill first with the best players, then
   FLEX with the best left over (optimal for this league's QB, 2 RB, 2 WR, TE, FLEX, D/ST, K). A
   player may also fill the slot he actually started in; IR players can't start. Slot counts come
   from each season's `rosterSettings.lineupSlotCounts`. Only seasons whose lineups include the
-  bench count: 2018–2020 and 2022–2025. `lib/bench.ts` also reads the lineup files for
-  `lib/champions.ts`. The live season has no lineups until it's over, so no bench numbers.
+  bench count: 2018–2025 and the season in
+  progress, whose decided weeks are fetched weekly since Round 5 (so the season page's Bench
+  column and the game records count it live). `lib/bench.ts` also reads the lineup files for
+  `lib/champions.ts`, `lib/playcalls.ts` and `lib/roster.ts`.
 - Season pages (`lib/seasons.ts`, `components/Bracket.tsx`, Luke 2026-11-15). `/seasons` lists
   every season with champion, runner-up and last place. `/seasons/[year]` has:
   - the podium
@@ -346,9 +447,13 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    (2026-11-14) is built: tapping a chart point selects its season, the Opponents ring and name
    are centered, and the Opponents box lost its Active switch (always active). Luke's extras
    (2026-11-15) are built: luck, points left on the bench, Pancake Watch and season pages.
-   Next: the domain.
+   Round 5 (2026-11-15) is built: Manager Performance trimmed to four tabs with the 2026
+   default, the rank line and the Roster box; Manager Playcalls (Luck, Odds, Roster IQ, Trades,
+   Streak); centered Opponents; Records Compact and new descriptions; Rank Δ in Compact
+   standings. Luke answered its 4 questions the same day (recorded above). The 2021 data
+   (lineups, projections, trades) came in with a 2021 member's cookies the same day. Next: the
+   domain.
 
-Later, not v1: head-to-head records, photos for the Hall, bench numbers for the live season
-(would need weekly lineup fetches).
+Later, not v1: head-to-head records, photos for the Hall.
 
 Don't overbuild v1. Build the stage in front of you.

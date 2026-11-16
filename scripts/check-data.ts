@@ -4,18 +4,21 @@
 //   and skip most 2017 entries; where they differ, the old value is noted next to the expectation.
 // - championship counts (the stars in the old Teams menu)
 // - per-season averages, order and RKΔ against the old Leaderboard copy
-// - championship lineups against the final scores, and the hand-entered 2021 one
+// - championship lineups against the final scores, and the hand-entered 2021 one against ESPN's
 // - last place against the 2024 pancake news post
 // - the Active records rule against the site owner's example
 // - the Manager Performance medals against the site owner's 2024 PF example, and the awards
 // - luck, bench numbers, playoff brackets and the Pancake Watch's premise
+// - Round 5: Odds, trade points, the best-lineup seed and the Roster box
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
-import { careerTotals, champions, gameRecords, getLeague, luck, seasonRecords, type League } from "../lib/league";
+import { careerTotals, champions, gameRecords, getLeague, luck, odds, seasonRecords, type League } from "../lib/league";
 import { VIEWS, rankOrder } from "../lib/standings";
 import { championDetails, topStarters } from "../lib/champions";
 import { achievements, performance } from "../lib/manager";
+import { readTrades, regularSeeds } from "../lib/playcalls";
+import { rosterBox } from "../lib/roster";
 import { rounds } from "../lib/seasons";
 
 const THROUGH = 2025;
@@ -134,18 +137,21 @@ const differ = slugs.filter((_, i) => computed[i] !== changes[i]);
 check(differ.join() === RKD_TYPOS.join(), `Leaderboard RKΔ: ${slugs.length - differ.length}/${slugs.length} match, plus the 2 Sheet typos`,
   differ.join(" "));
 
-// 6. Champions page: each final's starters add up to the champion's score. ESPN has no 2021
-// lineups; that one was entered by hand from the site owner (9 starters, 4 bench, no points). The
-// 2023 final matches the old news post (178.68–76.5 over Robel).
+// 6. Champions page: each final's starters add up to the champion's score. 2021's lineups came
+// later (2026-11-15, the seasons endpoint with a 2021 member's cookies); the site owner's hand
+// entry from before (data/manual/lineups-2021.json) must match ESPN's final lineup slot for slot.
+// The 2023 final matches the old news post (178.68–76.5 over Robel).
 const finals = champions(league).map((c) => ({ c, d: championDetails(league, c) }));
 const espn = finals.filter(({ d }) => !d.manual);
 const adds = espn.filter(({ d }) => d.starters && d.final && close(d.starters.reduce((a, p) => a + (p.points ?? NaN), 0), d.final.home.points, 0.011));
-check(adds.length === espn.length && espn.length === finals.length - 1,
+check(adds.length === espn.length && espn.length === finals.length,
   `championship lineups add up to the final score: ${adds.length}/${espn.length} from ESPN`);
 const hand = finals.find(({ c }) => c.season === 2021)!;
-check(hand.c.person === "robel" && hand.d.manual && hand.d.starters?.length === 9 && hand.d.bench?.length === 4 &&
-  [...hand.d.starters, ...hand.d.bench].every((p) => p.points === null), "2021 championship roster entered by hand",
-  `${hand.c.person}: ${hand.d.starters?.length} starters, ${hand.d.bench?.length} bench`);
+const typed = JSON.parse(fs.readFileSync(path.join(process.cwd(), "data", "manual", "lineups-2021.json"), "utf8")) as
+  { person: string; starters: { slot: string; name: string }[]; bench: { slot: string; name: string }[] };
+const slots = (list: { slot: string; name: string }[] | null | undefined) => (list ?? []).map((p) => `${p.slot} ${p.name}`).sort().join("; ");
+check(hand.c.person === typed.person && slots(hand.d.starters) === slots(typed.starters) && slots(hand.d.bench) === slots(typed.bench),
+  "2021 championship lineup entered by hand matches ESPN's", `${hand.c.person}: ${slots(hand.d.starters)}`);
 const f2023 = finals.find(({ c }) => c.season === 2023)!.d.final!;
 check(close(f2023.home.points, 178.68) && close(f2023.away.points, 76.5) && f2023.away.person === "robel", "2023 final",
   `${f2023.home.points}–${f2023.away.points} vs ${f2023.away.person}`);
@@ -186,10 +192,10 @@ const tab = (pick: (m: { place: number | null; last: boolean }) => boolean, mode
   people.flatMap((p) => performance(league, p).filter((s) => pick(s.marks[mode])).map((s) => `${s.season} ${p}`)).sort();
 check(award("moty").join() === tab((m) => m.place === 1, "pf").join() && award("below-zero").join() === tab((m) => m.last, "pf").join() &&
   award("dream").join() === tab((m) => m.last, "pa").join(), "PF and PA medals match the season awards", award("moty").join(", "));
-// MVFP: one per season with lineups; ESPN kept none for 2021
+// MVFP: one per season (2021's since its lineups were fetched, 2026-11-15)
 const mvfp = topStarters(league);
-check([...mvfp.keys()].sort().join() === "2017,2018,2019,2020,2022,2023,2024,2025" && [...mvfp.values()].every((v) => v.length === 1),
-  "MVFP in every season but 2021", [...mvfp.values()].flat().map((v) => `${v.season} ${v.person} ${v.name} ${v.points.toFixed(1)}`).join("; "));
+check([...mvfp.keys()].sort().join() === "2017,2018,2019,2020,2021,2022,2023,2024,2025" && [...mvfp.values()].every((v) => v.length === 1),
+  "MVFP in every season", [...mvfp.values()].flat().map((v) => `${v.season} ${v.person} ${v.name} ${v.points.toFixed(1)}`).join("; "));
 
 // 10. Luck, bench, brackets and the Pancake Watch (Luke, 2026-11-15)
 // All-play hands out exactly as many expected wins each week as there are games, so luck adds up
@@ -199,7 +205,7 @@ check(luckSums.every((n) => Math.abs(n) < 1e-6), "luck adds up to zero in every 
 // Bench numbers exist for the seasons whose lineups include the bench, one row per team per game.
 // The starters add up to the team's score, and the best lineup is never below the one started.
 const benchSeasons = [...new Set(league.bench.map((b) => b.season))].sort();
-check(benchSeasons.join() === "2018,2019,2020,2022,2023,2024,2025", "bench numbers for 2018–2025 except 2021", benchSeasons.join());
+check(benchSeasons.join() === "2018,2019,2020,2021,2022,2023,2024,2025", "bench numbers for 2018–2025", benchSeasons.join());
 const scoreOf = new Map(league.games.flatMap((g) => [g.home, g.away].map((s) => [`${g.season}:${g.week}:${s.teamId}`, s.points] as const)));
 const benchRows = league.bench.length;
 const gamesInBenchSeasons = league.games.filter((g) => benchSeasons.includes(g.season)).length * 2;
@@ -222,6 +228,58 @@ check(finalsOk.length === league.seasons.filter((s) => s.complete).length, "each
 const lastSeeds = league.teamSeasons.filter((t) => t.lastPlace).map((t) => ({ t, spots: league.seasons.find((s) => s.season === t.season)!.playoffTeams }));
 check(lastSeeds.every(({ t, spots }) => t.seed > spots), "every last-place team missed the playoffs",
   lastSeeds.map(({ t, spots }) => `${t.season} seed ${t.seed}/${spots}`).join(", "));
+
+// 11. Round 5 (2026-11-15): Odds, trades, the best-lineup seed and the Roster box
+// ESPN's projections cover every game of 2018–2025 (2017 has none).
+// Each game's projected win goes to one side (a tie half each), so Odds adds up to zero each season.
+// (Checked once against ESPN's own projected team totals: 2026 week 1, 14/14 lineups to the cent.)
+const projectedSeasons = league.seasons.filter((s) => league.teamSeasons.some((t) => t.season === s.season && t.projectedWins !== null)).map((s) => s.season);
+check(projectedSeasons.join() === "2018,2019,2020,2021,2022,2023,2024,2025", "ESPN projections for 2018–2025", projectedSeasons.join());
+const oddsSums = projectedSeasons.map((y) => league.teamSeasons.filter((t) => t.season === y).reduce((n, t) => n + odds(t)!, 0));
+check(oddsSums.every((n) => Math.abs(n) < 1e-6), "Odds add up to zero in every season", oddsSums.map((n) => n.toFixed(6)).join(" "));
+const horseshoe = seasons["luckiest"];
+const blackCat = seasons["unluckiest"];
+console.log(`info The Horseshoe: ${horseshoe.teamSeason.person} ${horseshoe.value.toFixed(1)} in ${horseshoe.teamSeason.season}; The Black Cat: ${blackCat.teamSeason.person} ${blackCat.value.toFixed(1)} in ${blackCat.teamSeason.season}`);
+// Trades: every trade's players are known for 2018–2023 and 2026 (2024–2025 had none), and each
+// team's trades match ESPN's own counter. A trade's nets add up to zero.
+const tradeSeasons = full.seasons.map((s) => s.season).filter((y) => full.teamSeasons.some((t) => t.season === y && t.tradeNet !== null));
+check(tradeSeasons.join() === full.seasons.map((s) => s.season).filter((y) => y !== 2017).join(), "trade details for every season but 2017", tradeSeasons.join());
+const tradeCountsOff = tradeSeasons.flatMap((y) => {
+  const file = readTrades(y)!;
+  return full.teamSeasons
+    .filter((t) => t.season === y)
+    .filter((t) => file.trades.filter((tr) => tr.legs.some((l) => l.fromTeamId === t.teamId || l.toTeamId === t.teamId)).length !== t.trades)
+    .map((t) => `${y} ${t.person}`);
+});
+check(tradeCountsOff.length === 0, "each team's trades match ESPN's trade counter", tradeCountsOff.join(", ") || `${tradeSeasons.map((y) => `${y}: ${readTrades(y)!.trades.length}`).join(", ")}`);
+const netSums = tradeSeasons.map((y) => full.teamSeasons.filter((t) => t.season === y).reduce((n, t) => n + t.tradeNet!, 0));
+check(netSums.every((n) => Math.abs(n) < 1e-6), "trade points add up to zero in every season", netSums.map((n) => n.toFixed(2)).join(" "));
+// Roster IQ: replaying the regular season with everyone's actual scores gives ESPN's seeds (wins,
+// then total points; in 2017–2018 the two division winners first), and the best lineup every week
+// never makes a seed worse.
+const seedsOff = league.seasons.filter((s) => s.complete).flatMap((s) => {
+  const division = new Map(league.teamSeasons.filter((t) => t.season === s.season).map((t) => [t.teamId, t.division]));
+  const seeds = regularSeeds(league.games.filter((g) => g.season === s.season), division);
+  return league.teamSeasons.filter((t) => t.season === s.season && seeds.get(t.teamId) !== t.seed).map((t) => `${s.season} ${t.person} ${seeds.get(t.teamId)} vs ${t.seed}`);
+});
+check(seedsOff.length === 0, "the regular-season replay gives ESPN's seeds", seedsOff.join(", "));
+const optimized = league.teamSeasons.filter((t) => t.optimizedSeed !== null);
+check(optimized.length === league.teamSeasons.filter((t) => t.bench !== null).length && optimized.every((t) => t.optimizedSeed! <= t.seed),
+  "best-lineup seeds for every bench season, never worse than the real seed",
+  `${optimized.length} team-seasons, ${optimized.filter((t) => t.optimizedSeed! < t.seed).length} move up`);
+// Roster box: the best player of each MVFP's team is the MVFP; Inconsistent exists wherever there
+// are projections; the best drafted player is one of the team's picks.
+const mvfpOff = [...mvfp.values()].flat().filter((v) => {
+  const t = league.teamSeasons.find((x) => x.season === v.season && x.person === v.person)!;
+  return rosterBox(t).picks.best?.name !== v.name;
+});
+check(mvfpOff.length === 0, "each MVFP is his team's Best Player", mvfpOff.map((v) => `${v.season} ${v.person}`).join(", "));
+const boxes = league.teamSeasons.map((t) => ({ t, box: rosterBox(t) }));
+check(boxes.every(({ t, box }) => (box.picks.inconsistent !== null) === projectedSeasons.includes(t.season)) &&
+  boxes.every(({ box }) => box.picks.drafted !== null) &&
+  boxes.every(({ box }) => box.picks.best !== null && box.picks.franchise !== null),
+  "Roster box: every pick where its data exists",
+  `${boxes.filter(({ box }) => box.picks.inconsistent).length} Inconsistent, ${boxes.filter(({ box }) => box.picks.drafted).length} drafted of ${boxes.length}`);
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

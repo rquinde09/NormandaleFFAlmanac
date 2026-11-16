@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { ChartFrame, MedalKey, RED, SeasonLine, countAxis, keep, medalColor, rankOf, xScale } from "@/components/ChartFrame";
+import { RosterBox } from "@/components/RosterBox";
 import { Segmented } from "@/components/Segmented";
 import { Card, SectionLabel } from "@/components/ui";
-import { ordinal } from "@/lib/format";
-import type { ChartMode as Mode, SeasonPoint } from "@/lib/manager";
+import { ordinal, pts } from "@/lib/format";
+import type { SeasonPoint } from "@/lib/manager";
+
+type Mode = "finish" | "wins" | "pf" | "pa";
 
 // `ranks` says how the markers are ranked on that tab
 const MODES: { value: Mode; label: string; ranks: string }[] = [
@@ -12,80 +16,67 @@ const MODES: { value: Mode; label: string; ranks: string }[] = [
   { value: "wins", label: "Wins", ranks: "Rank in the league that season: most wins is 1st, ties broken by PF." },
   { value: "pf", label: "PF", ranks: "Rank in the league that season: most points for is 1st." },
   { value: "pa", label: "PA", ranks: "Rank in the league that season: fewest points against is 1st." },
-  {
-    value: "streak",
-    label: "Streak",
-    ranks: "The season's longest winning (W) or losing (L) streak, whichever is longer. The league's longest winning streak that season is 1st, its longest losing streak last.",
-  },
-  { value: "trades", label: "Trades", ranks: "Rank in the league that season: most trades is 1st." },
-  {
-    value: "luck",
-    label: "Luck",
-    ranks: "Wins above or below expected. Expected wins: each week, the share of the league this team outscored. Luckiest that season is 1st, unluckiest last.",
-  },
-  {
-    value: "bench",
-    label: "Bench",
-    ranks: "Points left on the bench: each week's best possible lineup minus the one started. Fewest that season is 1st. ESPN has bench lineups for 2018–2025, except 2021.",
-  },
 ];
 
-const MEDALS: Record<number, string> = { 1: "#fbbf24", 2: "#d4d4d8", 3: "#cd7f32" };
-const LINE = "#ef4444"; // red-500, the site's accent
-
-// Clicks inside these keep the selected season: the points themselves and the tabs
-const KEEP = "data-keeps-season";
-
-// One box (the site owner's "Manager Performance"): a year-by-year chart with a tab for each
-// stat. Each season's marker shows where it ranked in the league on that tab: gold, silver and
-// bronze for 1st–3rd, a pancake for last (Round 3, 2026-11-14). Completed seasons only.
-// Tapping a point selects its season: the year is highlighted on the axis and the point's number
-// goes bold (Round 4, 2026-11-14). The selection stays across tabs; tapping the point again, or
-// anywhere else on the page, clears it.
-export function ManagerPerformance({ seasons }: { seasons: SeasonPoint[] }) {
+// The site owner's "Manager Performance" box: a year-by-year line with a tab for each stat (Round 5
+// moved the decision tabs to Manager Playcalls). Each season's marker shows where it ranked in the
+// league on that tab: gold, silver and bronze for 1st–3rd, a pancake for last (Round 3). Tapping a
+// season selects it (Round 4); the line under the chart then says where it ranked, and the Roster
+// box opens with that season's players (Round 5). The season in progress is selected at first.
+export function ManagerPerformance({
+  seasons,
+  selected,
+  onSelect,
+}: {
+  seasons: SeasonPoint[];
+  selected: number | null;
+  onSelect: (season: number) => void;
+}) {
   const [mode, setMode] = useState<Mode>("finish");
-  const [selected, setSelected] = useState<number | null>(null);
   const ranks = MODES.find((m) => m.value === mode)!.ranks;
-
-  useEffect(() => {
-    if (selected === null) return;
-    const clear = (e: MouseEvent) => {
-      if (!(e.target instanceof Element && e.target.closest(`[${KEEP}]`))) setSelected(null);
-    };
-    document.addEventListener("click", clear);
-    return () => document.removeEventListener("click", clear);
-  }, [selected]);
+  const point = seasons.find((s) => s.season === selected) ?? null;
 
   return (
     <section>
       <SectionLabel>Manager Performance</SectionLabel>
       <Card>
-        <div {...{ [KEEP]: "" }}>
+        <div {...keep}>
           <Segmented label="Chart" options={MODES} value={mode} onChange={setMode} small />
         </div>
-        <Chart seasons={seasons} mode={mode} selected={selected} onSelect={(s) => setSelected(s === selected ? null : s)} />
-        <Legend ranks={ranks} pancake={mode !== "trades"} />
+        <LineChart seasons={seasons} mode={mode} selected={selected} onSelect={onSelect} />
+        <div {...keep}>{point && <SeasonLine season={point.season} parts={describe(point, mode)} />}</div>
+        <div className="mt-3 space-y-1 text-xs text-zinc-500">
+          <MedalKey pancake />
+          <p>{ranks}</p>
+        </div>
+        {point && <RosterBox point={point} />}
       </Card>
     </section>
   );
 }
 
-// Points tabs: a free axis around the values, labels rounded to whole points
-const POINTS = new Set<Mode>(["pf", "pa", "bench"]);
-const plusMinus = (v: number, digits: number) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(digits)}`;
+function describe(p: SeasonPoint, mode: Mode): string[] {
+  if (p.live) return ["Season in progress"];
+  const m = p.marks[mode];
+  const rank = rankOf(m.place, p.teams);
+  const last = m.last ? " 🥞" : "";
+  const v = p.values[mode]!;
+  switch (mode) {
+    case "finish":
+      return [`Finished ${ordinal(v)} of ${p.teams}${last}`];
+    case "wins":
+      return [`${v} win${v === 1 ? "" : "s"} (${p.facts.record})`, `${rank}${last}`];
+    case "pf":
+      return [`${pts(v)} PF`, `${rank}${last}`];
+    case "pa":
+      return [`${pts(v)} PA`, `${rank}${last}`];
+  }
+}
 
-const labelOf = (v: number, mode: Mode) =>
-  mode === "finish"
-    ? ordinal(v)
-    : mode === "streak"
-      ? v > 0 ? `W${v}` : v < 0 ? `L${-v}` : "0"
-      : mode === "luck"
-        ? plusMinus(v, 1)
-        : POINTS.has(mode)
-          ? String(Math.round(v))
-          : String(v);
-const tickOf = (v: number, mode: Mode) =>
-  POINTS.has(mode) ? Math.round(v).toLocaleString("en-US") : mode === "luck" ? plusMinus(v, 0) : labelOf(v, mode);
+// Points tabs: a free axis around the values, labels rounded to whole points
+const POINTS = new Set<Mode>(["pf", "pa"]);
+const labelOf = (v: number, mode: Mode) => (mode === "finish" ? ordinal(v) : POINTS.has(mode) ? String(Math.round(v)) : String(v));
+const tickOf = (v: number, mode: Mode) => (POINTS.has(mode) ? Math.round(v).toLocaleString("en-US") : labelOf(v, mode));
 
 type Point = { s: SeasonPoint; v: number };
 
@@ -98,17 +89,9 @@ function segments(points: Point[]) {
   return out;
 }
 
-// A count axis from 0 (or below, for losing streaks) to a round top
-function countAxis(values: number[]) {
-  const hi = Math.max(2, Math.ceil(Math.max(0, ...values) / 2) * 2);
-  const lo = Math.min(0, Math.floor(Math.min(0, ...values) / 2) * 2);
-  return { lo, hi, ticks: lo < 0 ? [lo, 0, hi] : [0, hi / 2, hi] };
-}
-
 // One line, one axis, which follows the tab. Markers are HTML positioned in percent over an SVG
-// drawn with non-scaling strokes, so text and dots keep their size at any width. Each marker is a
-// 28 px button, under the ~30 px between seasons on a 375 px phone with nine seasons.
-function Chart({
+// drawn with non-scaling strokes, so text and dots keep their size at any width.
+function LineChart({
   seasons,
   mode,
   selected,
@@ -119,10 +102,8 @@ function Chart({
   selected: number | null;
   onSelect: (season: number) => void;
 }) {
-  if (seasons.length === 0) return <p className="py-10 text-center text-sm text-zinc-500">No finished seasons yet.</p>;
-  // Bench has no number for seasons without bench lineups (2017, 2021)
   const points: Point[] = seasons.flatMap((s) => (s.values[mode] === null ? [] : [{ s, v: s.values[mode]! }]));
-  if (points.length === 0) return <p className="py-10 text-center text-sm text-zinc-500">ESPN has no bench lineups for these seasons.</p>;
+  if (seasons.length === 0) return <p className="py-10 text-center text-sm text-zinc-500">No seasons yet.</p>;
   const values = points.map((p) => p.v);
 
   // y: 0 at the top, 100 at the bottom, in percent
@@ -132,7 +113,7 @@ function Chart({
     const worst = Math.max(...seasons.map((s) => s.teams));
     y = (rank) => ((rank - 1) / Math.max(1, worst - 1)) * 100;
     ticks = [1, Math.round((1 + worst) / 2), worst];
-  } else if (POINTS.has(mode)) {
+  } else if (POINTS.has(mode) && values.length) {
     const pad = Math.max((Math.max(...values) - Math.min(...values)) * 0.15, 50);
     const lo = Math.floor((Math.min(...values) - pad) / 100) * 100;
     const hi = Math.ceil((Math.max(...values) + pad) / 100) * 100;
@@ -143,11 +124,7 @@ function Chart({
     y = (v) => (1 - (v - axis.lo) / (axis.hi - axis.lo)) * 100;
     ticks = axis.ticks;
   }
-
-  const first = seasons[0].season;
-  const last = seasons[seasons.length - 1].season;
-  const span = Math.max(1, last - first);
-  const x = (season: number) => (first === last ? 50 : 4 + ((season - first) / span) * 92);
+  const x = xScale(seasons);
 
   // A label sits above its point unless the line comes into the point from above on both sides
   const below = (i: number) => {
@@ -157,24 +134,14 @@ function Chart({
   };
 
   return (
-    <div className="relative mt-7 mr-2 mb-7 ml-10 h-44">
-      {/* A faint band behind the selected season, from its label down to its year */}
-      {selected !== null && points.some((p) => p.s.season === selected) && (
-        <div
-          className="pointer-events-none absolute -top-5 -bottom-7 w-7 -translate-x-1/2 rounded-lg bg-zinc-800/70"
-          style={{ left: `${x(selected)}%` }}
-          aria-hidden
-        />
-      )}
-
-      {ticks.map((t) => (
-        <div key={t} className={`absolute right-0 left-0 border-t ${t === 0 && (mode === "streak" || mode === "luck") ? "border-zinc-600" : "border-zinc-800"}`} style={{ top: `${y(t)}%` }}>
-          <span className="absolute right-full mr-2 -translate-y-1/2 text-[10px] tabular-nums whitespace-nowrap text-zinc-500">
-            {tickOf(t, mode)}
-          </span>
-        </div>
-      ))}
-
+    <ChartFrame
+      seasons={seasons}
+      y={y}
+      ticks={ticks.map((t) => ({ value: t, label: tickOf(t, mode) }))}
+      selected={selected}
+      onSelect={onSelect}
+      label={(s) => (s.live ? `${s.season}: season in progress` : s.values[mode] === null ? `${s.season}` : `${s.season}: ${labelOf(s.values[mode]!, mode)}`)}
+    >
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
         {segments(points).map(([a, b]) => (
           <line
@@ -183,87 +150,38 @@ function Chart({
             y1={y(a.v)}
             x2={x(b.s.season)}
             y2={y(b.v)}
-            stroke={LINE}
+            stroke={RED}
             strokeWidth={2}
             vectorEffect="non-scaling-stroke"
           />
         ))}
       </svg>
-
-      <ul aria-label="Seasons">
-        {points.map(({ s, v }, i) => {
-          const m = s.marks[mode];
-          const medal = m.place !== null && !m.last ? MEDALS[m.place] : undefined;
-          const rank = m.last ? "last" : m.place && m.place <= 3 ? ordinal(m.place) : null;
-          const on = s.season === selected;
-          return (
-            <li
-              key={s.season}
-              className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center"
-              style={{ left: `${x(s.season)}%`, top: `${y(v)}%` }}
+      {points.map(({ s, v }, i) => {
+        const m = s.marks[mode];
+        const medal = medalColor(m);
+        const on = s.season === selected;
+        return (
+          <div
+            key={s.season}
+            className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center"
+            style={{ left: `${x(s.season)}%`, top: `${y(v)}%` }}
+            aria-hidden
+          >
+            {m.last ? (
+              <span className="text-[15px] leading-none">🥞</span>
+            ) : (
+              <span className={`block rounded-full ring-2 ring-zinc-900 ${medal ? "h-3.5 w-3.5" : "h-2.5 w-2.5"}`} style={{ background: medal ?? RED }} />
+            )}
+            <span
+              className={`absolute left-1/2 -translate-x-1/2 tabular-nums whitespace-nowrap ${
+                on ? "text-[11px] font-bold text-zinc-50" : "text-[9px] text-zinc-400"
+              } ${below(i) ? "top-full mt-1" : "bottom-full mb-1"}`}
             >
-              {m.last ? (
-                <span className="text-[15px] leading-none">🥞</span>
-              ) : (
-                <span
-                  className={`block rounded-full ring-2 ring-zinc-900 ${medal ? "h-3.5 w-3.5" : "h-2.5 w-2.5"}`}
-                  style={{ background: medal ?? LINE }}
-                />
-              )}
-              <span
-                className={`absolute left-1/2 -translate-x-1/2 tabular-nums whitespace-nowrap ${
-                  on ? "text-[11px] font-bold text-zinc-50" : "text-[9px] text-zinc-400"
-                } ${below(i) ? "top-full mt-1" : "bottom-full mb-1"}`}
-                aria-hidden
-              >
-                {labelOf(v, mode)}
-              </span>
-              {/* The tap target, centered on the marker */}
-              <button
-                type="button"
-                {...{ [KEEP]: "" }}
-                onClick={() => onSelect(s.season)}
-                aria-pressed={on}
-                aria-label={`${s.season}: ${labelOf(v, mode)}${rank && mode !== "finish" ? `, ${rank} in the league` : ""}`}
-                className="absolute top-1/2 left-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-zinc-400"
-              />
-            </li>
-          );
-        })}
-      </ul>
-
-      {/* Years along the bottom; the selected one is highlighted */}
-      {points.map(({ s }) => (
-        <span
-          key={s.season}
-          className={`absolute top-full mt-2 -translate-x-1/2 rounded px-1 text-[10px] tabular-nums ${
-            s.season === selected ? "bg-red-500 font-semibold text-white" : "text-zinc-500"
-          }`}
-          style={{ left: `${x(s.season)}%` }}
-          aria-hidden
-        >
-          {points.length > 5 ? `’${String(s.season).slice(2)}` : s.season}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function Legend({ ranks, pancake }: { ranks: string; pancake: boolean }) {
-  const dot = (color: string) => <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: color }} />;
-  return (
-    <div className="space-y-1 text-xs text-zinc-500">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-        <span className="flex items-center gap-1.5">{dot(MEDALS[1])} 1st</span>
-        <span className="flex items-center gap-1.5">{dot(MEDALS[2])} 2nd</span>
-        <span className="flex items-center gap-1.5">{dot(MEDALS[3])} 3rd</span>
-        {pancake && (
-          <span className="flex items-center gap-1.5">
-            <span className="text-[13px] leading-none">🥞</span> Last
-          </span>
-        )}
-      </div>
-      <p>{ranks}</p>
-    </div>
+              {labelOf(v, mode)}
+            </span>
+          </div>
+        );
+      })}
+    </ChartFrame>
   );
 }

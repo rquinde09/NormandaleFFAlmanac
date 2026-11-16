@@ -1,8 +1,9 @@
 // Details behind each title on the Champions page: the championship game's lineup, the season's
 // best game, and the player who scored the most points while in the starting lineup. Lineups come
 // from data/raw/lineups/{season}.json, fetched once a season is over. 2017 has starters only, all
-// in slot 0. ESPN keeps no lineups for 2021, so that champion's lineup was entered by hand from the
-// site owner (data/manual/lineups-2021.json), without points.
+// in slot 0. A hand-entered lineup (data/manual/lineups-{season}.json, without points) is used only
+// when ESPN has none. 2021's, entered from the site owner before ESPN's 2021 lineups were fetched,
+// matches ESPN's slot for slot (npm run check), so ESPN's is shown.
 import fs from "node:fs";
 import path from "node:path";
 import { BENCH, readLineups, type RawLineups, type RawPlayer } from "@/lib/bench";
@@ -62,7 +63,7 @@ export type TopStarter = { season: number; person: string; name: string; points:
 
 // The MVFP award (the site owner, 2026-11-14): each completed season's player who scored the most
 // points for one team while in its starting lineup, every game counted, playoffs included. Ties
-// share it. A season without lineups (2021) has none.
+// share it. A season without lineups would have none.
 let topStartersCache: Map<number, TopStarter[]> | null = null;
 export function topStarters(league: League): Map<number, TopStarter[]> {
   if (topStartersCache) return topStartersCache;

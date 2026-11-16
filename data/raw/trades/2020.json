@@ -1,0 +1,598 @@
+{
+  "available": true,
+  "seasonId": 2020,
+  "trades": [
+    {
+      "id": "4149d2ac-f94e-481f-9934-885aa86612c3",
+      "legs": [
+        {
+          "fromTeamId": 1,
+          "playerId": 13295,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 1,
+          "playerId": 2979477,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 3126486,
+          "toTeamId": 1
+        }
+      ],
+      "processDate": 1599962079720,
+      "scoringPeriodId": 1
+    },
+    {
+      "id": "e5c19267-4d6e-4b51-89fb-568c7d69bbee",
+      "legs": [
+        {
+          "fromTeamId": 11,
+          "playerId": -16026,
+          "toTeamId": 14
+        },
+        {
+          "fromTeamId": 14,
+          "playerId": 14876,
+          "toTeamId": 11
+        }
+      ],
+      "processDate": 1600328406325,
+      "scoringPeriodId": 2
+    },
+    {
+      "id": "0f1d1c54-d284-429f-bf31-8a1c8d834367",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 13217,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 2,
+          "playerId": 3052876,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 12,
+          "playerId": 14924,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1600883106246,
+      "scoringPeriodId": 3
+    },
+    {
+      "id": "114a1b3a-6a47-4929-a87a-dcc71af94e69",
+      "legs": [
+        {
+          "fromTeamId": 3,
+          "playerId": 3046439,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 3,
+          "playerId": 4040761,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 3,
+          "playerId": 4047839,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 12,
+          "playerId": 2974858,
+          "toTeamId": 3
+        }
+      ],
+      "processDate": 1600922116646,
+      "scoringPeriodId": 3
+    },
+    {
+      "id": "cb953bb4-571d-44e8-9899-9d1301e3fb69",
+      "legs": [
+        {
+          "fromTeamId": 1,
+          "playerId": 3054212,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 1,
+          "playerId": 3915416,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 12,
+          "playerId": 3117251,
+          "toTeamId": 1
+        }
+      ],
+      "processDate": 1600972840254,
+      "scoringPeriodId": 3
+    },
+    {
+      "id": "d4b4f77f-afaf-4f87-8041-b974a287b11b",
+      "legs": [
+        {
+          "fromTeamId": 9,
+          "playerId": 2980453,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 4243160,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 2580,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 13295,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 2979477,
+          "toTeamId": 9
+        }
+      ],
+      "processDate": 1600988986279,
+      "scoringPeriodId": 3
+    },
+    {
+      "id": "74743d42-0436-4643-853c-1bc0c8d648b7",
+      "legs": [
+        {
+          "fromTeamId": 4,
+          "playerId": -16025,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 4,
+          "playerId": 10452,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 12,
+          "playerId": 3915416,
+          "toTeamId": 4
+        },
+        {
+          "fromTeamId": 12,
+          "playerId": 4047839,
+          "toTeamId": 4
+        }
+      ],
+      "processDate": 1601501193998,
+      "scoringPeriodId": 4
+    },
+    {
+      "id": "2fa50d54-f497-4558-b3aa-70b177408280",
+      "legs": [
+        {
+          "fromTeamId": 9,
+          "playerId": 13295,
+          "toTeamId": 11
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 3025433,
+          "toTeamId": 11
+        },
+        {
+          "fromTeamId": 11,
+          "playerId": 2976212,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 11,
+          "playerId": 3115378,
+          "toTeamId": 9
+        }
+      ],
+      "processDate": 1601967600000,
+      "scoringPeriodId": 5
+    },
+    {
+      "id": "aa223921-3dd6-43a5-9dd0-c66c2ef1b100",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 3052117,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 2580,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1601967600000,
+      "scoringPeriodId": 5
+    },
+    {
+      "id": "ca66a2f0-d4a5-459a-8cd0-c59b7627b545",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 14924,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 16731,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1601967600000,
+      "scoringPeriodId": 5
+    },
+    {
+      "id": "f256a48d-6e57-4c16-bd77-16e668e0facc",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 14886,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 2,
+          "playerId": 16813,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 2,
+          "playerId": 2574808,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 2,
+          "playerId": 2576434,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 14053,
+          "toTeamId": 2
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 15818,
+          "toTeamId": 2
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 2979843,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1601967600000,
+      "scoringPeriodId": 5
+    },
+    {
+      "id": "5294d8a9-49f2-442e-a685-660fcb4ae392",
+      "legs": [
+        {
+          "fromTeamId": 4,
+          "playerId": 2975674,
+          "toTeamId": 17
+        },
+        {
+          "fromTeamId": 4,
+          "playerId": 3915416,
+          "toTeamId": 17
+        },
+        {
+          "fromTeamId": 17,
+          "playerId": 15880,
+          "toTeamId": 4
+        }
+      ],
+      "processDate": 1602080111776,
+      "scoringPeriodId": 5
+    },
+    {
+      "id": "452f4424-f4f3-4cfe-a9c3-9efe12482e55",
+      "legs": [
+        {
+          "fromTeamId": 3,
+          "playerId": 4036133,
+          "toTeamId": 11
+        },
+        {
+          "fromTeamId": 11,
+          "playerId": 16913,
+          "toTeamId": 3
+        }
+      ],
+      "processDate": 1602541503843,
+      "scoringPeriodId": 5
+    },
+    {
+      "id": "605fd523-a30e-4423-ab1d-fd7d8f416902",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 3134353,
+          "toTeamId": 11
+        },
+        {
+          "fromTeamId": 11,
+          "playerId": 14876,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1602550813523,
+      "scoringPeriodId": 5
+    },
+    {
+      "id": "e861d8e0-2e40-49cf-8524-748dd65c2284",
+      "legs": [
+        {
+          "fromTeamId": 9,
+          "playerId": 2985659,
+          "toTeamId": 11
+        },
+        {
+          "fromTeamId": 11,
+          "playerId": 3049899,
+          "toTeamId": 9
+        }
+      ],
+      "processDate": 1602658800000,
+      "scoringPeriodId": 6
+    },
+    {
+      "id": "f718650d-2f09-4985-a88a-3813ce869dab",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 3054850,
+          "toTeamId": 11
+        },
+        {
+          "fromTeamId": 11,
+          "playerId": 13981,
+          "toTeamId": 2
+        },
+        {
+          "fromTeamId": 11,
+          "playerId": 3051392,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1602658800000,
+      "scoringPeriodId": 6
+    },
+    {
+      "id": "a73446d4-4952-4298-934d-d6ea2e96e2d8",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 3916945,
+          "toTeamId": 17
+        },
+        {
+          "fromTeamId": 2,
+          "playerId": 4052042,
+          "toTeamId": 17
+        },
+        {
+          "fromTeamId": 17,
+          "playerId": 2969962,
+          "toTeamId": 2
+        },
+        {
+          "fromTeamId": 17,
+          "playerId": 3919596,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1602884847597,
+      "scoringPeriodId": 6
+    },
+    {
+      "id": "7d19b1f9-e7c3-4908-890e-f5efd4e54ed4",
+      "legs": [
+        {
+          "fromTeamId": 15,
+          "playerId": 16782,
+          "toTeamId": 16
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 4038524,
+          "toTeamId": 16
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 4241372,
+          "toTeamId": 16
+        },
+        {
+          "fromTeamId": 16,
+          "playerId": 4241389,
+          "toTeamId": 15
+        }
+      ],
+      "processDate": 1603295924076,
+      "scoringPeriodId": 7
+    },
+    {
+      "id": "22e175d5-771b-44a6-b704-7cc2257436b6",
+      "legs": [
+        {
+          "fromTeamId": 9,
+          "playerId": 3115378,
+          "toTeamId": 11
+        },
+        {
+          "fromTeamId": 11,
+          "playerId": 16757,
+          "toTeamId": 9
+        }
+      ],
+      "processDate": 1603417858918,
+      "scoringPeriodId": 7
+    },
+    {
+      "id": "e671d10e-c1bd-41a4-901e-378b804458bb",
+      "legs": [
+        {
+          "fromTeamId": 9,
+          "playerId": 3043275,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 3139522,
+          "toTeamId": 12
+        },
+        {
+          "fromTeamId": 12,
+          "playerId": 3046439,
+          "toTeamId": 9
+        }
+      ],
+      "processDate": 1603782000000,
+      "scoringPeriodId": 8
+    },
+    {
+      "id": "1c8a7199-c101-4bce-989e-ddf2f9f5a89f",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": -16003,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 2,
+          "playerId": 3121023,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 3051876,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1603905706613,
+      "scoringPeriodId": 8
+    },
+    {
+      "id": "3a0757a9-22ab-48d8-8d05-19109567af30",
+      "legs": [
+        {
+          "fromTeamId": 11,
+          "playerId": 3924365,
+          "toTeamId": 13
+        },
+        {
+          "fromTeamId": 13,
+          "playerId": 3895856,
+          "toTeamId": 11
+        }
+      ],
+      "processDate": 1604673889041,
+      "scoringPeriodId": 9
+    },
+    {
+      "id": "f917cc3d-d710-4634-a6af-584e103d4926",
+      "legs": [
+        {
+          "fromTeamId": 1,
+          "playerId": 3128390,
+          "toTeamId": 2
+        },
+        {
+          "fromTeamId": 2,
+          "playerId": 15860,
+          "toTeamId": 1
+        }
+      ],
+      "processDate": 1604995200000,
+      "scoringPeriodId": 10
+    },
+    {
+      "id": "f7a1c5d4-2a7a-4f3c-a9ee-1aedb1c71bc3",
+      "legs": [
+        {
+          "fromTeamId": 2,
+          "playerId": 2576925,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 2,
+          "playerId": 3051392,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 16732,
+          "toTeamId": 2
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 2576434,
+          "toTeamId": 2
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 2976212,
+          "toTeamId": 2
+        }
+      ],
+      "processDate": 1605130215253,
+      "scoringPeriodId": 10
+    },
+    {
+      "id": "7618619b-d4e2-4fab-82eb-28e88506cba9",
+      "legs": [
+        {
+          "fromTeamId": 4,
+          "playerId": -16021,
+          "toTeamId": 9
+        },
+        {
+          "fromTeamId": 9,
+          "playerId": 16813,
+          "toTeamId": 4
+        }
+      ],
+      "processDate": 1605134097845,
+      "scoringPeriodId": 10
+    },
+    {
+      "id": "ccf9b655-bfc6-4c0e-b894-cc568d7ec742",
+      "legs": [
+        {
+          "fromTeamId": 3,
+          "playerId": 4046692,
+          "toTeamId": 15
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 15971,
+          "toTeamId": 3
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 2980453,
+          "toTeamId": 3
+        },
+        {
+          "fromTeamId": 15,
+          "playerId": 4241389,
+          "toTeamId": 3
+        }
+      ],
+      "processDate": 1605832696082,
+      "scoringPeriodId": 11
+    }
+  ]
+}

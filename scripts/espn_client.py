@@ -15,9 +15,9 @@ BOX_VIEWS = ["mMatchupScore", "mScoreboard"]
 ENV_NAMES = ("ESPN_LEAGUE_ID", "ESPN_S2", "ESPN_SWID")
 
 
-def load_config():
-    """Environment variables win (GitHub Actions secrets); .env.local fills in locally."""
-    values = parse(DEFAULT_PATH) if DEFAULT_PATH.exists() else {}
+def load_config(path=DEFAULT_PATH):
+    """Environment variables win (GitHub Actions secrets); .env.local (or `path`) fills in locally."""
+    values = parse(path) if path.exists() else {}
     config = {name: (os.environ.get(name) or values.get(name) or "").strip() for name in ENV_NAMES}
     missing = [name for name, value in config.items() if not value]
     if missing:
@@ -51,3 +51,40 @@ def fetch_box_scores(req, matchup_period, scoring_period):
         params={"view": BOX_VIEWS, "scoringPeriodId": scoring_period},
         headers={"x-fantasy-filter": json.dumps(filters)},
     )
+
+
+def unwrap(data):
+    """leagueHistory answers with a one-item list"""
+    return data[0] if isinstance(data, list) else data
+
+
+def fetch_draft(req):
+    return unwrap(req.league_get(params={"view": "mDraftDetail"}))
+
+
+def _players_filter(season, ids):
+    # Every scoring period's stats plus the season rows: 00 = actual, 10 = ESPN's projection
+    return {"players": {"filterIds": {"value": ids},
+                        "filterStatsForTopScoringPeriodIds": {"value": 25, "additionalValue": [f"00{season}", f"10{season}"]}}}
+
+
+def fetch_player_info(req, season, ids):
+    """Players' weekly and season stats, scored with the league's settings (kona_player_info)"""
+    data = req.league_get(params={"view": "kona_player_info"}, headers={"x-fantasy-filter": json.dumps(_players_filter(season, ids))})
+    return unwrap(data).get("players", [])
+
+
+def fetch_trade_transactions(req, scoring_period):
+    """One scoring period's trade transactions (mTransactions2). Other teams' TRADE_ACCEPT rows come
+    back without players; 2018's executed TRADE_UPHOLD rows have them."""
+    filters = {"transactions": {"filterType": {"value": ["TRADE_ACCEPT", "TRADE_UPHOLD"]}}}
+    data = req.league_get(params={"view": "mTransactions2", "scoringPeriodId": scoring_period},
+                          headers={"x-fantasy-filter": json.dumps(filters)})
+    return unwrap(data).get("transactions", []) or []
+
+
+def fetch_player_cards(req, season, ids):
+    """Player cards (kona_playercard), which list each player's transactions, trades included with
+    both teams' players. mTransactions2 leaves other teams' trade legs out."""
+    data = req.league_get(params={"view": "kona_playercard"}, headers={"x-fantasy-filter": json.dumps(_players_filter(season, ids))})
+    return unwrap(data).get("players", [])

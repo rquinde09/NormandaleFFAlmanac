@@ -1,9 +1,10 @@
-// What a manager's page shows beyond the standings: the Manager Performance chart, head-to-head
-// numbers against each opponent and the achievements (the site owner's Round 2 and Round 3 notes,
-// 2026-11-07 and 2026-11-14). Counting rules are in CLAUDE.md.
+// What a manager's page shows beyond the standings: the Manager Performance and Manager Playcalls
+// charts, head-to-head numbers against each opponent and the achievements (the site owner's notes,
+// Rounds 2–5, 2026-11-07 to 2026-11-15). Counting rules are in CLAUDE.md.
 import { topStarters } from "@/lib/champions";
-import { pts } from "@/lib/format";
-import { type Game, type Kind, type League, type TeamSeason, luck, managerBySlug } from "@/lib/league";
+import { pts, record } from "@/lib/format";
+import { type Game, type Kind, type League, type TeamSeason, luck, managerBySlug, odds } from "@/lib/league";
+import { rosterBox, type RosterBox } from "@/lib/roster";
 
 export type OpponentLine = {
   slug: string;
@@ -90,18 +91,40 @@ export function opponents(league: League, person: string): Opponents {
   };
 }
 
-// ---- Manager Performance chart ----
+// ---- Manager Performance and Manager Playcalls charts ----
 
-export type ChartMode = "finish" | "wins" | "pf" | "pa" | "streak" | "trades" | "luck" | "bench";
+// Manager Performance: Finish, Wins, PF, PA. Manager Playcalls (Round 5, 2026-11-15), the manager's
+// own decisions: Luck, Odds, Roster IQ (points left on the bench), Trades, Streak.
+export type ChartMode = "finish" | "wins" | "pf" | "pa" | "luck" | "odds" | "bench" | "trades" | "streak";
 
-// Where a season ranked in the league on one tab: 1–3 earn a medal, `last` the pancake
-export type Mark = { place: number | null; last: boolean };
+// Where a season ranked in the league on one tab: 1–3 earn a medal where `medal` allows one, `last`
+// the pancake. `place` is null without a number that season.
+export type Mark = { place: number | null; medal: boolean; last: boolean };
+
+// What the line under each chart says about the selected season
+export type SeasonFacts = {
+  record: string; // every decided game
+  wins: number;
+  games: number;
+  expectedWins: number; // all-play
+  projectedWins: number | null; // ESPN's favorite; null without projections
+  benchAverage: number | null; // the league's average points left on the bench that season
+  seed: number;
+  optimizedSeed: number | null;
+  trades: number;
+  tradeNet: number | null; // null when ESPN has no trade details for the season
+  winStreak: number;
+  lossStreak: number;
+};
 
 export type SeasonPoint = {
   season: number;
   teams: number;
+  live: boolean; // the season in progress: on the axis, selectable, but no numbers (Round 5)
   values: Record<ChartMode, number | null>; // null: no number that season (Bench without lineups)
   marks: Record<ChartMode, Mark>;
+  facts: SeasonFacts;
+  roster: RosterBox;
 };
 
 // The longer of the season's longest winning and losing streaks, the winning one on a tie: a
@@ -127,41 +150,64 @@ const RANKINGS: Record<ChartMode, Ranking> = {
   pf: { value: (t) => t.all.pf, better: (a, b) => cents(a.all.pf) > cents(b.all.pf), pancake: true },
   // Fewest PA is best: most PA is the "It Was Only A Dream" award
   pa: { value: (t) => t.all.pa, better: (a, b) => cents(a.all.pa) < cents(b.all.pa), pancake: true },
-  // Longest winning streak is best, longest losing streak last
-  streak: { value: signedStreak, better: (a, b) => signedStreak(a) > signedStreak(b), pancake: true },
+  // Round 5: Luck and Odds get medals for the most wins above expected, on a green bar, and no pancake
+  luck: { value: luck, better: (a, b) => cents(luck(a)) > cents(luck(b)), pancake: false, medals: (t) => luck(t) > 0 },
+  odds: { value: odds, better: (a, b) => cents(odds(a)!) > cents(odds(b)!), pancake: false, medals: (t) => (odds(t) ?? 0) > 0 },
+  // Fewest points left on the bench is best, most is last (the Benchwarmer award). Roster IQ's bars
+  // show green or red against the league average instead of these marks.
+  bench: { value: (t) => t.bench, better: (a, b) => cents(a.bench!) < cents(b.bench!), pancake: true },
   // Most trades is best; no pancake for not trading, and no medal without a trade
   trades: { value: (t) => t.trades, better: (a, b) => a.trades > b.trades, pancake: false, medals: (t) => t.trades > 0 },
-  // Luke, 2026-11-15. Luck: most wins above expected is best. Bench: fewest points left on the
-  // bench is best, most is last (the Benchwarmer award).
-  luck: { value: luck, better: (a, b) => cents(luck(a)) > cents(luck(b)), pancake: true },
-  bench: { value: (t) => t.bench, better: (a, b) => cents(a.bench!) < cents(b.bench!), pancake: true },
+  // Longest winning streak is best (medals only for a winning streak), longest losing streak last
+  streak: { value: signedStreak, better: (a, b) => signedStreak(a) > signedStreak(b), pancake: true, medals: (t) => signedStreak(t) > 0 },
 };
 
 function mark(mode: ChartMode, t: TeamSeason, everyone: TeamSeason[]): Mark {
-  if (mode === "finish") return { place: t.finalRank, last: t.lastPlace };
+  if (mode === "finish") return { place: t.finalRank, medal: true, last: t.lastPlace };
   const r = RANKINGS[mode];
-  if (r.value(t) === null || (r.medals && !r.medals(t))) return { place: null, last: false };
+  if (r.value(t) === null) return { place: null, medal: false, last: false };
   const field = everyone.filter((o) => r.value(o) !== null);
   const place = 1 + field.filter((o) => r.better!(o, t)).length;
   const last = r.pancake && !field.some((o) => r.better!(t, o));
-  return { place, last };
+  return { place, medal: !r.medals || r.medals(t), last };
 }
 
-// One point per completed season. The season in progress stays off the chart: half a season's
-// PF would flatten the rest.
+const MODES = Object.keys(RANKINGS) as ChartMode[];
+
+// One point per season the manager played. Completed seasons carry the numbers; the season in
+// progress is on the axis with none (half a season's PF would flatten the rest), but its Roster box
+// counts the weeks decided so far.
 export function performance(league: League, person: string): SeasonPoint[] {
-  const complete = new Map(league.seasons.filter((s) => s.complete).map((s) => [s.season, s]));
-  const modes = Object.keys(RANKINGS) as ChartMode[];
+  const info = new Map(league.seasons.map((s) => [s.season, s]));
   return league.teamSeasons
-    .filter((t) => t.person === person && complete.has(t.season))
+    .filter((t) => t.person === person)
     .sort((a, b) => a.season - b.season)
     .map((t) => {
+      const season = info.get(t.season)!;
       const field = league.teamSeasons.filter((o) => o.season === t.season);
+      const benched = field.filter((o) => o.bench !== null);
+      const live = !season.complete;
       return {
         season: t.season,
-        teams: complete.get(t.season)!.teams,
-        values: Object.fromEntries(modes.map((m) => [m, RANKINGS[m].value(t)])) as Record<ChartMode, number | null>,
-        marks: Object.fromEntries(modes.map((m) => [m, mark(m, t, field)])) as Record<ChartMode, Mark>,
+        teams: season.teams,
+        live,
+        values: Object.fromEntries(MODES.map((m) => [m, live ? null : RANKINGS[m].value(t)])) as Record<ChartMode, number | null>,
+        marks: Object.fromEntries(MODES.map((m) => [m, live ? { place: null, medal: false, last: false } : mark(m, t, field)])) as Record<ChartMode, Mark>,
+        facts: {
+          record: record(t.all),
+          wins: t.all.w + t.all.t / 2,
+          games: t.all.games,
+          expectedWins: t.expectedWins,
+          projectedWins: t.projectedWins,
+          benchAverage: benched.length ? benched.reduce((n, o) => n + o.bench!, 0) / benched.length : null,
+          seed: t.seed,
+          optimizedSeed: t.optimizedSeed,
+          trades: t.trades,
+          tradeNet: t.tradeNet,
+          winStreak: t.longestWinStreak,
+          lossStreak: t.longestLossStreak,
+        },
+        roster: rosterBox(t),
       };
     });
 }
@@ -212,7 +258,7 @@ export function achievements(league: League, person: string): Achievement[] {
       icon: "💪",
       title: "MVFP",
       detail: "Had the highest scoring player in the league",
-      fine: "Most points by one player in a team's starting lineup that season, playoffs included. ESPN has no 2021 lineups.",
+      fine: "Most points by one player in a team's starting lineup that season, playoffs included.",
       earned: mvfp.length > 0,
       note: short([...new Set(mvfp.map((p) => p.season))]),
       seasons: mvfp.map((p) => ({ season: p.season, extra: `${p.name}, ${pts(p.points)} pts` })),
@@ -228,7 +274,7 @@ export function achievements(league: League, person: string): Achievement[] {
       icon: "🪑",
       title: "The Benchwarmer",
       detail: "Left the Most Points on the Bench",
-      fine: "In one season, every game counted: the best possible lineup each week minus the one started. ESPN has bench lineups for 2018–2025, except 2021.",
+      fine: "In one season, every game counted: the best possible lineup each week minus the one started. ESPN has bench lineups from 2018 on.",
       ...bySeasons(
         years((t) => {
           const field = league.teamSeasons.filter((x) => x.season === t.season && x.bench !== null).map((x) => cents(x.bench!));

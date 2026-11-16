@@ -23,7 +23,8 @@ const KIND_LABEL = { regular: "", playoff: " · playoffs", placement: " · place
 // Head-to-head over every game, all seasons, one tab at a time: an opponent with a ring and just
 // their name (the site owner, 2026-11-14), or a single game. The ring's middle holds the number the
 // tab picks by: games, wins, losses, or the points over every game against them. Active opponents
-// only, with no switch (Round 4).
+// only, with no switch (Round 4). The ring sits in the middle of the box with the name or the game
+// under it, on every tab (Round 5).
 export function Opponents({ data }: { data: OpponentsData }) {
   const [tab, setTab] = useState<Tab>("faced");
   const about = TABS.find((t) => t.key === tab)!.about;
@@ -76,22 +77,24 @@ function Pick({ o, tab }: { o: OpponentLine; tab: OpponentKey }) {
     pa: { share: o.pa / (o.pf + o.pa), value: Math.round(o.pa).toLocaleString("en-US"), label: "PA" },
   }[tab];
 
-  // Nothing else to show, so the ring and the name sit in the middle of the box (Round 4)
   return (
-    <div className="mt-4 flex items-center justify-center gap-5">
+    <div className={STACK}>
       <Ring {...ring} />
-      <Link href={`/teams/${o.slug}`} className="block min-w-0 truncate text-xl font-semibold text-zinc-50 hover:text-white">
+      <Link href={`/teams/${o.slug}`} className="block max-w-full truncate text-xl font-semibold text-zinc-50 hover:text-white">
         {o.nickname}
       </Link>
     </div>
   );
 }
 
+// Every tab's content: centered, and the same height so switching tabs doesn't move the page
+const STACK = "mt-4 flex min-h-56 flex-col items-center justify-center gap-2 text-center";
+
 function OneGame({ g, about }: { g: GameLine; about: string }) {
   return (
-    <div className="mt-4 flex items-center gap-5">
+    <div className={STACK}>
       <Ring share={g.pf / (g.pf + g.pa)} value={score(g.pf)} label="PF" />
-      <div className="min-w-0 text-sm">
+      <div className="max-w-full min-w-0 text-sm">
         <div className="text-xs text-zinc-500">{about}</div>
         <Link href={`/teams/${g.opponentSlug}`} className="block truncate text-xl font-semibold text-zinc-50 hover:text-white">
           vs {g.opponent}

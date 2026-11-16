@@ -2,7 +2,8 @@
 // The counting rules live in CLAUDE.md; scripts/check-data.ts checks them against the old Sheet.
 import fs from "node:fs";
 import path from "node:path";
-import { benchGames, type BenchGame } from "@/lib/bench";
+import { benchGames, readLineups, type BenchGame } from "@/lib/bench";
+import { optimizedSeeds, projectedWins, tradeNets } from "@/lib/playcalls";
 import type { Career } from "@/lib/standings";
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -43,6 +44,7 @@ export type TeamSeason = {
   teamId: number;
   teamName: string;
   seed: number;
+  division: number; // ESPN's divisionId: two divisions in 2017 and 2018, one since
   finalRank: number | null; // null while the season is in progress
   lastPlace: boolean; // finished last of the season's teams: the pancake
   regular: Totals; // ESPN's own record: regular season only
@@ -54,6 +56,10 @@ export type TeamSeason = {
   // outscored, summed over every decided game. `luck` is wins minus this.
   expectedWins: number;
   bench: number | null; // points left on the bench over the season; null without bench lineups
+  // Round 5 (2026-11-15), from lib/playcalls.ts:
+  projectedWins: number | null; // games ESPN's projections favored this team in; null without projections
+  tradeNet: number | null; // starting-lineup points the season's trades gained (or lost); null without trade details
+  optimizedSeed: number | null; // the seed with the best lineup every week; null without bench lineups
 };
 
 // A playoff-week schedule entry: the winners bracket, placement games or the consolation ladder.
@@ -105,6 +111,7 @@ type RawTeam = {
   nickname?: string;
   owners?: string[];
   playoffSeed: number;
+  divisionId?: number;
   rankCalculatedFinal?: number;
   rankFinal?: number;
   transactionCounter?: { trades?: number };
@@ -137,6 +144,10 @@ export const winPct = (t: Totals) => (t.games ? (t.w + t.t / 2) / t.games : 0);
 
 // Wins above (or below) what the team's scores earned against the whole league each week
 export const luck = (t: TeamSeason) => t.all.w + t.all.t / 2 - t.expectedWins;
+
+// Odds (the site owner's Round 5): wins above (or below) what ESPN's projections expected. Positive:
+// ESPN doubted the team; negative: ESPN gave it false hope.
+export const odds = (t: TeamSeason) => (t.projectedWins === null ? null : t.all.w + t.all.t / 2 - t.projectedWins);
 
 const cents = (n: number) => Math.round(n * 100); // compares points without float noise
 
@@ -229,6 +240,12 @@ export function getLeague(): League {
     const seasonBench = benchGames(s.seasonId, slots, (teamId) => credit.get(teamId)!);
     bench.push(...seasonBench);
 
+    const lineups = readLineups(s.seasonId);
+    const projected = projectedWins(seasonGames, lineups);
+    const nets = tradeNets(s.seasonId, lineups);
+    const division = new Map(s.teams.map((t) => [t.id, t.divisionId ?? 0]));
+    const optimized = complete && seasonBench.length ? optimizedSeeds(seasonGames, seasonBench, division) : null;
+
     // Playoff weeks as scheduled, byes and undecided games included, in ESPN's (bracket) order
     const seed = new Map(s.teams.map((t) => [t.id, t.playoffSeed]));
     const bracketSide = (r: RawSide): BracketSide => ({ person: credit.get(r.teamId)!, teamId: r.teamId, seed: seed.get(r.teamId)!, points: r.totalPoints });
@@ -276,6 +293,7 @@ export function getLeague(): League {
         teamId: team.id,
         teamName: teamName(team),
         seed: team.playoffSeed,
+        division: team.divisionId ?? 0,
         finalRank,
         lastPlace: finalRank === s.teams.length,
         regular,
@@ -287,6 +305,9 @@ export function getLeague(): League {
         bench: seasonBench.length
           ? seasonBench.filter((b) => b.teamId === team.id).reduce((n, b) => n + cents(b.left), 0) / 100
           : null,
+        projectedWins: projected ? (projected.get(team.id) ?? 0) : null,
+        tradeNet: nets ? (nets.get(team.id) ?? 0) : null,
+        optimizedSeed: optimized?.get(team.id) ?? null,
       });
     }
   }
@@ -416,6 +437,7 @@ export function seasonRecords(league: League, top = 5, counts: (person: string) 
   const pick = (value: (ts: TeamSeason) => number, compare: (a: TeamSeason, b: TeamSeason) => number, from = rows) =>
     [...from].sort(compare).slice(0, top).map((teamSeason) => ({ teamSeason, value: value(teamSeason) }));
   const benched = rows.filter((t) => t.bench !== null);
+  const projectedRows = rows.filter((t) => t.projectedWins !== null);
   return [
     { key: "best", title: "The Special One", subtitle: "Most wins in a season", unit: "wins",
       entries: pick((t) => t.all.w, (a, b) => b.all.w - a.all.w || b.all.pf - a.all.pf) },
@@ -433,11 +455,12 @@ export function seasonRecords(league: League, top = 5, counts: (person: string) 
       entries: pick((t) => t.longestLossStreak, (a, b) => b.longestLossStreak - a.longestLossStreak) },
     { key: "trades", title: "The Peaky Blinders", subtitle: "Most trades", unit: "trades",
       entries: pick((t) => t.trades, (a, b) => b.trades - a.trades) },
-    // Added by Luke, 2026-11-15. The names are placeholders until the site owner picks his own.
-    { key: "luckiest", title: "The Horseshoe", subtitle: "Most wins above expected", unit: "luck",
-      entries: pick(luck, (a, b) => luck(b) - luck(a)) },
-    { key: "unluckiest", title: "The Black Cat", subtitle: "Most wins below expected", unit: "luck",
-      entries: pick(luck, (a, b) => luck(a) - luck(b)) },
+    // Added by Luke, 2026-11-15. Round 5 (the same day) describes these two as results against
+    // ESPN's projections, so they count Odds, over the seasons with projections.
+    { key: "luckiest", title: "The Horseshoe", subtitle: "Outperformed season projection", unit: "odds",
+      entries: pick((t) => odds(t)!, (a, b) => odds(b)! - odds(a)!, projectedRows) },
+    { key: "unluckiest", title: "The Black Cat", subtitle: "Underperformed season projection", unit: "odds",
+      entries: pick((t) => odds(t)!, (a, b) => odds(a)! - odds(b)!, projectedRows) },
     { key: "bench-season", title: "Asleep at the Wheel", subtitle: "Most points left on the bench", unit: "pts",
       entries: pick((t) => t.bench!, (a, b) => b.bench! - a.bench!, benched) },
   ];
@@ -468,7 +491,8 @@ export function benchRecords(league: League, top = 5, counts: (person: string) =
   return [
     { key: "bench-game", title: "Riding the Pine", subtitle: "Most points left on the bench", unit: "pts",
       entries: list(rows, (r) => r.bench.left) },
-    { key: "bench-loss", title: "Self-Inflicted", subtitle: "Lost, but the best lineup would have won by the most", unit: "pts",
+    // The site owner's wording (Round 5); ranked by how much the best lineup would have won by
+    { key: "bench-loss", title: "Self-Inflicted", subtitle: "Lost, but the best lineup would have won them the game", unit: "pts",
       entries: list(blown, (r) => r.bench.best - r.game.away.points) },
   ];
 }
