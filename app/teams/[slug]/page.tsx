@@ -79,7 +79,7 @@ export default async function ManagerPage({ params }: Params) {
         </details>
       </Card>
 
-      <ManagerCharts seasons={performance(league, slug)} />
+      <ManagerCharts name={manager.nickname} seasons={performance(league, slug)} />
       <Opponents data={opponents(league, slug)} />
       <Achievements list={achievements(league, slug)} />
     </div>

@@ -10,6 +10,7 @@
 // - the Manager Performance medals against the site owner's 2024 PF example, and the awards
 // - luck, bench numbers, playoff brackets and the Pancake Watch's premise
 // - Round 5: Odds, trade points, the best-lineup seed and the Roster box
+// - Round 6: the Playcall Review against the site owner's 2023 sketch, and the pancake game
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
@@ -213,9 +214,9 @@ check(benchRows === gamesInBenchSeasons && league.bench.every((b) => close(b.act
   "bench rows match every game, starters add up to the score", `${benchRows} rows, ${gamesInBenchSeasons} team-games`);
 check(league.bench.every((b) => b.best >= b.actual - 0.005), "best lineup is never below the one started",
   `${league.bench.filter((b) => b.best < b.actual - 0.005).length} below`);
-// The Bench tab's pancakes agree with the Benchwarmer award
-check(award("benchwarmer").join() === people.flatMap((p) => performance(league, p).filter((s) => s.marks.bench.last).map((s) => `${s.season} ${p}`)).sort().join(),
-  "Bench pancakes match the Benchwarmer award", award("benchwarmer").join(", "));
+// The Playcall Review's lowest Roster IQ each season (Round 6) is the Benchwarmer award
+check(award("benchwarmer").join() === people.flatMap((p) => performance(league, p).filter((s) => s.review.iq.value !== null && close(s.review.iq.value, s.review.iq.lo, 1e-9)).map((s) => `${s.season} ${p}`)).sort().join(),
+  "lowest Roster IQ matches the Benchwarmer award", award("benchwarmer").join(", "));
 // Each season's final is in its last week, and its winner is the champion
 const finalsOk = league.seasons.filter((s) => s.complete).filter((s) => {
   const final = rounds(league, s, "playoff").at(-1)!;
@@ -280,6 +281,42 @@ check(boxes.every(({ t, box }) => (box.picks.inconsistent !== null) === projecte
   boxes.every(({ box }) => box.picks.best !== null && box.picks.franchise !== null),
   "Roster box: every pick where its data exists",
   `${boxes.filter(({ box }) => box.picks.inconsistent).length} Inconsistent, ${boxes.filter(({ box }) => box.picks.drafted).length} drafted of ${boxes.length}`);
+
+// 12. Round 6 (2026-11-17): the Playcall Review and the compact Pancake Watch
+// Roster IQ is the league's average points left on the bench minus the team's, so it adds up to
+// zero each season, like Luck, Odds and Trades.
+const reviews = people.flatMap((p) => performance(full, p).map((s) => ({ p, s })));
+const iqSums = benchSeasons.map((y) => reviews.filter(({ s }) => s.season === y).reduce((n, { s }) => n + s.review.iq.value!, 0));
+check(iqSums.every((n) => Math.abs(n) < 1e-6), "Roster IQ adds up to zero in every season", iqSums.map((n) => n.toFixed(6)).join(" "));
+// Every bar's ends are the league's worst and best that season with zero between them, the
+// season's number lies between the ends, and its rank is within the league
+const rowsOff = reviews.flatMap(({ p, s }) =>
+  Object.entries(s.review)
+    .filter(([, r]) => r.lo > 0 || r.hi < 0 || (r.value !== null && (r.value < r.lo - 1e-9 || r.value > r.hi + 1e-9 || r.place! < 1 || r.place! > s.teams)))
+    .map(([k]) => `${s.season} ${p} ${k}`),
+);
+check(rowsOff.length === 0, "Playcall Review: every number sits between the league's worst and best", rowsOff.join(", ") || `${reviews.length} seasons`);
+// The site owner's sketch: AJ and Luke in 2023, as drawn. His Roster IQ numbers, 54.6 and −99.4,
+// were read off the old chart; the site's are 54.1 and −100.8.
+const review23 = (p: string) => reviews.find((r) => r.p === p && r.s.season === 2023)!.s.review;
+const drawn = (r: ReturnType<typeof review23>) =>
+  [r.luck.value!.toFixed(1), r.odds.value!, r.iq.value!.toFixed(1), Math.round(r.trades.value!), r.streak.value!].join(" ");
+check(drawn(review23("aj")) === "1.3 2 54.1 -76 10" && drawn(review23("luke")) === "-1.3 -1 -100.8 24 -8", "2023 Playcall Reviews match the sketch (AJ, Luke)",
+  `AJ ${drawn(review23("aj"))}; Luke ${drawn(review23("luke"))}`);
+// 2017 has no projections, bench lineups or trade details; the season in progress has every number
+const r17 = reviews.filter(({ s }) => s.season === 2017);
+const live = reviews.filter(({ s }) => s.live);
+check(r17.every(({ s }) => s.review.odds.value === null && s.review.iq.value === null && s.review.trades.value === null) &&
+  live.every(({ s }) => Object.values(s.review).every((r) => r.value !== null)),
+  "2017 rows say so; the season in progress has a review so far", `${r17.length} in 2017, ${live.length} live`);
+// The Pancake Watch's pancake game: in the ladder's last week, ESPN lists the last-place game last,
+// and its loser (or the team with that bye) finished last
+const pancakeGames = league.seasons.filter((s) => s.complete).filter((s) => {
+  const g = rounds(league, s, "consolation").at(-1)!.games.at(-1)!;
+  const loser = !g.away ? g.home : g.winner === "HOME" ? g.away : g.home;
+  return loser.person === league.teamSeasons.find((t) => t.season === s.season && t.lastPlace)!.person;
+});
+check(pancakeGames.length === league.seasons.filter((s) => s.complete).length, "the ladder's last game decides last place", `${pancakeGames.length} seasons`);
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

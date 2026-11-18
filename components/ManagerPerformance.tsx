@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChartFrame, MedalKey, RED, SeasonLine, countAxis, keep, medalColor, rankOf, xScale } from "@/components/ChartFrame";
+import { PlaycallReview } from "@/components/PlaycallReview";
 import { RosterBox } from "@/components/RosterBox";
 import { Segmented } from "@/components/Segmented";
 import { Card, SectionLabel } from "@/components/ui";
@@ -18,16 +19,19 @@ const MODES: { value: Mode; label: string; ranks: string }[] = [
   { value: "pa", label: "PA", ranks: "Rank in the league that season: fewest points against is 1st." },
 ];
 
-// The site owner's "Manager Performance" box: a year-by-year line with a tab for each stat (Round 5
-// moved the decision tabs to Manager Playcalls). Each season's marker shows where it ranked in the
-// league on that tab: gold, silver and bronze for 1st–3rd, a pancake for last (Round 3). Tapping a
-// season selects it (Round 4); the line under the chart then says where it ranked, and the Roster
-// box opens with that season's players (Round 5). The season in progress is selected at first.
+// The site owner's "Manager Performance" box: a year-by-year line with a tab for each stat. Each
+// season's marker shows where it ranked in the league on that tab: gold, silver and bronze for
+// 1st–3rd, a pancake for last (Round 3). Tapping a season selects it (Round 4); the line under the
+// chart then says where it ranked, the Roster box opens with that season's players (Round 5), and
+// the Playcall Review below it with that season's decisions (Round 6). The season in progress is
+// selected at first.
 export function ManagerPerformance({
+  name,
   seasons,
   selected,
   onSelect,
 }: {
+  name: string; // the manager's first name, for "<name>'s Playcall Review"
   seasons: SeasonPoint[];
   selected: number | null;
   onSelect: (season: number) => void;
@@ -50,6 +54,7 @@ export function ManagerPerformance({
           <p>{ranks}</p>
         </div>
         {point && <RosterBox point={point} />}
+        {point && <PlaycallReview point={point} name={name} />}
       </Card>
     </section>
   );

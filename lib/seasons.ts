@@ -56,7 +56,7 @@ export type WatchRow = {
 
 export type PancakeWatch =
   | { phase: "regular"; season: number; weeksLeft: number; playoffTeams: number; line: WatchRow; rows: WatchRow[] }
-  | { phase: "ladder"; season: number; ladder: Round[] };
+  | { phase: "ladder"; season: number; ladder: Round[]; final: boolean }; // final: the latest round is the season's last week
 
 // While a season is on: who's outside the playoff spots, worst first. Every team that misses the
 // playoffs plays in the consolation ladder, and its loser takes the pancakes, so even the first
@@ -65,7 +65,10 @@ export type PancakeWatch =
 export function pancakeWatch(league: League): PancakeWatch | null {
   const info = league.seasons[league.seasons.length - 1];
   if (info.complete) return null;
-  if (info.throughWeek >= info.regularWeeks) return { phase: "ladder", season: info.season, ladder: rounds(league, info, "consolation") };
+  if (info.throughWeek >= info.regularWeeks) {
+    const ladder = rounds(league, info, "consolation");
+    return { phase: "ladder", season: info.season, ladder, final: ladder.at(-1)?.week === info.weeks };
+  }
 
   const teams = league.teamSeasons.filter((t) => t.season === info.season).sort((a, b) => a.seed - b.seed);
   const wins = (t: TeamSeason) => t.regular.w + t.regular.t / 2;

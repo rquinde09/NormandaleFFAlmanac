@@ -1,6 +1,6 @@
-// What a manager's page shows beyond the standings: the Manager Performance and Manager Playcalls
-// charts, head-to-head numbers against each opponent and the achievements (the site owner's notes,
-// Rounds 2–5, 2026-11-07 to 2026-11-15). Counting rules are in CLAUDE.md.
+// What a manager's page shows beyond the standings: the Manager Performance chart with its Playcall
+// Review, head-to-head numbers against each opponent and the achievements (the site owner's notes,
+// Rounds 2–6, 2026-11-07 to 2026-11-17). Counting rules are in CLAUDE.md.
 import { topStarters } from "@/lib/champions";
 import { pts, record } from "@/lib/format";
 import { type Game, type Kind, type League, type TeamSeason, luck, managerBySlug, odds } from "@/lib/league";
@@ -91,40 +91,43 @@ export function opponents(league: League, person: string): Opponents {
   };
 }
 
-// ---- Manager Performance and Manager Playcalls charts ----
+// ---- Manager Performance and the Playcall Review ----
 
-// Manager Performance: Finish, Wins, PF, PA. Manager Playcalls (Round 5, 2026-11-15), the manager's
-// own decisions: Luck, Odds, Roster IQ (points left on the bench), Trades, Streak.
-export type ChartMode = "finish" | "wins" | "pf" | "pa" | "luck" | "odds" | "bench" | "trades" | "streak";
+// Manager Performance's tabs: Finish, Wins, PF, PA
+export type ChartMode = "finish" | "wins" | "pf" | "pa";
 
 // Where a season ranked in the league on one tab: 1–3 earn a medal where `medal` allows one, `last`
 // the pancake. `place` is null without a number that season.
 export type Mark = { place: number | null; medal: boolean; last: boolean };
 
-// What the line under each chart says about the selected season
+// What the lines under Manager Performance and the Playcall Review say about the selected season
 export type SeasonFacts = {
   record: string; // every decided game
-  wins: number;
-  games: number;
-  expectedWins: number; // all-play
-  projectedWins: number | null; // ESPN's favorite; null without projections
-  benchAverage: number | null; // the league's average points left on the bench that season
   seed: number;
-  optimizedSeed: number | null;
+  optimizedSeed: number | null; // the seed with the best lineup every week; completed seasons only
   trades: number;
-  tradeNet: number | null; // null when ESPN has no trade details for the season
-  winStreak: number;
-  lossStreak: number;
+};
+
+// The Playcall Review (the site owner's Round 6, 2026-11-17): one season's decisions, each a bar
+// from Bad to Good with zero in the middle. Higher is better on every one.
+export type ReviewKey = "luck" | "odds" | "iq" | "trades" | "streak";
+
+export type ReviewRow = {
+  value: number | null; // null: no number that season (no projections, bench lineups or trade details)
+  lo: number; // the league's worst that season, at most 0: the bar's left end
+  hi: number; // the league's best that season, at least 0: its right end
+  place: number | null; // 1 = the league's best that season; ties share a place
 };
 
 export type SeasonPoint = {
   season: number;
   teams: number;
-  live: boolean; // the season in progress: on the axis, selectable, but no numbers (Round 5)
-  values: Record<ChartMode, number | null>; // null: no number that season (Bench without lineups)
+  live: boolean; // the season in progress: on the axis, selectable, but no chart numbers (Round 5)
+  values: Record<ChartMode, number | null>; // null: no number that season
   marks: Record<ChartMode, Mark>;
   facts: SeasonFacts;
   roster: RosterBox;
+  review: Record<ReviewKey, ReviewRow>; // the season in progress counts its decided weeks
 };
 
 // The longer of the season's longest winning and losing streaks, the winning one on a tie: a
@@ -139,44 +142,70 @@ const cents = (n: number) => Math.round(n * 100); // compares points without flo
 type Ranking = {
   value: (t: TeamSeason) => number | null;
   better?: (a: TeamSeason, b: TeamSeason) => boolean;
-  pancake: boolean; // whether the last place gets the pancake
-  medals?: (t: TeamSeason) => boolean; // whether this season can earn a medal at all
 };
 
 const RANKINGS: Record<ChartMode, Ranking> = {
-  finish: { value: (t) => t.finalRank!, pancake: true },
+  finish: { value: (t) => t.finalRank! },
   // Most wins, ties broken by PF as in the standings
-  wins: { value: (t) => t.all.w, better: (a, b) => a.all.w > b.all.w || (a.all.w === b.all.w && cents(a.all.pf) > cents(b.all.pf)), pancake: true },
-  pf: { value: (t) => t.all.pf, better: (a, b) => cents(a.all.pf) > cents(b.all.pf), pancake: true },
+  wins: { value: (t) => t.all.w, better: (a, b) => a.all.w > b.all.w || (a.all.w === b.all.w && cents(a.all.pf) > cents(b.all.pf)) },
+  pf: { value: (t) => t.all.pf, better: (a, b) => cents(a.all.pf) > cents(b.all.pf) },
   // Fewest PA is best: most PA is the "It Was Only A Dream" award
-  pa: { value: (t) => t.all.pa, better: (a, b) => cents(a.all.pa) < cents(b.all.pa), pancake: true },
-  // Round 5: Luck and Odds get medals for the most wins above expected, on a green bar, and no pancake
-  luck: { value: luck, better: (a, b) => cents(luck(a)) > cents(luck(b)), pancake: false, medals: (t) => luck(t) > 0 },
-  odds: { value: odds, better: (a, b) => cents(odds(a)!) > cents(odds(b)!), pancake: false, medals: (t) => (odds(t) ?? 0) > 0 },
-  // Fewest points left on the bench is best, most is last (the Benchwarmer award). Roster IQ's bars
-  // show green or red against the league average instead of these marks.
-  bench: { value: (t) => t.bench, better: (a, b) => cents(a.bench!) < cents(b.bench!), pancake: true },
-  // Most trades is best; no pancake for not trading, and no medal without a trade
-  trades: { value: (t) => t.trades, better: (a, b) => a.trades > b.trades, pancake: false, medals: (t) => t.trades > 0 },
-  // Longest winning streak is best (medals only for a winning streak), longest losing streak last
-  streak: { value: signedStreak, better: (a, b) => signedStreak(a) > signedStreak(b), pancake: true, medals: (t) => signedStreak(t) > 0 },
+  pa: { value: (t) => t.all.pa, better: (a, b) => cents(a.all.pa) < cents(b.all.pa) },
 };
 
 function mark(mode: ChartMode, t: TeamSeason, everyone: TeamSeason[]): Mark {
   if (mode === "finish") return { place: t.finalRank, medal: true, last: t.lastPlace };
-  const r = RANKINGS[mode];
-  if (r.value(t) === null) return { place: null, medal: false, last: false };
-  const field = everyone.filter((o) => r.value(o) !== null);
-  const place = 1 + field.filter((o) => r.better!(o, t)).length;
-  const last = r.pancake && !field.some((o) => r.better!(t, o));
-  return { place, medal: !r.medals || r.medals(t), last };
+  const better = RANKINGS[mode].better!;
+  const place = 1 + everyone.filter((o) => better(o, t)).length;
+  return { place, medal: true, last: !everyone.some((o) => better(t, o)) };
 }
 
 const MODES = Object.keys(RANKINGS) as ChartMode[];
 
-// One point per season the manager played. Completed seasons carry the numbers; the season in
+// Each Playcall Review number for every team of one season. Roster IQ is the league's average
+// points left on the bench minus the team's own, so it adds up to zero each season, like Luck, Odds
+// and Trades. Trades is 0 for a team that made none.
+function reviewValues(field: TeamSeason[]): Map<TeamSeason, Record<ReviewKey, number | null>> {
+  const benched = field.filter((o) => o.bench !== null);
+  const average = benched.length ? benched.reduce((n, o) => n + o.bench!, 0) / benched.length : null;
+  return new Map(
+    field.map((t) => [
+      t,
+      {
+        luck: luck(t),
+        odds: odds(t),
+        iq: average === null || t.bench === null ? null : average - t.bench,
+        trades: t.tradeNet,
+        streak: signedStreak(t),
+      },
+    ]),
+  );
+}
+
+const REVIEW_KEYS: ReviewKey[] = ["luck", "odds", "iq", "trades", "streak"];
+
+function review(t: TeamSeason, field: TeamSeason[]): Record<ReviewKey, ReviewRow> {
+  const all = reviewValues(field);
+  return Object.fromEntries(
+    REVIEW_KEYS.map((key) => {
+      const value = all.get(t)![key];
+      const others = [...all.values()].map((v) => v[key]).filter((v): v is number => v !== null);
+      return [
+        key,
+        {
+          value,
+          lo: Math.min(0, ...others),
+          hi: Math.max(0, ...others),
+          place: value === null ? null : 1 + others.filter((o) => cents(o) > cents(value)).length,
+        },
+      ];
+    }),
+  ) as Record<ReviewKey, ReviewRow>;
+}
+
+// One point per season the manager played. Completed seasons carry the chart numbers; the season in
 // progress is on the axis with none (half a season's PF would flatten the rest), but its Roster box
-// counts the weeks decided so far.
+// and Playcall Review count the weeks decided so far.
 export function performance(league: League, person: string): SeasonPoint[] {
   const info = new Map(league.seasons.map((s) => [s.season, s]));
   return league.teamSeasons
@@ -185,7 +214,6 @@ export function performance(league: League, person: string): SeasonPoint[] {
     .map((t) => {
       const season = info.get(t.season)!;
       const field = league.teamSeasons.filter((o) => o.season === t.season);
-      const benched = field.filter((o) => o.bench !== null);
       const live = !season.complete;
       return {
         season: t.season,
@@ -193,21 +221,9 @@ export function performance(league: League, person: string): SeasonPoint[] {
         live,
         values: Object.fromEntries(MODES.map((m) => [m, live ? null : RANKINGS[m].value(t)])) as Record<ChartMode, number | null>,
         marks: Object.fromEntries(MODES.map((m) => [m, live ? { place: null, medal: false, last: false } : mark(m, t, field)])) as Record<ChartMode, Mark>,
-        facts: {
-          record: record(t.all),
-          wins: t.all.w + t.all.t / 2,
-          games: t.all.games,
-          expectedWins: t.expectedWins,
-          projectedWins: t.projectedWins,
-          benchAverage: benched.length ? benched.reduce((n, o) => n + o.bench!, 0) / benched.length : null,
-          seed: t.seed,
-          optimizedSeed: t.optimizedSeed,
-          trades: t.trades,
-          tradeNet: t.tradeNet,
-          winStreak: t.longestWinStreak,
-          lossStreak: t.longestLossStreak,
-        },
+        facts: { record: record(t.all), seed: t.seed, optimizedSeed: t.optimizedSeed, trades: t.trades },
         roster: rosterBox(t),
+        review: review(t, field),
       };
     });
 }

@@ -149,7 +149,10 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   season; trade details for every season but 2017, per-team counts match ESPN's, and
   trade points add up to zero; the regular-season replay gives ESPN's seeds and the best-lineup
   seed is never worse; each MVFP is his team's Best Player; the Roster box has every pick its
-  data allows. Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts`,
+  data allows. Round 6 adds: Roster IQ adds up to zero each season and its lowest is the
+  Benchwarmer; every Playcall Review number sits between the league's worst and best; AJ's and
+  Luke's 2023 reviews come out as sketched; 2017's rows say what's missing and the season in
+  progress has every number; the pancake ladder's last game decides last place. Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts`,
   `lib/manager.ts`, `lib/bench.ts`, `lib/seasons.ts`, `lib/playcalls.ts` or `lib/roster.ts`.
 - Python lives in `.venv` (`python -m venv .venv`, then `.venv/Scripts/python -m pip install -r
   requirements.txt`). `scripts/check_env.py` checks `.env.local` without printing values.
@@ -225,7 +228,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     or PDIFF.
   - Manager Performance (`components/ManagerPerformance.tsx`, `performance` in `lib/manager.ts`,
     the shared axis in `components/ChartFrame.tsx`): one red line, with tabs for Finish, Wins, PF
-    and PA (Round 5 moved the rest to Manager Playcalls), and one y axis that follows the tab
+    and PA (Round 5 moved the rest to Manager Playcalls, which Round 6 replaced with the Playcall
+    Review), and one y axis that follows the tab
     (Finish has 1st at the top). Every point is labeled. Each season's marker shows where that
     season ranked in the league on that tab: gold, silver and bronze for 1st–3rd and a pancake
     for last. Finish uses the final standings. Wins: most is 1st, ties broken by PF. PF: most is
@@ -235,8 +239,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     progress has a column with no point. No year picker or season card (removed in Round 3).
     Tapping a season selects it (Round 4): its year turns into a red pill, a faint band runs
     behind its column, and its number goes bold. Each season's tap target is a 28 px column over
-    its point and year. The selection stays when the tab changes and is shared with Manager
-    Playcalls (`components/ManagerCharts.tsx`); tapping it again, or anywhere outside the points,
+    its point and year. The selection stays when the tab changes, and the Roster box and Playcall
+    Review below follow it (`components/ManagerCharts.tsx` holds it); tapping it again, or anywhere outside the points,
     tabs and the boxes about the selection, clears it. Round 5: the page opens with the season in
     progress selected (a retired manager's last season), and a line under the chart says where
     the selected season ranked ("2019 · 7 wins (7-9) · 6th of 12"; the season in progress: "Season
@@ -249,34 +253,50 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     weekly projections, added up over his starts there (2018–2025 and 2026; none for 2017).
     Franchise Player: the most starts; a tie goes to ESPN's higher preseason projection. The
     season in progress counts its decided weeks. 2017 has no Inconsistent (no projections).
-  - Manager Playcalls (`components/ManagerPlaycalls.tsx`, Round 5): "a breakdown of decisions
-    made by the manager", folded shut (`<details>`) under Manager Performance. Bar charts from
-    zero, completed seasons, tabs in the site owner's order with Luke's Odds after Luck:
-    - Luck: all-play wins above expected (`luck`). Green up if positive, red down if negative;
-      gold, silver and bronze dots in the bar for the league's three luckiest. No pancake.
-      (The site owner first asked to rename Luck to Odds; once he understood all-play he kept it,
-      2026-11-15.)
-    - Odds (`odds`, `projectedWins`): wins above or below what ESPN projected. Each game, ESPN's
-      favorite is the starting lineup with the higher projected score (a tie counts half); a
-      team's projected wins are the games it was favored in, over every decided game like W-L.
-      The site owner's example: projected 5-12, finished 9-8, so +4 ("ESPN doubted you"); −4 is
-      "false hope". Green/red like Luck, medals for the top three. No number for 2017.
-    - Roster IQ (was Bench): points left on the bench. Green if below that season's league
-      average, red if above, no medals. Selecting a bar draws a dashed line at the league average
-      and opens a small window: "179.8 pts left on the bench · league avg 246.6" and "Seed: 10th →
-      Best-lineup seed: 6th". The best-lineup seed (`optimizedSeeds` in `lib/playcalls.ts`, Luke's
-      pick of the site owner's "optimized finish"): the regular season replayed with this team's
-      best lineup every week and everyone else's actual scores, seeded as ESPN does (games
-      against it can change other teams' records too). No playoff replay.
-    - Trades: bar height is the number of trades. Green if they paid off, red if not, grey
-      without details (2017); the label is the net points. Net (`tradeNets`, Luke's pick of
-      the rule): every player received scores for his new team in the weeks he started there, from
+  - Playcall Review (`components/PlaycallReview.tsx`, `review` in `lib/manager.ts`; the site
+    owner's Round 6 sketch, 2026-11-17, with his answers relayed by Luke the same day). It
+    replaced Round 5's Manager Playcalls box (five tabs of season-by-season bar charts with
+    medals), which the site owner found confusing. Inside Manager Performance under the Roster
+    box, open while a season is selected, like the players: "AJ's Playcall Review · 2023", or
+    "· 2026 so far" for the season in progress, which counts its decided weeks. Five rows, each
+    a thin bar with zero in the middle: the bad word and that season's league worst at the left
+    end, the good word and its best at the right (the site owner's pick; his sketch's end numbers
+    came off the old Luck chart). Each half is scaled to its own end, so a full half is the
+    league's best or worst that season. The bar fills from zero to the number, green when good
+    and red when bad; a number that rounds to zero is grey, "Even". Then the verdict word and his
+    line. A small rank beside the number ("2nd of 14", higher is better on every row, ties share
+    a place); no medals or pancakes (site owner). On wider screens the verdicts sit right of the
+    bars, as sketched. A folded "How it's counted" explains each number. The rows, in his words:
+    - Luck, Unlucky ↔ Lucky: "Lucky – Won more games than expected" / "Unlucky – Lost more games
+      than expected". All-play wins above expected (`luck`). (The site owner first asked to
+      rename Luck to Odds; once he understood all-play he kept it, 2026-11-15.)
+    - Odds, Under perform ↔ Over perform: "Over perform – ESPN rooted against the team" / "Under
+      perform – ESPN rooted for the team". Wins above what ESPN projected (`odds`,
+      `projectedWins`): each game, ESPN's favorite is the starting lineup with the higher
+      projected score (a tie counts half); a team's projected wins are the games it was favored
+      in, over every decided game like W-L. Round 5's example: projected 5-12, finished 9-8, so
+      +4. 2017's row says "ESPN has no 2017 projections".
+    - Roster IQ, Low ↔ High: "High – Made better roster calls than league mates" / "Low – Made
+      worse roster calls than league mates". The league's average points left on the bench that
+      season minus the team's own (Bench, below), so it adds up to zero each season and the
+      lowest is the Benchwarmer. Under it, where the best lineup would have moved the seed up:
+      "Best lineup every week: seed 14th → 11th" (`optimizedSeeds` in `lib/playcalls.ts`, Luke's
+      pick of the site owner's Round 5 "optimized finish": the regular season replayed with this
+      team's best lineup every week and everyone else's actual scores, seeded as ESPN does; games
+      against it can change other teams' records too; no playoff replay; completed seasons
+      only). 2017's row says "ESPN has no 2017 bench lineups".
+    - Trades, Bust ↔ Boom: "Boom – Trade helped your season" / "Bust – Trade did not help your
+      season" ("Trades" after more than one). The net points (`tradeNets`, Luke's pick of the
+      rule): every player received scores for his new team in the weeks he started there, from
       the trade until he leaves its roster, playoffs included; the team that sent him is charged
-      the same points. Medals for the three most trades, none without a trade.
-    - Streak: the longer of the season's longest winning and losing streaks (the winning one on
-      a tie); green up for W, red down for L. Gold, silver and bronze dots for the league's three
-      longest winning streaks; the pancake on the bar for its longest losing streak.
-    Each tab has a line under the chart for the selected season, like Manager Performance's.
+      the same points. A team without a trade counts as 0 for the ends and ranks, and its row
+      says "No trades" in grey. 2017: "17 trades · ESPN has no 2017 trade details".
+    - Streaks, Cold ↔ Hot: "Hot – Team showed consistency winning" / "Cold – Team failed to
+      perform". The longer of the season's longest winning and losing streaks (the winning one on
+      a tie), shown as W10 or L8. He wrote 14 at both ends; the ends are the league's, like the
+      other rows.
+    `npm run check` tests his sketch, 2023: AJ +1.3, +2, +54.1, −76, W10; Luke −1.3, −1, −100.8,
+    +24, L8 (his 54.6 and −99.4 were read off the old chart).
   - Opponents (`lib/manager.ts`, `components/Opponents.tsx`): head-to-head over every decided
     game, live season included, in seven tabs. Faced (most games), Easiest (most wins against),
     Toughest (most losses against), Most PF and Most PA (totals over every game against that
@@ -338,7 +358,7 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   outscored (ties count half), over every decided game, as with W-L. Luck is wins (ties half)
   minus that, so each season's luck adds up to zero.
 - Odds (`odds`, `TeamSeason.projectedWins`, `lib/playcalls.ts`; the site owner's Round 5 with
-  Luke, 2026-11-15): see Manager Playcalls. Each season's Odds add up to zero. The Horseshoe:
+  Luke, 2026-11-15): see the Playcall Review. Each season's Odds add up to zero. The Horseshoe:
   Luke 2025, 9-8 when ESPN projected 1-16 (+8).
 - Bench (`lib/bench.ts`, Luke 2026-11-15): each week's best possible lineup from the team's
   players, minus the starters' points. One-position slots fill first with the best players, then
@@ -368,6 +388,13 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   "No playoffs" once a team can't catch enough teams to make it (ties at equal wins count as
   catchable). Seeds are ESPN's live `playoffSeed`, which breaks ties on total points. After the
   regular season it shows the ladder.
+  Round 6 (site owner, 2026-11-17) made it compact: folded shut (`<details>`), it shows only
+  who's in danger of last place, the name large in red with a pancake and a pulsing red light
+  (steady with reduced motion), and one line ("Last at 2-7, tied with Randy · 5 weeks left").
+  Tapping it opens the list above. During the regular season that's the bottom of the standings
+  (ESPN's last seed). After it, the bottom game of the ladder's latest week. In the ladder's last
+  week ESPN lists the last-place game last (every season 2017–2025; `npm run check` tests it), so
+  that game reads "The pancake game: the loser finishes last", and a bye there is last place.
 - PWA: `app/manifest.ts`, with icons generated by `app/icon.tsx` and `app/apple-icon.tsx`.
 
 ## Counting rules (settled 2026-11-01: they reproduce the Sheet exactly for all 23 managers)
@@ -451,8 +478,10 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    default, the rank line and the Roster box; Manager Playcalls (Luck, Odds, Roster IQ, Trades,
    Streak); centered Opponents; Records Compact and new descriptions; Rank Δ in Compact
    standings. Luke answered its 4 questions the same day (recorded above). The 2021 data
-   (lineups, projections, trades) came in with a 2021 member's cookies the same day. Next: the
-   domain.
+   (lineups, projections, trades) came in with a 2021 member's cookies the same day. Round 6
+   (2026-11-17) is built: the one-season Playcall Review under the Roster box replaced Manager
+   Playcalls, and the Pancake Watch is compact. The site owner answered its 4 questions through
+   Luke the same day (recorded above). Next: the domain.
 
 Later, not v1: head-to-head records, photos for the Hall.
 

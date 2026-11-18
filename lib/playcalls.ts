@@ -1,4 +1,4 @@
-// Manager Playcalls numbers that need lineups or trades (the site owner's Round 5, 2026-11-15):
+// Playcall Review numbers that need lineups or trades (the site owner's Round 5, 2026-11-15):
 // ESPN's projected wins (Odds), what each season's trades gained or lost, and the seed a team would
 // have had with its best lineup every week (Roster IQ).
 import fs from "node:fs";

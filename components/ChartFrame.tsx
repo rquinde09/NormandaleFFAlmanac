@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import { ordinal } from "@/lib/format";
 import type { SeasonPoint } from "@/lib/manager";
 
-// Shared by the Manager Performance line chart and the Manager Playcalls bar chart: the axis, the
-// selected season's band, the years along the bottom and a tap target for every season.
+// The Manager Performance chart's frame: the axis, the selected season's band, the years along the
+// bottom and a tap target for every season. The colors are shared with the Playcall Review.
 
 // Clicks inside elements with this attribute keep the selected season (points, tabs, the boxes
 // that describe the selection); a click anywhere else clears it (Round 4)
@@ -16,7 +16,6 @@ export const MEDALS: Record<number, string> = { 1: "#fbbf24", 2: "#d4d4d8", 3: "
 export const RED = "#ef4444"; // red-500, the site's accent
 export const GREEN = "#10b981"; // emerald-500
 export const GREY = "#52525b"; // zinc-600
-export const PLOT_HEIGHT = 176; // px, the frame's h-44
 
 export type Tick = { value: number; label: string };
 
@@ -46,7 +45,6 @@ export function ChartFrame({
   seasons,
   y,
   ticks,
-  zeroLine = false,
   selected,
   onSelect,
   label,
@@ -55,7 +53,6 @@ export function ChartFrame({
   seasons: SeasonPoint[];
   y: (v: number) => number; // percent from the top
   ticks: Tick[];
-  zeroLine?: boolean; // draw 0 stronger (values around zero)
   selected: number | null;
   onSelect: (season: number) => void;
   label: (s: SeasonPoint) => string; // each tap target's accessible name
@@ -77,7 +74,7 @@ export function ChartFrame({
       {ticks.map((t) => (
         <div
           key={t.value}
-          className={`pointer-events-none absolute right-0 left-0 border-t ${zeroLine && t.value === 0 ? "border-zinc-600" : "border-zinc-800"}`}
+          className="pointer-events-none absolute right-0 left-0 border-t border-zinc-800"
           style={{ top: `${y(t.value)}%` }}
         >
           <span className="absolute right-full mr-2 -translate-y-1/2 text-[10px] tabular-nums whitespace-nowrap text-zinc-500">{t.label}</span>
