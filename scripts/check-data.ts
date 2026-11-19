@@ -11,13 +11,27 @@
 // - luck, bench numbers, playoff brackets and the Pancake Watch's premise
 // - Round 5: Odds, trade points, the best-lineup seed and the Roster box
 // - Round 6: the Playcall Review against the site owner's 2023 sketch, and the pancake game
+// - Round 7: close games and blowouts, their awards, records and career lines
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
-import { careerTotals, champions, gameRecords, getLeague, luck, odds, seasonRecords, type League } from "../lib/league";
+import {
+  BLOWOUT_OVER,
+  CLOSE_UNDER,
+  careerTotals,
+  champions,
+  gameRecords,
+  getLeague,
+  luck,
+  marginCents,
+  marginKind,
+  odds,
+  seasonRecords,
+  type League,
+} from "../lib/league";
 import { VIEWS, rankOrder } from "../lib/standings";
 import { championDetails, topStarters } from "../lib/champions";
-import { achievements, performance } from "../lib/manager";
+import { achievements, marginCareer, performance } from "../lib/manager";
 import { readTrades, regularSeeds } from "../lib/playcalls";
 import { rosterBox } from "../lib/roster";
 import { rounds } from "../lib/seasons";
@@ -317,6 +331,68 @@ const pancakeGames = league.seasons.filter((s) => s.complete).filter((s) => {
   return loser.person === league.teamSeasons.find((t) => t.season === s.season && t.lastPlace)!.person;
 });
 check(pancakeGames.length === league.seasons.filter((s) => s.complete).length, "the ladder's last game decides last place", `${pancakeGames.length} seasons`);
+
+// 13. Round 7 (2026-11-18): close games (decided by under 7) and blowouts (by more than 50)
+// Every decided game is close, normal or a blowout, and each team-season's close and blowout
+// games are its share of them
+const kinds = { close: 0, normal: 0, blowout: 0 };
+for (const g of full.games) kinds[marginKind(g)] += 1;
+const sideCount = (kind: "close" | "blowout") => full.teamSeasons.reduce((n, t) => n + t[kind].w + t[kind].l + t[kind].t, 0);
+check(kinds.close + kinds.normal + kinds.blowout === full.games.length && sideCount("close") === 2 * kinds.close && sideCount("blowout") === 2 * kinds.blowout &&
+  full.teamSeasons.every((t) => t.close.w + t.close.l + t.close.t + t.blowout.w + t.blowout.l + t.blowout.t <= t.all.games),
+  "close + normal + blowout games add up to every decided game", `${kinds.close} + ${kinds.normal} + ${kinds.blowout} = ${full.games.length}`);
+// The thresholds are about one standard deviation either side of the average winning margin, so
+// close games and blowouts are each about a sixth of the games (15.4% and 16.3% at exactly 1 SD)
+const margins = league.games.map((g) => marginCents(g) / 100);
+const meanMargin = margins.reduce((n, m) => n + m, 0) / margins.length;
+const sdMargin = Math.sqrt(margins.reduce((n, m) => n + (m - meanMargin) ** 2, 0) / margins.length);
+const closeShare = league.games.filter((g) => marginKind(g) === "close").length / league.games.length;
+const blowoutShare = league.games.filter((g) => marginKind(g) === "blowout").length / league.games.length;
+check(Math.abs(closeShare - 0.154) < 0.025 && Math.abs(blowoutShare - 0.163) < 0.025 && Math.abs(meanMargin - sdMargin - CLOSE_UNDER) < 1 && Math.abs(meanMargin + sdMargin - BLOWOUT_OVER) < 3,
+  "close games and blowouts are each about a sixth of the games",
+  `${(closeShare * 100).toFixed(1)}% close, ${(blowoutShare * 100).toFixed(1)}% blowouts; margin ${meanMargin.toFixed(1)} ± ${sdMargin.toFixed(1)} through ${THROUGH}`);
+// Each achievement's holders are the matching season record's top holders, season by season (ties
+// share the award), and each record's holder has the award that season
+const awardsMatch = (awardKey: string, recordKey: string) => {
+  const list = seasonRecords(league, Infinity).find((r) => r.key === recordKey)!.entries;
+  const tops = league.seasons.filter((s) => s.complete).flatMap((s) => {
+    const inSeason = list.filter((e) => e.teamSeason.season === s.season);
+    return inSeason.filter((e) => e.value > 0 && e.value === inSeason[0].value).map((e) => `${s.season} ${e.teamSeason.person}`);
+  });
+  const holder = list[0].teamSeason;
+  return { ok: award(awardKey).join() === tops.sort().join() && award(awardKey).includes(`${holder.season} ${holder.person}`), detail: award(awardKey).join(", ") };
+};
+const ice = awardsMatch("ice", "close-wins");
+const blownOut = awardsMatch("blown-out", "blowout-losses");
+check(ice.ok, "Ice in the Veins matches the Escape Artist's top holders each season", ice.detail);
+check(blownOut.ok, "Got Blown Out matches the Punching Bag's top holders each season", blownOut.detail);
+// The four records' holders through 2025, ties broken by the margins added up (Luke's pick):
+// the closer games first on close-game records, the bigger margins first on blowout records.
+// Jeremy's 4 close wins in 2019 (by 14.30 in all) beat Abdi's 2023 (17.46) and 2021 (19.06).
+const marginExpect: [string, string, number, number, number][] = [
+  ["blowout-wins", "aj", 2018, 5, 403.78],
+  ["blowout-losses", "tom", 2018, 6, 474.0], // Jordan also lost 6 in 2021, by 455.80
+  ["close-wins", "jeremy", 2019, 4, 14.3],
+  ["close-losses", "madison", 2019, 5, 26.1],
+];
+for (const [key, person, season, value, by] of marginExpect) {
+  const e = seasons[key];
+  const t = e.teamSeason;
+  const split = key.startsWith("close") ? t.close : t.blowout;
+  const total = key.endsWith("wins") ? split.wonBy : split.lostBy;
+  check(t.person === person && t.season === season && e.value === value && close(total, by), `season record ${key}`,
+    `${t.person} ${e.value} in ${t.season}, by ${total.toFixed(2)} in all`);
+}
+const order = seasonRecords(league).find((r) => r.key === "close-wins")!.entries.map((e) => `${e.teamSeason.season} ${e.teamSeason.person}`);
+check(order.slice(0, 3).join() === "2019 jeremy,2023 abdi,2021 abdi", "close-win ties go to the closer games", order.join(", "));
+// Career lines through 2025, so the season in progress doesn't move them
+const lineOf = (p: string) => {
+  const m = marginCareer(league, p);
+  return `${m.close.w}-${m.close.l} ${m.blowout.w}-${m.blowout.l}`;
+};
+const lineExpect: Record<string, string> = { kyle: "15-4 4-11", randy: "8-15 8-14", aj: "8-16 27-11" };
+check(Object.entries(lineExpect).every(([p, s]) => lineOf(p) === s), "career close-game and blowout lines through 2025",
+  Object.keys(lineExpect).map((p) => `${p} ${lineOf(p)}`).join("; "));
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

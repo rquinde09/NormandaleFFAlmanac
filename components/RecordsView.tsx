@@ -74,7 +74,8 @@ export function RecordsView({ all, active }: { all: RecordSet; active: RecordSet
       )}
 
       {/* Cards with 1st to 5th: on a phone with Compact off, and on wider screens */}
-      <ul className={`grid gap-3 md:grid-cols-2 ${compact ? "hidden md:grid" : ""}`}>
+      {/* grid-cols-1 (minmax(0, 1fr)) keeps a long detail line from widening the page on a phone */}
+      <ul className={`grid grid-cols-1 gap-3 md:grid-cols-2 ${compact ? "hidden md:grid" : ""}`}>
         {cards.map((c) => (
           <li key={c.key} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 sm:p-5">
             <div className="text-xs font-medium tracking-wider text-red-400 uppercase">{c.title}</div>

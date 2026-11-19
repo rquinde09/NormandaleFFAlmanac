@@ -1,9 +1,9 @@
 // What a manager's page shows beyond the standings: the Manager Performance chart with its Playcall
 // Review, head-to-head numbers against each opponent and the achievements (the site owner's notes,
-// Rounds 2–6, 2026-11-07 to 2026-11-17). Counting rules are in CLAUDE.md.
+// Rounds 2–7, 2026-11-07 to 2026-11-18). Counting rules are in CLAUDE.md.
 import { topStarters } from "@/lib/champions";
 import { pts, record } from "@/lib/format";
-import { type Game, type Kind, type League, type TeamSeason, luck, managerBySlug, odds } from "@/lib/league";
+import { BLOWOUT_OVER, CLOSE_UNDER, type Game, type Kind, type League, type TeamSeason, luck, managerBySlug, odds } from "@/lib/league";
 import { rosterBox, type RosterBox } from "@/lib/roster";
 
 export type OpponentLine = {
@@ -228,6 +228,24 @@ export function performance(league: League, person: string): SeasonPoint[] {
     });
 }
 
+// ---- Close games and blowouts (Round 7) ----
+
+export type WLT = { w: number; l: number; t: number };
+
+// The Career stats line, "Close games 16-4 · Blowouts 7-11": every decided game, the season in
+// progress included like the rest of the career numbers. Pass a league cut at a season to stop there.
+export function marginCareer(league: League, person: string): { close: WLT; blowout: WLT } {
+  const sum = { close: { w: 0, l: 0, t: 0 }, blowout: { w: 0, l: 0, t: 0 } };
+  for (const t of league.teamSeasons.filter((x) => x.person === person)) {
+    for (const kind of ["close", "blowout"] as const) {
+      sum[kind].w += t[kind].w;
+      sum[kind].l += t[kind].l;
+      sum[kind].t += t[kind].t;
+    }
+  }
+  return sum;
+}
+
 // ---- Achievements ----
 
 export type Tier = "goat" | "pancake";
@@ -260,6 +278,18 @@ export function achievements(league: League, person: string): Achievement[] {
       const field = league.teamSeasons.filter((x) => x.season === t.season).map((x) => cents(value(x)));
       return cents(value(t)) === (most ? Math.max(...field) : Math.min(...field));
     });
+  // Most of something countable that season; a season where nobody has any awards nobody
+  const mostOf = (count: (t: TeamSeason) => number) =>
+    years((t) => count(t) > 0 && count(t) === Math.max(...league.teamSeasons.filter((x) => x.season === t.season).map(count)));
+  const MARGINS = "In one season, every game counted: regular season and playoffs.";
+  // Like bySeasons, with the season's count beside each year when tapped ("2019 (4 close wins)")
+  const withCounts = (seasons: number[], count: (t: TeamSeason) => number, unit: string) => ({
+    ...bySeasons(seasons),
+    seasons: seasons.map((season) => {
+      const n = count(done.find((t) => t.season === season)!);
+      return { season, extra: `${n} ${n === 1 ? unit.replace(/(es|s)$/, "") : unit}` };
+    }),
+  });
 
   const mvfp = [...topStarters(league).values()].flat().filter((p) => p.person === person).sort((a, b) => a.season - b.season);
   const EVERY_GAME = "In one season, every game counted: regular season and playoffs.";
@@ -279,6 +309,9 @@ export function achievements(league: League, person: string): Achievement[] {
       note: short([...new Set(mvfp.map((p) => p.season))]),
       seasons: mvfp.map((p) => ({ season: p.season, extra: `${p.name}, ${pts(p.points)} pts` })),
     },
+    // Round 7 (2026-11-18); the name is a placeholder until the site owner names it
+    { key: "ice", tier: "goat", icon: "🧊", title: "Ice in the Veins", detail: "Won the Most Close Games",
+      fine: `Most wins by under ${CLOSE_UNDER} points. ${MARGINS}`, ...withCounts(mostOf((t) => t.close.w), (t) => t.close.w, "close wins") },
     { key: "pancake", tier: "pancake", icon: "🥞", title: "The Pancake House", detail: "Last Place", ...bySeasons(years((t) => t.lastPlace)) },
     { key: "choke", tier: "pancake", icon: "🧑‍🎨", title: "The Choke Artist", detail: "Runner Up", ...bySeasons(years((t) => t.finalRank === 2)) },
     { key: "below-zero", tier: "pancake", icon: "🥶", title: "Below Zero", detail: "Scored the Least Points For", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, false)) },
@@ -298,5 +331,8 @@ export function achievements(league: League, person: string): Achievement[] {
         }),
       ),
     },
+    // Round 7 (2026-11-18); the name is a placeholder until the site owner names it
+    { key: "blown-out", tier: "pancake", icon: "💥", title: "Got Blown Out", detail: "Lost the Most Blowouts",
+      fine: `Most losses by more than ${BLOWOUT_OVER} points. ${MARGINS}`, ...withCounts(mostOf((t) => t.blowout.l), (t) => t.blowout.l, "blowout losses") },
   ];
 }

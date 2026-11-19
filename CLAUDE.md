@@ -152,7 +152,12 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   data allows. Round 6 adds: Roster IQ adds up to zero each season and its lowest is the
   Benchwarmer; every Playcall Review number sits between the league's worst and best; AJ's and
   Luke's 2023 reviews come out as sketched; 2017's rows say what's missing and the season in
-  progress has every number; the pancake ladder's last game decides last place. Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts`,
+  progress has every number; the pancake ladder's last game decides last place. Round 7 adds:
+  close, normal and blowout games add up to every decided game; each is about a sixth of the
+  games; Ice in the Veins and Got Blown Out go to the Escape Artist's and Punching Bag's top
+  holders each season; the four new records' holders and the close-win tie order; and Kyle's,
+  Randy's and AJ's career lines through 2025 (Kyle 15-4 and 4-11, Randy 8-15 and 8-14, AJ 8-16
+  and 27-11). Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts`,
   `lib/manager.ts`, `lib/bench.ts`, `lib/seasons.ts`, `lib/playcalls.ts` or `lib/roster.ts`.
 - Python lives in `.venv` (`python -m venv .venv`, then `.venv/Scripts/python -m pip install -r
   requirements.txt`). `scripts/check_env.py` checks `.env.local` without printing values.
@@ -225,7 +230,10 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   - First card: first name with stars and pancakes, Active/Retired, "Champion: years" and "Loser:
     years" (last place). No full name. The career numbers fold out under "Career stats": the
     all-time record, then Seasons, Win %, PF/G and Total PF, left to right. No rank, best finish
-    or PDIFF.
+    or PDIFF. Round 7 (2026-11-18) added one line under them, "Close games 16-4 · Blowouts 7-11"
+    (`marginCareer` in `lib/manager.ts`): W-L in close games and blowouts over every decided
+    game, the season in progress included; 0-0 without any. A small line under it gives the
+    definitions ("Close: by under 7 points · Blowout: by over 50"), one line each at 375 px.
   - Manager Performance (`components/ManagerPerformance.tsx`, `performance` in `lib/manager.ts`,
     the shared axis in `components/ChartFrame.tsx`): one red line, with tabs for Finish, Wins, PF
     and PA (Round 5 moved the rest to Manager Playcalls, which Round 6 replaced with the Playcall
@@ -324,6 +332,12 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     and PA count every game that season, so a playoff bye's missing game is part of the game
     (site owner); ties share the award. The Trade and Commish awards were removed in Round 3.
     The Below Zero award isn't the "Below Zero" season record (fewest wins).
+    Round 7 (2026-11-18) added one to each tier, both names placeholders until the site owner
+    names them: GOAT Tier 🧊 Ice in the Veins ("Won the Most Close Games": most close-game wins
+    that season) and Pancake Tier 💥 Got Blown Out ("Lost the Most Blowouts": most blowout
+    losses). Completed seasons only, ties share it (2018's top was 2 close wins, so seven teams
+    share that one), and a season where nobody has any awards nobody. Tapping one shows each
+    season's count ("2020 (3 close wins)").
 - Champions page (`/hall-of-mahaan-bakaree`): each title expands (`<details>`) to the
   championship game's lineup with the bench, the season's best game (the champion's highest
   score), and the best player (most points while in the starting lineup, playoffs included).
@@ -353,6 +367,19 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   (ranked by how much it would have won by); The Horseshoe "Outperformed season projection" and
   The Black Cat "Underperformed season projection", which therefore count Odds (2018–2025), not
   all-play luck.
+  Round 7 (2026-11-18) added four season records after those, names placeholders (Luke's pick):
+  The Steamroller "Most wins by more than 50 points", The Punching Bag "Most losses by more than
+  50 points", The Escape Artist "Most wins by under 7 points" and Heartbreak Hotel "Most losses by
+  under 7 points". Same rules as the other season records (completed seasons, 2017 included, top
+  5, Active counts the manager). The counts are small (at most 6 close games or 7 blowouts in a
+  season), so ties are common; Luke's tie-break is the margins added up: the smaller total
+  first on the close-game records, the bigger first on the blowout records. Jeremy's 4 close wins
+  in 2019 (by 14.3 in all) hold The Escape Artist over Abdi's 2023 (17.5) and 2021 (19.1). The
+  detail reads "2019 · 4-0 in close games, by 14.3 total · team", the margin before the team name
+  so a phone's truncated 2nd–5th rows still show it. Through 2025 the holders are AJ 2018 (5),
+  Tom 2018 (6, by 474.0 over Jordan 2021's 455.8), Jeremy 2019 (4) and Madison 2019 (5); with
+  Active on, Kaden 2019 and Robel 2024 hold the two loss records. The card grid is
+  `grid-cols-1` on a phone so a long detail line can't widen the page.
 - Luck (`luck` and `TeamSeason.expectedWins` in `lib/league.ts`, Luke 2026-11-15): all-play
   expected wins. Each week a team earns the share of the other teams that played that it
   outscored (ties count half), over every decided game, as with W-L. Luck is wins (ties half)
@@ -415,6 +442,17 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - Troy Montoya played 2017–2019 on an ESPN account in another name (owner ID `AAB17ECA…`). The
   mapping was confirmed by his Sheet row matching to the hundredth of a point.
 - Ties: none so far. Default if one happens: show W-L-T, and Win % counts a tie as half a win.
+- Close games and blowouts (the site owner, Round 7, 2026-11-18; `marginKind`, `CLOSE_UNDER`,
+  `BLOWOUT_OVER` and `TeamSeason.close`/`.blowout` in `lib/league.ts`): a close game is decided
+  by under 7 points, a blowout by more than 50, compared in cents. Every decided game counts, as
+  with W-L; byes and undecided games don't. Why these numbers: over the 1,088 decided games from
+  2017 to 2026 week 10, the winning margin averages 29.3 points with a standard deviation of
+  22.4. One SD either side is 6.9–51.7 and holds 68.3% of games, so close means more than 1 SD
+  below the average (15.4% of games) and a blowout more than 1 SD above it (16.3%); the round
+  numbers give 15.7% close and 17.9% blowouts. A margin of exactly 7 or 50 is neither (one game:
+  Randy's 148.98–98.98 over Kenny, 2018 week 16). The site owner picked these over an
+  alternative based on bench swaps. A team plays a median of 3 close games and 3 blowouts a
+  season, so there are no per-season bar charts (considered and rejected).
 - Last place (the league's "Loser", punished with pancakes) is `finalRank` equal to the season's
   team count (`lastPlace` on each team-season). It matches the 2024 pancake news post: 2018 Nigel,
   2019 Kaden, 2020 Ryan, 2021 Suny, Luke 2022–23; `npm run check` tests it. Pancakes (🥞) show
@@ -481,7 +519,9 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    (lineups, projections, trades) came in with a 2021 member's cookies the same day. Round 6
    (2026-11-17) is built: the one-season Playcall Review under the Roster box replaced Manager
    Playcalls, and the Pancake Watch is compact. The site owner answered its 4 questions through
-   Luke the same day (recorded above). Next: the domain.
+   Luke the same day (recorded above). Round 7 (2026-11-18) is built: close games and blowouts
+   (the career line, Ice in the Veins and Got Blown Out, and four season records). Luke picked
+   the record names and the tie-break the same day (recorded above). Next: the domain.
 
 Later, not v1: head-to-head records, photos for the Hall.
 

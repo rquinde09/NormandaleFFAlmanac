@@ -3,6 +3,8 @@ import { PageTitle } from "@/components/ui";
 import { RecordsView, type RecordCard, type RecordEntry, type RecordSet } from "@/components/RecordsView";
 import { pts, record, score } from "@/lib/format";
 import {
+  BLOWOUT_OVER,
+  CLOSE_UNDER,
   benchRecords,
   gameRecords,
   getLeague,
@@ -58,7 +60,15 @@ function benchEntry(league: League, { game: g, bench: b, value }: BenchRecordEnt
   };
 }
 
-const plusMinus = (n: number, digits = 1) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n).toFixed(digits)}`;
+// The win records add up the winning margins, the loss records the losing ones
+const MARGIN_RECORDS: Record<string, { kind: "close" | "blowout"; wins: boolean; label: string }> = {
+  "blowout-wins": { kind: "blowout", wins: true, label: "blowouts" },
+  "blowout-losses": { kind: "blowout", wins: false, label: "blowouts" },
+  "close-wins": { kind: "close", wins: true, label: "close games" },
+  "close-losses": { kind: "close", wins: false, label: "close games" },
+};
+
+const plusMinus =(n: number, digits = 1) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n).toFixed(digits)}`;
 
 function seasonEntry(league: League, def: RecordDef<SeasonRecordEntry>, { teamSeason: t, value }: SeasonRecordEntry): RecordEntry {
   const who = managerBySlug(league, t.person)!.nickname;
@@ -70,6 +80,18 @@ function seasonEntry(league: League, def: RecordDef<SeasonRecordEntry>, { teamSe
       who,
       value: `${plusMinus(value, Number.isInteger(value) ? 0 : 1)} wins`,
       detail: `${t.season} · ${t.teamName} · ${record(t.all)}, ESPN projected ${wins(projected)}-${wins(t.all.games - projected)}`,
+    };
+  }
+  // Close games and blowouts (Round 7): the season's W-L in them and the margins added up, which
+  // break ties, before the team name so a phone's truncated rows still show them
+  const margin = MARGIN_RECORDS[def.key];
+  if (margin) {
+    const split = t[margin.kind];
+    const by = margin.wins ? split.wonBy : split.lostBy;
+    return {
+      who,
+      value: `${value} ${value === 1 ? SINGULAR[def.unit] : def.unit}`,
+      detail: `${t.season} · ${record(split)} in ${margin.label}, by ${pts(by)} total · ${t.teamName}`,
     };
   }
   const isPoints = def.unit === "pts";
@@ -110,6 +132,8 @@ export default function RecordsPage() {
         Season projection: in each game, ESPN&apos;s favorite was the starting lineup with the higher projected score, so a team was
         projected to win the games it was favored in. ESPN has projections from 2018 on (none for 2017). Bench: each
         week&apos;s best possible lineup minus the one started, from ESPN&apos;s lineups for 2018 on (2017 lists starters only).
+        A close game is decided by under {CLOSE_UNDER} points and a blowout by more than {BLOWOUT_OVER}. Ties in those records go to
+        the smaller margins added up (close games) or the bigger ones (blowouts).
       </p>
     </>
   );

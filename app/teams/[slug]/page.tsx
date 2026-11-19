@@ -5,8 +5,8 @@ import { ManagerCharts } from "@/components/ManagerCharts";
 import { Opponents } from "@/components/Opponents";
 import { Card, Pancakes, Stars, Stat } from "@/components/ui";
 import { pct, pts, record } from "@/lib/format";
-import { careerTotals, getLeague, managerBySlug, winPct } from "@/lib/league";
-import { achievements, opponents, performance } from "@/lib/manager";
+import { BLOWOUT_OVER, CLOSE_UNDER, careerTotals, getLeague, managerBySlug, winPct } from "@/lib/league";
+import { achievements, marginCareer, opponents, performance } from "@/lib/manager";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -28,6 +28,7 @@ export default async function ManagerPage({ params }: Params) {
   if (!manager) notFound();
 
   const career = careerTotals(league).get(slug)!;
+  const margins = marginCareer(league, slug);
   const seasons = league.teamSeasons.filter((ts) => ts.person === slug).sort((a, b) => a.season - b.season);
   const titleYears = seasons.filter((s) => s.finalRank === 1).map((s) => s.season);
   const lastYears = seasons.filter((s) => s.lastPlace).map((s) => s.season);
@@ -76,6 +77,15 @@ export default async function ManagerPage({ params }: Params) {
             <Stat label="PF/G" value={pts(career.games ? career.pf / career.games : 0)} />
             <Stat label="Total PF" value={pts(career.pf)} />
           </div>
+          {/* Round 7: W-L in close games and blowouts, every decided game */}
+          <p className="mt-3 text-sm text-zinc-400">
+            Close games <span className="font-semibold tabular-nums text-zinc-50">{record(margins.close)}</span>
+            <span className="text-zinc-600"> · </span>
+            Blowouts <span className="font-semibold tabular-nums text-zinc-50">{record(margins.blowout)}</span>
+          </p>
+          <p className="mt-0.5 text-xs text-zinc-500">
+            Close: by under {CLOSE_UNDER} points · Blowout: by over {BLOWOUT_OVER}
+          </p>
         </details>
       </Card>
 

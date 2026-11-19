@@ -38,6 +38,9 @@ export type Game = {
 
 export type Totals = { w: number; l: number; t: number; pf: number; pa: number; games: number };
 
+// One team's close games or blowouts (Round 7): W-L-T, and the winning and losing margins added up
+export type MarginSplit = { w: number; l: number; t: number; wonBy: number; lostBy: number };
+
 export type TeamSeason = {
   season: number;
   person: string;
@@ -60,6 +63,9 @@ export type TeamSeason = {
   projectedWins: number | null; // games ESPN's projections favored this team in; null without projections
   tradeNet: number | null; // starting-lineup points the season's trades gained (or lost); null without trade details
   optimizedSeed: number | null; // the seed with the best lineup every week; null without bench lineups
+  // Round 7 (2026-11-18), every decided game: decided by under 7 points, or by more than 50
+  close: MarginSplit;
+  blowout: MarginSplit;
 };
 
 // A playoff-week schedule entry: the winners bracket, placement games or the consolation ladder.
@@ -150,6 +156,20 @@ export const luck = (t: TeamSeason) => t.all.w + t.all.t / 2 - t.expectedWins;
 export const odds = (t: TeamSeason) => (t.projectedWins === null ? null : t.all.w + t.all.t / 2 - t.projectedWins);
 
 const cents = (n: number) => Math.round(n * 100); // compares points without float noise
+
+// Close games and blowouts (the site owner, Round 7, 2026-11-18). Over the 1,088 decided games from
+// 2017 to 2026 week 10 the winning margin averages 29.3 points with a standard deviation of 22.4,
+// so one SD either side is 6.9–51.7. A close game is decided by under 7 points (about 1 SD below
+// the average), a blowout by more than 50 (about 1 SD above); compared in cents.
+export const CLOSE_UNDER = 7;
+export const BLOWOUT_OVER = 50;
+export type MarginKind = "close" | "normal" | "blowout";
+export const marginCents = (g: Game) => Math.abs(cents(g.home.points) - cents(g.away.points));
+export function marginKind(g: Game): MarginKind {
+  const m = marginCents(g);
+  return m < CLOSE_UNDER * 100 ? "close" : m > BLOWOUT_OVER * 100 ? "blowout" : "normal";
+}
+const emptySplit = (): MarginSplit => ({ w: 0, l: 0, t: 0, wonBy: 0, lostBy: 0 });
 
 function readJson<T>(file: string): T {
   return JSON.parse(fs.readFileSync(file, "utf8")) as T;
@@ -277,6 +297,7 @@ export function getLeague(): League {
       const regular = emptyTotals();
       const all = emptyTotals();
       const results: string[] = [];
+      const splits = { close: emptySplit(), blowout: emptySplit() };
       for (const g of seasonGames) {
         const side = g.home.teamId === team.id ? "home" : g.away.teamId === team.id ? "away" : null;
         if (!side) continue;
@@ -285,7 +306,19 @@ export function getLeague(): League {
         addGame(all, g[side].points, g[other].points, result);
         if (g.kind === "regular") addGame(regular, g[side].points, g[other].points, result);
         results.push(result);
+        const kind = marginKind(g);
+        if (kind !== "normal") {
+          const split = splits[kind]; // margins in cents until the season is counted
+          if (result === "W") {
+            split.w += 1;
+            split.wonBy += marginCents(g);
+          } else if (result === "L") {
+            split.l += 1;
+            split.lostBy += marginCents(g);
+          } else split.t += 1;
+        }
       }
+      const inPoints = (s: MarginSplit): MarginSplit => ({ ...s, wonBy: s.wonBy / 100, lostBy: s.lostBy / 100 });
       const finalRank = complete ? (team.rankCalculatedFinal || team.rankFinal || null) : null;
       teamSeasons.push({
         season: s.seasonId,
@@ -308,6 +341,8 @@ export function getLeague(): League {
         projectedWins: projected ? (projected.get(team.id) ?? 0) : null,
         tradeNet: nets ? (nets.get(team.id) ?? 0) : null,
         optimizedSeed: optimized?.get(team.id) ?? null,
+        close: inPoints(splits.close),
+        blowout: inPoints(splits.blowout),
       });
     }
   }
@@ -463,6 +498,17 @@ export function seasonRecords(league: League, top = 5, counts: (person: string) 
       entries: pick((t) => odds(t)!, (a, b) => odds(a)! - odds(b)!, projectedRows) },
     { key: "bench-season", title: "Asleep at the Wheel", subtitle: "Most points left on the bench", unit: "pts",
       entries: pick((t) => t.bench!, (a, b) => b.bench! - a.bench!, benched) },
+    // Round 7 (2026-11-18): close games and blowouts. The counts are small, so ties are common:
+    // Luke's pick breaks them by the margins added up, the closer games first on the close-game
+    // records and the bigger margins first on the blowout records.
+    { key: "blowout-wins", title: "The Steamroller", subtitle: "Most wins by more than 50 points", unit: "wins",
+      entries: pick((t) => t.blowout.w, (a, b) => b.blowout.w - a.blowout.w || cents(b.blowout.wonBy) - cents(a.blowout.wonBy)) },
+    { key: "blowout-losses", title: "The Punching Bag", subtitle: "Most losses by more than 50 points", unit: "losses",
+      entries: pick((t) => t.blowout.l, (a, b) => b.blowout.l - a.blowout.l || cents(b.blowout.lostBy) - cents(a.blowout.lostBy)) },
+    { key: "close-wins", title: "The Escape Artist", subtitle: "Most wins by under 7 points", unit: "wins",
+      entries: pick((t) => t.close.w, (a, b) => b.close.w - a.close.w || cents(a.close.wonBy) - cents(b.close.wonBy)) },
+    { key: "close-losses", title: "Heartbreak Hotel", subtitle: "Most losses by under 7 points", unit: "losses",
+      entries: pick((t) => t.close.l, (a, b) => b.close.l - a.close.l || cents(a.close.lostBy) - cents(b.close.lostBy)) },
   ];
 }
 
