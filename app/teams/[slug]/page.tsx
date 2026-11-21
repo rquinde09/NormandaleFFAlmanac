@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Achievements } from "@/components/Achievements";
 import { ManagerCharts } from "@/components/ManagerCharts";
 import { Opponents } from "@/components/Opponents";
-import { Card, Pancakes, Stars, Stat } from "@/components/ui";
+import { Card, Pancakes, Stars } from "@/components/ui";
 import { pct, pts, record } from "@/lib/format";
 import { BLOWOUT_OVER, CLOSE_UNDER, careerTotals, getLeague, managerBySlug, winPct } from "@/lib/league";
 import { achievements, marginCareer, opponents, performance } from "@/lib/manager";
@@ -55,7 +55,7 @@ export default async function ManagerPage({ params }: Params) {
         </div>
         {(titleYears.length > 0 || lastYears.length > 0) && (
           <div className="mt-3 space-y-0.5 text-sm">
-            {titleYears.length > 0 && <p className="text-amber-400">Champion: {titleYears.join(", ")}</p>}
+            {titleYears.length > 0 && <p className="text-lg text-amber-400">Champion: {titleYears.join(", ")}</p>}
             {lastYears.length > 0 && <p className="text-orange-300">Loser: {lastYears.join(", ")}</p>}
           </div>
         )}
@@ -71,20 +71,18 @@ export default async function ManagerPage({ params }: Params) {
             <span className="text-3xl font-bold tabular-nums text-zinc-50">{record(career)}</span>
             <span className="text-sm text-zinc-400">all-time</span>
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <Stat label="Seasons" value={career.seasons} />
-            <Stat label="Win %" value={pct(winPct(career))} />
-            <Stat label="PF/G" value={pts(career.games ? career.pf / career.games : 0)} />
-            <Stat label="Total PF" value={pts(career.pf)} />
-          </div>
-          {/* Round 7: W-L in close games and blowouts, every decided game */}
-          <p className="mt-3 text-sm text-zinc-400">
-            Close games <span className="font-semibold tabular-nums text-zinc-50">{record(margins.close)}</span>
-            <span className="text-zinc-600"> · </span>
-            Blowouts <span className="font-semibold tabular-nums text-zinc-50">{record(margins.blowout)}</span>
-          </p>
-          <p className="mt-0.5 text-xs text-zinc-500">
-            Close: by under {CLOSE_UNDER} points · Blowout: by over {BLOWOUT_OVER}
+          {/* All six side by side, on a phone too (the site owner, Round 8: "I intentionally want the stats all
+              next to each other"); Close games and Blowouts are Round 7's W-L over every decided game */}
+          <dl className="mt-3 flex items-start justify-between gap-1.5 sm:justify-start sm:gap-8">
+            <CareerStat label="Seasons" value={String(career.seasons)} />
+            <CareerStat label="Win %" value={pct(winPct(career))} />
+            <CareerStat label="Close games" value={record(margins.close)} />
+            <CareerStat label="Blowouts" value={record(margins.blowout)} />
+            <CareerStat label="PF/G" value={pts(career.games ? career.pf / career.games : 0)} />
+            <CareerStat label="Total PF" value={pts(career.pf)} />
+          </dl>
+          <p className="mt-2 text-xs text-zinc-500">
+            Close games: by under {CLOSE_UNDER} points · Blowouts: by over {BLOWOUT_OVER}
           </p>
         </details>
       </Card>
@@ -92,6 +90,15 @@ export default async function ManagerPage({ params }: Params) {
       <ManagerCharts name={manager.nickname} seasons={performance(league, slug)} />
       <Opponents data={opponents(league, slug)} />
       <Achievements list={achievements(league, slug)} />
+    </div>
+  );
+}
+
+function CareerStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 shrink-0">
+      <dt className="text-[10px] whitespace-nowrap text-zinc-400 sm:text-xs">{label}</dt>
+      <dd className="mt-0.5 text-[13px] font-semibold whitespace-nowrap tabular-nums text-zinc-50 sm:text-lg">{value}</dd>
     </div>
   );
 }

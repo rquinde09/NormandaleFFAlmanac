@@ -1,123 +1,101 @@
 import Link from "next/link";
 import { Bracket } from "@/components/Bracket";
-import { Card, SectionLabel } from "@/components/ui";
 import { record } from "@/lib/format";
 import type { PancakeWatch as Watch, WatchRow } from "@/lib/seasons";
 
-// The home page's race for last place while a season is on (Luke, 2026-11-15). Compact since the
-// site owner's Round 6 (2026-11-17): folded shut, it shows only who's in danger of last place, in
-// large red type with a pancake and a red light; tapping it opens the rest. During the regular
-// season that's the team at the bottom of the standings, and the rest is everyone outside the
-// playoff spots, worst first. After it, the bottom game of the pancake ladder (in its last week, the
-// game whose loser finishes last), and the rest is the ladder itself.
-export function PancakeWatch({ watch, name }: { watch: Watch; name: (slug: string) => string }) {
-  const danger = inDanger(watch, name);
-  return (
-    <section>
-      <SectionLabel>Pancake Watch 🥞</SectionLabel>
-      <Card>
-        <details className="group">
-          <summary className="flex cursor-pointer list-none items-start gap-3 [&::-webkit-details-marker]:hidden">
-            {danger.people.length > 0 && <RedLight />}
-            <div className="min-w-0 flex-1">
-              {danger.people.length > 0 && (
-                <div className="truncate text-3xl font-bold tracking-tight text-red-500">
-                  {danger.people.map((p, i) => (
-                    <span key={p}>
-                      {i > 0 && <span className="text-lg font-medium text-zinc-500"> vs </span>}
-                      {p}
-                    </span>
-                  ))}{" "}
-                  🥞
-                </div>
-              )}
-              <div className="mt-0.5 text-sm text-zinc-400">{danger.note}</div>
-            </div>
-            <span className="mt-2 shrink-0 text-zinc-500 transition-transform group-open:rotate-180" aria-hidden>
-              ▾
-            </span>
-          </summary>
-
-          <div className="mt-4 border-t border-zinc-800 pt-3">
-            {watch.phase === "regular" ? (
-              <>
-                <p className="text-sm text-zinc-400">
-                  Miss the top {watch.playoffTeams} and you play in the pancake ladder, where last place takes the pancakes.{" "}
-                  {watch.weeksLeft} regular-season week{watch.weeksLeft === 1 ? "" : "s"} left.
-                </p>
-                <ol className="mt-3 divide-y divide-zinc-800">
-                  {watch.rows.map((r) => (
-                    <Row key={r.person} r={r} />
-                  ))}
-                </ol>
-                <div className="mt-2 border-t border-dashed border-zinc-700 pt-2 text-xs text-zinc-500">
-                  Playoff line: {watch.line.seed}. {watch.line.nickname} {record(watch.line)}
-                </div>
-              </>
-            ) : watch.ladder.length ? (
-              <>
-                <p className="mb-3 text-sm text-zinc-400">The teams that missed the playoffs play for last place. The loser takes the pancakes.</p>
-                <Bracket rounds={watch.ladder} name={name} />
-              </>
-            ) : (
-              <p className="text-sm text-zinc-400">The teams that missed the playoffs play for last place. The loser takes the pancakes.</p>
-            )}
-            <Link href={`/seasons/${watch.season}`} className="mt-3 block text-sm text-zinc-300 underline-offset-2 hover:underline">
-              {watch.season} standings and brackets →
-            </Link>
-          </div>
-        </details>
-      </Card>
-    </section>
-  );
-}
-
-// Who the folded watch shows, and the small line under the names
-function inDanger(watch: Watch, name: (slug: string) => string): { people: string[]; note: string } {
+// The home page's race for last place while a season is on (Luke, 2026-11-15), as the site owner's
+// Round 8 card (2026-11-20): who's in danger of last place, and, opened, each team's chance of
+// finishing last. During the regular season "in danger" is the team at the bottom of the standings;
+// after it, the bottom game of the pancake ladder (in its last week, the game whose loser finishes last).
+export function inDanger(watch: Watch, name: (slug: string) => string): { people: string[]; note: string } {
+  const weeks = `${watch.weeksLeft} week${watch.weeksLeft === 1 ? "" : "s"} left`;
   if (watch.phase === "regular") {
-    const [last, ...rest] = watch.rows;
-    if (!last) return { people: [], note: "No one is outside the playoff spots yet." };
-    const tied = rest.filter((r) => r.w === last.w && r.l === last.l && r.t === last.t).map((r) => r.nickname);
-    const weeks = `${watch.weeksLeft} week${watch.weeksLeft === 1 ? "" : "s"} left`; // kept on one line
-    return {
-      people: [last.nickname],
-      note: `Last at ${record(last)}${tied.length ? `, tied with ${tied.join(" and ")}` : ""} · ${weeks}`,
-    };
+    const last = watch.rows[0];
+    return last ? { people: [last.nickname], note: weeks } : { people: [], note: weeks };
   }
   const round = watch.ladder.at(-1);
   const game = round?.games.at(-1);
-  if (!round || !game) return { people: [], note: "The regular season is over. The pancake ladder starts next week." };
+  if (!round || !game) return { people: [], note: "The pancake ladder starts next week" };
   // In the ladder's last week, ESPN lists the last-place game last (every season, 2017–2025)
-  if (!game.away) return { people: [name(game.home.person)], note: watch.final ? "A bye in the last week: last place" : `Bottom of the pancake ladder, week ${round.week} (bye)` };
+  if (!game.away) return { people: [name(game.home.person)], note: watch.final ? "A bye in the last week: last place" : weeks };
   const loser = game.winner === "HOME" ? game.away : game.winner === "AWAY" ? game.home : null;
   if (watch.final && loser) return { people: [name(loser.person)], note: "Lost the pancake game: last place" };
-  return {
-    people: [name(game.home.person), name(game.away.person)],
-    note: watch.final ? "The pancake game: the loser finishes last" : `Bottom game of the pancake ladder, week ${round.week}`,
-  };
+  return { people: [name(game.home.person), name(game.away.person)], note: watch.final ? "The pancake game: the loser finishes last" : weeks };
 }
 
 // A red light, pulsing unless the visitor asked for less motion
-function RedLight() {
+export function RedLight({ className = "" }: { className?: string }) {
   return (
-    <span className="relative mt-3 flex h-3 w-3 shrink-0" aria-hidden>
+    <span className={`relative flex h-2.5 w-2.5 shrink-0 ${className}`} aria-hidden>
       <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 motion-safe:animate-ping" />
-      <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500" />
+      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
     </span>
   );
 }
 
-const gamesBack = (n: number) => (n === 0 ? "Tied, out on points" : `${Number.isInteger(n) ? n : n.toFixed(1)} back`);
+// "34%"; under half a percent "<1%"; a team that can't finish last any more "0%", in green
+function chance(r: WatchRow) {
+  if (r.safe) return "0%";
+  const p = Math.round(r.chance * 100);
+  return r.chance > 0 && p === 0 ? "<1%" : r.chance < 1 && p === 100 ? ">99%" : `${p}%`;
+}
 
-function Row({ r }: { r: WatchRow }) {
+// Opened (Round 8): "7 weeks left", then one row per team below the playoff line, last place first
+// and largest, each with its chance of finishing last, and the playoff line under a dashed rule.
+// After the regular season, the ladder's teams, most likely first, and the ladder itself.
+export function PancakeWatchView({ watch, name }: { watch: Watch; name: (slug: string) => string }) {
+  return (
+    <div className="rounded-3xl border border-zinc-800 bg-zinc-900 px-4 py-5 sm:px-6">
+      <div className="text-center text-base text-zinc-300">
+        {watch.weeksLeft} week{watch.weeksLeft === 1 ? "" : "s"} left
+      </div>
+      <ol className="mt-3 divide-y divide-zinc-800">
+        {watch.rows.map((r, i) => (
+          <Row key={r.person} r={r} big={i === 0 && !r.safe} />
+        ))}
+      </ol>
+      {watch.phase === "regular" ? (
+        <div className="mt-2 border-t border-dashed border-zinc-700 pt-3 text-zinc-500">
+          <div className="text-sm">
+            Playoff line: {watch.line.seed}. {watch.line.nickname} {record(watch.line)}
+            {(watch.line.chance > 0 || watch.line.safe) && <span className={watch.line.safe ? "text-emerald-400" : ""}> · {chance(watch.line)}</span>}
+          </div>
+          {watch.above.length > 0 && (
+            <div className="mt-1 text-xs">
+              Above the line: {watch.above.map((r) => `${r.nickname} ${chance(r)}`).join(" · ")}
+            </div>
+          )}
+          <p className="mt-2 text-[11px] leading-snug">
+            Miss the top {watch.playoffTeams} and you play in the pancake ladder, where last place takes the pancakes.{" "}
+            {watch.regularLeft} regular-season week{watch.regularLeft === 1 ? "" : "s"} left. % is the chance of finishing last, from
+            ESPN&apos;s projections.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-2 border-t border-dashed border-zinc-700 pt-3">
+          <p className="mb-3 text-[11px] leading-snug text-zinc-500">
+            The teams that missed the playoffs play for last place; the last game&apos;s loser takes the pancakes. % is the chance of
+            finishing last, from ESPN&apos;s projections.
+          </p>
+          {watch.ladder.length > 0 && <Bracket rounds={watch.ladder} name={name} />}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Row({ r, big }: { r: WatchRow; big: boolean }) {
+  const tone = r.safe ? "text-emerald-400" : big ? "text-red-500" : "text-zinc-50";
   return (
     <li>
-      <Link href={`/teams/${r.person}`} className="flex items-baseline gap-2 py-2 hover:text-white">
-        <span className="w-6 shrink-0 text-right text-sm tabular-nums text-zinc-500">{r.seed}.</span>
-        <span className="min-w-0 flex-1 truncate font-semibold text-zinc-50">{r.nickname}</span>
-        <span className="shrink-0 text-sm tabular-nums text-zinc-300">{record(r)}</span>
-        <span className="w-28 shrink-0 text-right text-xs text-zinc-500">
-          {r.out ? <span className="rounded-md bg-orange-950 px-1.5 py-0.5 text-orange-300">No playoffs</span> : gamesBack(r.behind)}
+      <Link href={`/teams/${r.person}`} className={`flex items-baseline gap-2 hover:opacity-90 ${big ? "py-3" : "py-2.5"}`}>
+        <span className={`shrink-0 text-right tabular-nums ${big ? "w-9 text-2xl text-red-500" : `w-9 text-base ${r.safe ? "text-emerald-600" : "text-zinc-500"}`}`}>
+          {r.seed}.
+        </span>
+        <span className={`min-w-0 flex-1 truncate font-semibold ${tone} ${big ? "text-2xl" : "text-lg"}`}>{r.nickname}</span>
+        <span className={`shrink-0 tabular-nums ${big ? "text-lg" : "text-base"} ${r.safe ? "text-emerald-400" : "text-zinc-200"}`}>{record(r)}</span>
+        <span className={`w-14 shrink-0 text-right tabular-nums ${big ? "text-lg font-semibold text-red-500" : r.safe ? "text-emerald-400" : "text-zinc-400"}`}>
+          {chance(r)}
         </span>
       </Link>
     </li>

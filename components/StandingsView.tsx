@@ -54,6 +54,10 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
     return before === -1 || now === -1 ? null : before - now;
   };
 
+  // On a phone the sorted stat can show differently: All-time's "W/L" shows the record (Round 8)
+  const phoneShow = col.phone?.show ?? col.show;
+  const phoneName = col.phone?.name ?? col.name;
+
   const values = sorted.filter(ok).map((e) => col.value(e.now));
   const lo = Math.min(...values, 0);
   const hi = Math.max(...values);
@@ -108,7 +112,7 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
       </div>
 
       {/* Phone, compact: one line each, "1. Jeremy ★★ ▲2 58.8%", the number being the sorted stat and
-          ▲2 the view's Rank Δ (the site owner's Round 5) */}
+          ▲2 the view's Rank Δ (the site owner's Round 5); All-time's W/L shows the record (Round 8) */}
       {compact && (
         <ol className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 md:hidden">
           {shown.map((e, i) => (
@@ -127,7 +131,7 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
                     <RankChange change={rankChange(e.row.slug)} />
                   </span>
                 )}
-                <span className="shrink-0 font-semibold tabular-nums text-zinc-50">{col.show(e.now)}</span>
+                <span className="shrink-0 font-semibold tabular-nums text-zinc-50">{phoneShow(e.now)}</span>
               </Link>
             </li>
           ))}
@@ -159,12 +163,12 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
                   </div>
                 </div>
                 <div className="shrink-0 text-right">
-                  <div className="text-lg font-semibold tabular-nums text-zinc-50">{col.show(e.now)}</div>
-                  <div className="text-xs text-zinc-500">{col.name}</div>
+                  <div className="text-lg font-semibold tabular-nums text-zinc-50">{phoneShow(e.now)}</div>
+                  <div className="text-xs text-zinc-500">{phoneName}</div>
                 </div>
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2 text-xs">
-                {view.phoneMinis.filter((m) => m.key !== col.key).slice(0, 4).map((m) => (
+                {view.phoneMinis.filter((m) => m.key !== col.key && !(col.phone && m.key === "record")).slice(0, 4).map((m) => (
                   <Mini key={m.label} label={m.label} value={m.show(e.now)} />
                 ))}
               </div>

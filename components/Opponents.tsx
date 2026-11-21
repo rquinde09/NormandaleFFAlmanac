@@ -2,62 +2,64 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Segmented } from "@/components/Segmented";
 import { Card, SectionLabel } from "@/components/ui";
 import { score } from "@/lib/format";
 import type { GameLine, OpponentKey, OpponentLine, Opponents as OpponentsData } from "@/lib/manager";
 
-type Tab = OpponentKey | "best" | "worst";
+type Tab = "favorites" | "points" | "best" | "worst";
 
-const TABS: { key: Tab; label: string; about: string }[] = [
-  { key: "faced", label: "Faced", about: "Played the most" },
-  { key: "easiest", label: "Easiest", about: "Most wins against" },
-  { key: "toughest", label: "Toughest", about: "Most losses against" },
-  { key: "pf", label: "Most PF", about: "Scored the most points on" },
-  { key: "pa", label: "Most PA", about: "Gave up the most points to" },
-  { key: "best", label: "Best win", about: "Most points in a win" },
-  { key: "worst", label: "Worst loss", about: "Fewest points in a loss" },
+// The site owner's Round 8 tabs (2026-11-20): Favorites holds Faced, Easiest and Toughest; Points
+// holds Most PF and Most PA
+const TABS: { value: Tab; label: string }[] = [
+  { value: "favorites", label: "Favorites" },
+  { value: "points", label: "Points" },
+  { value: "best", label: "Best win" },
+  { value: "worst", label: "Worst loss" },
 ];
+
+const PICKS: Record<"favorites" | "points", { key: OpponentKey; label: string }[]> = {
+  favorites: [
+    { key: "faced", label: "Faced" },
+    { key: "easiest", label: "Easiest" },
+    { key: "toughest", label: "Toughest" },
+  ],
+  points: [
+    { key: "pf", label: "Most PF" },
+    { key: "pa", label: "Most PA" },
+  ],
+};
 
 const KIND_LABEL = { regular: "", playoff: " · playoffs", placement: " · placement", consolation: " · consolation" };
 
-// Head-to-head over every game, all seasons, one tab at a time: an opponent with a ring and just
-// their name (the site owner, 2026-11-14), or a single game. The ring's middle holds the number the
-// tab picks by: games, wins, losses, or the points over every game against them. Active opponents
-// only, with no switch (Round 4). The ring sits in the middle of the box with the name or the game
-// under it, on every tab (Round 5).
+// Head-to-head over every game, all seasons, against active opponents only (Round 4). Favorites and
+// Points show small rings side by side, each with its label above and the opponent's name below;
+// Best win and Worst loss show the game. Every tab is the same height.
 export function Opponents({ data }: { data: OpponentsData }) {
-  const [tab, setTab] = useState<Tab>("faced");
-  const about = TABS.find((t) => t.key === tab)!.about;
+  const [tab, setTab] = useState<Tab>("favorites");
   const game = tab === "best" ? data.bestWin : tab === "worst" ? data.worstLoss : undefined;
-  const o = tab === "best" || tab === "worst" ? undefined : data.picks[tab];
 
   return (
     <section>
       <SectionLabel>Opponents</SectionLabel>
       <Card>
-        {/* Four tabs to a row on a phone, the second row stretched; one row from sm up */}
-        <div role="radiogroup" aria-label="Opponent" className="flex flex-wrap gap-0.5 rounded-xl border border-zinc-800 p-1">
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              role="radio"
-              aria-checked={t.key === tab}
-              onClick={() => setTab(t.key)}
-              className={`grow basis-[23%] rounded-lg px-1 py-1.5 text-xs font-medium whitespace-nowrap transition-colors sm:basis-0 sm:text-sm ${
-                t.key === tab ? "bg-zinc-700 text-zinc-50" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {o ? (
-          <Pick o={o} tab={tab as OpponentKey} />
+        <Segmented label="Opponent" options={TABS} value={tab} onChange={setTab} small />
+        {tab === "favorites" || tab === "points" ? (
+          <div className={`${STACK} flex-row items-center gap-1`}>
+            {PICKS[tab].map((p) => {
+              const o = data.picks[p.key];
+              return (
+                <div key={p.key} className="flex min-w-0 flex-1 flex-col items-center gap-1.5">
+                  <span className="text-sm text-zinc-400">{p.label}</span>
+                  {o ? <Pick o={o} pick={p.key} /> : <span className="py-8 text-sm text-zinc-500">–</span>}
+                </div>
+              );
+            })}
+          </div>
         ) : game ? (
-          <OneGame g={game} about={about} />
+          <OneGame g={game} about={tab === "best" ? "Most points in a win" : "Fewest points in a loss"} />
         ) : (
-          <p className="py-8 text-center text-sm text-zinc-500">No games yet.</p>
+          <p className={`${STACK} text-sm text-zinc-500`}>No games yet.</p>
         )}
       </Card>
     </section>
@@ -66,7 +68,7 @@ export function Opponents({ data }: { data: OpponentsData }) {
 
 // The red arc is the share of the games (wins on Faced and Easiest, losses on Toughest) or of the
 // points in those games (PF or PA)
-function Pick({ o, tab }: { o: OpponentLine; tab: OpponentKey }) {
+function Pick({ o, pick }: { o: OpponentLine; pick: OpponentKey }) {
   const winShare = o.games ? (o.w + o.t / 2) / o.games : 0;
   const plural = (n: number, one: string, many: string) => (n === 1 ? one : many);
   const ring = {
@@ -75,15 +77,14 @@ function Pick({ o, tab }: { o: OpponentLine; tab: OpponentKey }) {
     toughest: { share: o.games ? o.l / o.games : 0, value: String(o.l), label: plural(o.l, "loss", "losses") },
     pf: { share: o.pf / (o.pf + o.pa), value: Math.round(o.pf).toLocaleString("en-US"), label: "PF" },
     pa: { share: o.pa / (o.pf + o.pa), value: Math.round(o.pa).toLocaleString("en-US"), label: "PA" },
-  }[tab];
-
+  }[pick];
   return (
-    <div className={STACK}>
-      <Ring {...ring} />
-      <Link href={`/teams/${o.slug}`} className="block max-w-full truncate text-xl font-semibold text-zinc-50 hover:text-white">
+    <>
+      <Ring {...ring} small />
+      <Link href={`/teams/${o.slug}`} className="block max-w-full truncate text-lg font-semibold text-zinc-50 hover:text-white">
         {o.nickname}
       </Link>
-    </div>
+    </>
   );
 }
 
@@ -112,18 +113,18 @@ function OneGame({ g, about }: { g: GameLine; about: string }) {
 }
 
 // A ring meter: the red arc is the share (wins, or the points named in the middle) of the whole.
-function Ring({ share, value, label }: { share: number; value: string; label: string }) {
+function Ring({ share, value, label, small = false }: { share: number; value: string; label: string; small?: boolean }) {
   const r = 42;
   const c = 2 * Math.PI * r;
   const arc = Math.max(0, Math.min(1, share)) * c;
   return (
-    <div className="relative h-28 w-28 shrink-0">
+    <div className={`relative shrink-0 ${small ? "h-24 w-24" : "h-28 w-28"}`}>
       <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90" aria-hidden>
         <circle cx="50" cy="50" r={r} fill="none" stroke="#27272a" strokeWidth="10" />
         <circle cx="50" cy="50" r={r} fill="none" stroke="#ef4444" strokeWidth="10" strokeDasharray={`${arc} ${c}`} />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-lg font-bold tabular-nums text-zinc-50">{value}</span>
+        <span className={`font-bold tabular-nums text-zinc-50 ${small ? "text-base" : "text-lg"}`}>{value}</span>
         <span className="text-[10px] text-zinc-500">{label}</span>
       </div>
     </div>

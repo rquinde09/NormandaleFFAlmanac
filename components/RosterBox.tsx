@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { keep } from "@/components/ChartFrame";
 import type { SeasonPoint } from "@/lib/manager";
 import type { RosterKey, RosterPlayer } from "@/lib/roster";
 
 // The Roster box (the site owner's Round 5, inspired by Luke): four of the selected season's
-// players side by side, the title above, the name and the stat below. Opens once a season is
+// players side by side, the title above, the name and the stat below. Since Round 8 (2026-11-20) it
+// opens and closes from its title line, shut at first, and stays as it is when another season is
 // selected. "Inconsistent" is Luke's pick over "Most Hated" (2026-11-15).
 const TILES: { key: RosterKey; title: string; about: string }[] = [
   { key: "best", title: "Best Player", about: "Most points in his starting lineup" },
@@ -15,13 +16,15 @@ const TILES: { key: RosterKey; title: string; about: string }[] = [
   { key: "franchise", title: "Franchise Player", about: "Started the most weeks" },
 ];
 
-export function RosterBox({ point }: { point: SeasonPoint }) {
+export function RosterBox({ point, open, onToggle }: { point: SeasonPoint; open: boolean; onToggle: () => void }) {
   const { picks, missing } = point.roster;
   return (
     <div className="mt-4 border-t border-zinc-800 pt-3" {...keep}>
-      <div className="text-xs font-medium text-zinc-400">
+      <Toggle open={open} onToggle={onToggle}>
         {point.season} roster{point.live ? " so far" : ""}
-      </div>
+      </Toggle>
+      {open && (
+        <>
       <ul className="mt-2 grid grid-cols-4 gap-2">
         {TILES.map((t) => (
           <li key={t.key} className="min-w-0 text-center" title={t.about}>
@@ -31,7 +34,21 @@ export function RosterBox({ point }: { point: SeasonPoint }) {
         ))}
       </ul>
       {missing && <p className="mt-2 text-xs text-zinc-500">{missing}</p>}
+        </>
+      )}
     </div>
+  );
+}
+
+// The title line that opens and closes a box under the chart (Round 8)
+export function Toggle({ open, onToggle, children }: { open: boolean; onToggle: () => void; children: ReactNode }) {
+  return (
+    <button type="button" onClick={onToggle} aria-expanded={open} className="flex w-full items-center justify-between gap-2 py-0.5 text-left text-xs font-medium text-zinc-300 hover:text-zinc-100">
+      <span>{children}</span>
+      <span className={`text-zinc-500 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden>
+        ▾
+      </span>
+    </button>
   );
 }
 

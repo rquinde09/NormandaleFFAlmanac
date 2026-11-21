@@ -1,6 +1,6 @@
 // The three standings views (all-time totals, per-season and per-game averages) and how each
 // ranks. No Node imports, so the client-side standings page uses it directly.
-import { pct, pts, signed } from "@/lib/format";
+import { pct, pts } from "@/lib/format";
 
 // The per-season and per-game views rank only managers with this many seasons, so a short career
 // can't top them. Placeholder until the league picks a number (see CLAUDE.md).
@@ -32,6 +32,9 @@ export type Stat = {
   value: (c: Career) => number;
   show: (c: Career) => string;
   tiesOnly?: boolean; // shown only once the league has a tie
+  // On a phone, shown in place of the number: All-time's Wins shows the record (the site owner's
+  // Round 8: "W/L", still sorted by wins)
+  phone?: { name: string; show: (c: Career) => string };
 };
 
 export type View = {
@@ -57,7 +60,7 @@ function stat(key: string, label: string, name: string, value: (c: Career) => nu
 }
 
 const ALL: Stat[] = [
-  stat("wins", "W", "Wins", (c) => c.w, String),
+  { ...stat("wins", "W", "Wins", (c) => c.w, String), phone: { name: "Record", show: recordOf } },
   stat("losses", "L", "Losses", (c) => c.l, String),
   stat("ties", "T", "Ties", (c) => c.t, String, true),
   stat("pf", "PF", "Points for", (c) => c.pf, pts),
@@ -80,7 +83,6 @@ const GAME: Stat[] = [
   stat("winpct", "Win %", "Win %", winPctOf, pct),
   stat("pf", "PF/G", "PF per game", (c) => perGame(c.pf, c), pts),
   stat("pa", "PA/G", "PA per game", (c) => perGame(c.pa, c), pts),
-  stat("pdiff", "PDIFF/G", "PDIFF per game", (c) => perGame(c.pf - c.pa, c), signed),
 ];
 
 const mini = (stats: Stat[], key: string, label: string) => ({ key, label, show: stats.find((s) => s.key === key)!.show });
@@ -96,7 +98,7 @@ export const VIEWS: View[] = [
     rankStat: "wins",
     // Like the old Sheet: by wins, then points for
     rank: (a, b) => b.w - a.w || b.pf - a.pf,
-    phoneSorts: sorts("wins:Wins", "pf:PF", "pa:PA", "titles:Titles"),
+    phoneSorts: sorts("wins:W/L", "pf:PF", "pa:PA", "titles:Titles"),
     phoneMinis: [RECORD, mini(ALL, "pf", "PF"), mini(ALL, "pa", "PA"), mini(ALL, "trades", "Trades"), mini(ALL, "titles", "Titles")],
   },
   {
@@ -117,8 +119,9 @@ export const VIEWS: View[] = [
     stats: GAME,
     rankStat: "winpct",
     rank: (a, b) => winPctOf(b) - winPctOf(a) || perGame(b.pf, b) - perGame(a.pf, a),
-    phoneSorts: sorts("winpct:Win %", "pf:PF", "pa:PA", "pdiff:PDIFF"),
-    phoneMinis: [mini(GAME, "winpct", "Win %"), mini(GAME, "pf", "PF/G"), mini(GAME, "pa", "PA/G"), mini(GAME, "pdiff", "PDIFF/G"), RECORD],
+    // PDIFF removed in Round 8 (the site owner, 2026-11-20)
+    phoneSorts: sorts("winpct:Win %", "pf:PF", "pa:PA"),
+    phoneMinis: [mini(GAME, "winpct", "Win %"), mini(GAME, "pf", "PF/G"), mini(GAME, "pa", "PA/G"), RECORD],
   },
 ];
 

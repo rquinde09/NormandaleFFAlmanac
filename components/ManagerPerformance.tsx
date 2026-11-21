@@ -23,8 +23,8 @@ const MODES: { value: Mode; label: string; ranks: string }[] = [
 // season's marker shows where it ranked in the league on that tab: gold, silver and bronze for
 // 1st–3rd, a pancake for last (Round 3). Tapping a season selects it (Round 4); the line under the
 // chart then says where it ranked, the Roster box opens with that season's players (Round 5), and
-// the Playcall Review below it with that season's decisions (Round 6). The season in progress is
-// selected at first.
+// the Playcall Review below it with that season's decisions (Round 6). Since Round 8 those two open
+// on a tap, shut at first. The season in progress is selected at first.
 export function ManagerPerformance({
   name,
   seasons,
@@ -37,6 +37,9 @@ export function ManagerPerformance({
   onSelect: (season: number) => void;
 }) {
   const [mode, setMode] = useState<Mode>("finish");
+  // The Roster box and the Playcall Review open on a tap (the site owner, Round 8), shut at first
+  const [rosterOpen, setRosterOpen] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
   const ranks = MODES.find((m) => m.value === mode)!.ranks;
   const point = seasons.find((s) => s.season === selected) ?? null;
 
@@ -53,8 +56,8 @@ export function ManagerPerformance({
           <MedalKey pancake />
           <p>{ranks}</p>
         </div>
-        {point && <RosterBox point={point} />}
-        {point && <PlaycallReview point={point} name={name} />}
+        {point && <RosterBox point={point} open={rosterOpen} onToggle={() => setRosterOpen(!rosterOpen)} />}
+        {point && <PlaycallReview point={point} name={name} open={reviewOpen} onToggle={() => setReviewOpen(!reviewOpen)} />}
       </Card>
     </section>
   );

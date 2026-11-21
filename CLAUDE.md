@@ -30,6 +30,8 @@ without new evidence.
   deploy. A new manager means adding them here.
 - League news and stories are Markdown files that the site owner edits on GitHub's website. Keep
   the format simple enough to edit there: frontmatter plus plain Markdown, no MDX components.
+  Record-break posts (Round 8) are made from the data at build time (`lib/recordNews.ts`) and
+  listed with them; nothing is written to `content/news`.
 - Accounts: the site owner's personal GitHub (not an org) and Vercel Hobby plan, with Luke as
   collaborator. ESPN access uses one league member's cookies, kept in `.env.local` and Actions
   secrets. Luke knows whose they are; the repo doesn't record it.
@@ -131,8 +133,16 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   player, as ESPN's own 2021 box score pages show. The week's actual stat rows have the points
   (fetched 2026-11-15). In every season, every lineup's starters add up to the team score. `lineupSlotId` 20 = bench, 21 = IR,
   23 = FLEX. `defaultPositionId`: 1 QB, 2 RB, 3 WR, 4 TE, 5 K, 16 D/ST.
+- Checked 2026-11-20 (Round 8): for the weeks still to come, `mRoster` with a future
+  `scoringPeriodId` returns every team's current roster (ESPN carries the lineup forward) with
+  each player's projection for that week, through the season's last week; box scores give
+  `totalProjectedPoints` for the matchups already scheduled. Teams' `currentSimulationResults` are
+  ESPN's playoff odds (`playoffPct`, `rank`), with no last-place odds. ESPN schedules each week of
+  the pancake ladder only once the week before is decided; its pairings follow a fixed rule (see
+  Pancake Watch), checked against every season 2017–2025.
 - `fetch_seasons.py` drops personal settings, team-private lists and live/projection fields
   (`DROP_KEYS`) before saving, so the repo holds no private data and unchanged days don't commit.
+  The projections the Pancake Watch needs go in their own file (below), which does change daily.
 
 ## Scripts and commands
 - Node 26 LTS. Run `npm install`, then `npm run build` and `npm start`, or `npm run dev`. npm 11
@@ -154,11 +164,20 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   Luke's 2023 reviews come out as sketched; 2017's rows say what's missing and the season in
   progress has every number; the pancake ladder's last game decides last place. Round 7 adds:
   close, normal and blowout games add up to every decided game; each is about a sixth of the
-  games; Ice in the Veins and Got Blown Out go to the Escape Artist's and Punching Bag's top
-  holders each season; the four new records' holders and the close-win tie order; and Kyle's,
-  Randy's and AJ's career lines through 2025 (Kyle 15-4 and 4-11, Randy 8-15 and 8-14, AJ 8-16
-  and 27-11). Run it after any change to `lib/league.ts`, `lib/standings.ts`, `lib/champions.ts`,
-  `lib/manager.ts`, `lib/bench.ts`, `lib/seasons.ts`, `lib/playcalls.ts` or `lib/roster.ts`.
+  games; and Kyle's, Randy's and AJ's career lines through 2025 (Kyle 15-4 and 4-11, Randy 8-15
+  and 8-14, AJ 8-16 and 27-11). Round 8 adds: every One Hit Wonder is the team's lowest
+  projection and top score, the holder through 2025 is Ryan's Taysom Hill (41.52, 2024 week 11),
+  Tre Tucker wasn't on a 2025 week 3 roster and Tucker Kraft's 2025 week 8 counts; Below Zero's
+  most losses (Cesar 2017, 14); the four League records through 2025 (AJ 27, Jordan 20, Kyle 15
+  over Abdi's 15 on margins, AJ 16; Active: Kaden) and that they match every career line; Dunzo's
+  84 against the within-a-point share (25 games each through 2025) and both awards' holders; the
+  ladder rule against every season's pairings and places; the pancake chances add up to 100%,
+  safe teams never finish last and the replay gives ESPN's live seeds; record-break posts are in
+  date order and each names the record's holder as of its date (checked over every break since
+  2018); post dates; Per game has no PDIFF and All-time's W/L shows the record; the season
+  pages' Rank Δ adds up to zero. Run it after any change to `lib/league.ts`, `lib/standings.ts`,
+  `lib/champions.ts`, `lib/manager.ts`, `lib/bench.ts`, `lib/seasons.ts`, `lib/playcalls.ts`,
+  `lib/roster.ts`, `lib/pancake.ts`, `lib/records.ts` or `lib/recordNews.ts`.
 - Python lives in `.venv` (`python -m venv .venv`, then `.venv/Scripts/python -m pip install -r
   requirements.txt`). `scripts/check_env.py` checks `.env.local` without printing values.
   `scripts/probe.py [season ...]` prints a season summary, with owner IDs cut to 8 characters.
@@ -179,7 +198,13 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   - `data/raw/trades/{season}.json`: executed trades with every player (`available: false` for
     2017). Once a season is over; while it's on, whenever ESPN's trade count changes. A
     completed season's per-team counts must match `transactionCounter.trades`.
-  `--force-extras` refetches those four files without touching the season files, and never
+  - `data/raw/projections/{season}.json` (Round 8, 2026-11-20): while a season is on, every
+    team's roster for each week not yet decided, each player with his slot, position and ESPN's
+    projection for that week (`mRoster` with that `scoringPeriodId`; about 240 KB). Fetched on every
+    run, so the bot commits most days in season. Nothing is saved unless the week coming up has a
+    projection for every team. A finished season's file is left as it was; the site no longer
+    reads it.
+  `--force-extras` refetches the first four files without touching the season files, and never
   replaces one with an emptier one (no lineups, season totals only, no trade details), so a run
   with the site's cookies keeps 2021's. `--env FILE` reads cookies from another file
   (environment variables still win). It also writes
@@ -193,13 +218,45 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   `ESPN_S2`, `ESPN_SWID`. Collaborators on a personal repo can add them.
 
 ## Site
-- Routes: `/` (season status, Pancake Watch while a season is on, the reigning champion under
-  "Reigning Mahaan Bakaree Champion (The Great Goat)", news), `/standings` (`?view=all|season`;
-  no `view` is Per game), `/teams`, `/teams/[slug]`, `/records` (`?view=season`),
+- Routes: `/` (four cards; `?view=pancake` and `?view=news` open two of them in place, see Home
+  page), `/standings` (`?view=all|season`; no `view` is Per game), `/teams`, `/teams/[slug]`,
+  `/records` (`?view=season|league`),
   `/hall-of-mahaan-bakaree` (champions computed from final ranks; the nav tab says "Champions"),
-  `/seasons` and `/seasons/[year]`, `/news/[slug]`. Seasons has no nav tab (a sixth doesn't fit a
-  375 px phone): the home page's season card, the Champions page (each year and "Every season")
-  and the Standings page link to it.
+  `/seasons` and `/seasons/[year]` (`?stats=playcall`), `/news/[slug]`. Seasons has no nav tab (a
+  sixth doesn't fit a 375 px phone): the home page's season card, the Champions page (each year
+  and "Every season") and the Standings page link to it.
+- Home page (`app/page.tsx`, `components/Home.tsx`; the site owner's Round 8 mockup, 2026-11-20).
+  Four square cards, two by two on a phone and one row on wider screens; a card grows taller only
+  if its content needs it. He left the old home page's other parts out on purpose.
+  - "2026 Standings": the red N, "Season 10", "Week 10 of 14 complete" and a thin red bar (during
+    the playoffs "Playoffs · week 16 of 17", then "Final"). Opens `/seasons/<year>`.
+  - "The Mahaan Bakaree": 👑, "Reigning champion", the name with stars, the team name and that
+    season's W-L. Opens the Champions page.
+  - "Pancake Watch": 🥞, a pulsing red light and the name of whoever is in danger of last place
+    (as Round 6 defined it, below), and "7 weeks left" (weeks left in the season, playoffs
+    included). In the off-season (default): the last season's last place, "2025 last place".
+  - "News": 📰, the latest post's title and date.
+  - Pancake Watch and News open in place (`?view=pancake`, `?view=news`; opening one pushes a
+    history entry, so Back returns to the grid). The other three cards become pills along the top
+    (the mockup's News view repeated NEWS there; the third pill is Pancake Watch), and the title
+    reads "PANCAKE WATCH 🥞" or "NEWS". Opened views are at most `max-w-2xl` wide on big screens.
+    News shows every post in full, newest first (a written post before record posts on the same
+    day); each title links to its own page, whose back link returns to the opened News.
+  - The static page renders the grid; the URL is read once the page loads.
+- Record-break news (`lib/recordNews.ts`; the site owner's Round 8, Luke's answers 2026-11-20).
+  A post for every record on the Records page broken from 2026 on (`FIRST_NEWS_SEASON`, this
+  season back-filled to week 1), counting every manager: the true record, so a change only the
+  Active view sees doesn't post. Built from the data at build time, so nothing new is committed.
+  A game record or a League record is checked as each week is decided, a season record when the
+  season ends. Broken means beaten outright: a new game (or season) at the top with a different
+  number, or, on a League record, another manager passing the leader's count. Ties don't post,
+  even when the tie-break hands the record over (2026: Abdi passed Kyle's 15 close wins in week 3
+  and got a post; Kyle later reached 16 too and holds it on margins, without one). Each post is
+  dated the Tuesday after that NFL week (the season opens the Thursday after Labor Day), and
+  says what the record is, the new holder, number and game or season, the old record, and the
+  holder's top scorer that week (game records) or the game that took the lead (League records).
+  Title: "Abdi breaks The Escape Artist". Through 2026 week 10 there are two, both League records
+  in week 3 (Abdi's Escape Artist, Randy's Heartbreak Hotel); since 2018 there would be 42.
 - Old Google Sites URLs redirect in `next.config.ts`: `/home`, `/league-history` (to
   `/standings?view=all`), `/leaderboard` (to `?view=season`), `/retired-teams`,
   `/records/game-records`, `/records/season-records`. `/teams/<name>` and
@@ -207,8 +264,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   2026-11-05).
 - Standings has three views, defined in `lib/standings.ts`: All-time totals (W, L, PF, PA,
   Seasons, Titles, Trades), Per season averages (W, L, PF, PA per season, Seasons; through 2025
-  its numbers match the old Leaderboard page), and Per game averages (Win %, PF, PA, PDIFF per
-  game). Per game is the default (`DEFAULT_VIEW`, site owner 2026-11-07); All-time is
+  its numbers match the old Leaderboard page), and Per game averages (Win %, PF and PA per game;
+  Round 8 removed PDIFF everywhere). Per game is the default (`DEFAULT_VIEW`, site owner 2026-11-07); All-time is
   `?view=all`. All three count live. Each ends with Rank Δ: the change in that view's ranking since the
   end of the previous season, counted among the managers shown, so the Active switch renumbers.
   Active only is on by default (`active=0` turns it off). First names only, with stars and
@@ -216,7 +273,11 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   news posts keep their wording and the record "The Vega" keeps its name. On a phone, Compact (on by default, `compact=0` turns it off)
   replaced the name search: one line per manager, "1. Jeremy ★★ 🥞 ▲2 58.8%", the number being
   the sorted stat and ▲2 the view's Rank Δ (Round 5, 2026-11-15). The small stats show only with
-  Compact off. The desktop table has no
+  Compact off. Round 8 (the site owner; Luke confirmed the reading, 2026-11-20): All-time's phone
+  sort "Wins" is "W/L", and Compact and the cards show the record ("84-76") in its place, still
+  sorted by wins, high to low (`Stat.phone` in `lib/standings.ts`). Per season keeps separate Wins
+  and Losses. The desktop table keeps its W and L columns. He called the rest of the page
+  "perfect as it is", so the season pages' stat switch isn't here. The desktop table has no
   Compact switch. View, sort, direction, Compact and Active live in the URL, updated with
   `window.history.replaceState` (`lib/url.ts`), which Next keeps in sync with `useSearchParams`.
   Per season and Per game rank only managers with `MIN_SEASONS` (3, a placeholder) seasons;
@@ -225,15 +286,16 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   active manager fits on one phone screen. Retired managers sit in a collapsed "Retired" row
   (`<details>`) below (site owner, 2026-11-10).
 - Manager pages (the site owner's Round 2 spec, 2026-11-07, answers 2026-11-10; Round 3,
-  2026-11-14; Round 4, 2026-11-14; Round 5, 2026-11-15, with Luke's answers the same day), top
-  to bottom:
-  - First card: first name with stars and pancakes, Active/Retired, "Champion: years" and "Loser:
-    years" (last place). No full name. The career numbers fold out under "Career stats": the
-    all-time record, then Seasons, Win %, PF/G and Total PF, left to right. No rank, best finish
-    or PDIFF. Round 7 (2026-11-18) added one line under them, "Close games 16-4 · Blowouts 7-11"
-    (`marginCareer` in `lib/manager.ts`): W-L in close games and blowouts over every decided
-    game, the season in progress included; 0-0 without any. A small line under it gives the
-    definitions ("Close: by under 7 points · Blowout: by over 50"), one line each at 375 px.
+  2026-11-14; Round 4, 2026-11-14; Round 5, 2026-11-15, with Luke's answers the same day; Round 8,
+  2026-11-20, from his mockup of AJ's page at phone width), top to bottom:
+  - First card: first name with stars and pancakes, Active/Retired, "Champion: years" (gold,
+    larger since Round 8) and "Loser: years" (last place). No full name. The career numbers fold
+    out under "Career stats": the all-time record large, then all six stats in one row on a phone
+    too (Round 8: "I intentionally want the stats all next to each other"): Seasons, Win %, Close
+    games, Blowouts, PF/G and Total PF. No rank, best finish or PDIFF. Close games and Blowouts
+    (Round 7, `marginCareer` in `lib/manager.ts`) are W-L over every decided game, the season in
+    progress included; 0-0 without any. A small line under them gives the definitions ("Close
+    games: by under 7 points · Blowouts: by over 50"). It all fits 375 px.
   - Manager Performance (`components/ManagerPerformance.tsx`, `performance` in `lib/manager.ts`,
     the shared axis in `components/ChartFrame.tsx`): one red line, with tabs for Finish, Wins, PF
     and PA (Round 5 moved the rest to Manager Playcalls, which Round 6 replaced with the Playcall
@@ -249,12 +311,14 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     behind its column, and its number goes bold. Each season's tap target is a 28 px column over
     its point and year. The selection stays when the tab changes, and the Roster box and Playcall
     Review below follow it (`components/ManagerCharts.tsx` holds it); tapping it again, or anywhere outside the points,
-    tabs and the boxes about the selection, clears it. Round 5: the page opens with the season in
+    tabs and the boxes about the selection, clears it. Round 8: the Roster box and the Playcall
+    Review each open and close from a title line ("2025 roster ▾", "AJ's Playcall Review · 2025
+    ▾"), shut when the page opens; once opened, each stays open as other seasons are selected. Round 5: the page opens with the season in
     progress selected (a retired manager's last season), and a line under the chart says where
     the selected season ranked ("2019 · 7 wins (7-9) · 6th of 12"; the season in progress: "Season
     in progress").
   - Roster box (`lib/roster.ts`, `components/RosterBox.tsx`, Round 5, inspired by Luke): inside
-    Manager Performance, open while a season is selected. Four players side by side, title above,
+    Manager Performance while a season is selected, opened from its title line. Four players side by side, title above,
     photo, name and stat below. Best Player: most points in his starting lineup (the MVFP rule).
     Best Drafted: the most points that fantasy season by one of his draft picks, wherever he
     played. Inconsistent (Luke's pick over "Most Hated"): the starter furthest below ESPN's
@@ -265,7 +329,7 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     owner's Round 6 sketch, 2026-11-17, with his answers relayed by Luke the same day). It
     replaced Round 5's Manager Playcalls box (five tabs of season-by-season bar charts with
     medals), which the site owner found confusing. Inside Manager Performance under the Roster
-    box, open while a season is selected, like the players: "AJ's Playcall Review · 2023", or
+    box while a season is selected, opened from its title line: "AJ's Playcall Review · 2023", or
     "· 2026 so far" for the season in progress, which counts its decided weeks. Five rows, each
     a thin bar with zero in the middle: the bad word and that season's league worst at the left
     end, the good word and its best at the right (the site owner's pick; his sketch's end numbers
@@ -274,7 +338,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     and red when bad; a number that rounds to zero is grey, "Even". Then the verdict word and his
     line. A small rank beside the number ("2nd of 14", higher is better on every row, ties share
     a place); no medals or pancakes (site owner). On wider screens the verdicts sit right of the
-    bars, as sketched. A folded "How it's counted" explains each number. The rows, in his words:
+    bars, as sketched. A folded "How it's counted" explains each number. Round 8 put Roster IQ
+    first and Luck last: Roster IQ, Odds, Trades, Streaks, Luck. The rows, in his words:
     - Luck, Unlucky ↔ Lucky: "Lucky – Won more games than expected" / "Unlucky – Lost more games
       than expected". All-play wins above expected (`luck`). (The site owner first asked to
       rename Luck to Odds; once he understood all-play he kept it, 2026-11-15.)
@@ -306,18 +371,15 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     `npm run check` tests his sketch, 2023: AJ +1.3, +2, +54.1, −76, W10; Luke −1.3, −1, −100.8,
     +24, L8 (his 54.6 and −99.4 were read off the old chart).
   - Opponents (`lib/manager.ts`, `components/Opponents.tsx`): head-to-head over every decided
-    game, live season included, in seven tabs. Faced (most games), Easiest (most wins against),
-    Toughest (most losses against), Most PF and Most PA (totals over every game against that
-    opponent, not per game), Best win (most points in a win) and Worst loss (fewest points in a
-    loss). The first five show a ring and the opponent's name only (Round 3), centered in the box
-    (Round 4). The ring's middle holds games, wins, losses, or the PF or PA total; its red arc is
-    the win share (Faced, Easiest), loss share (Toughest) or points share. Best win and Worst loss
-    show the game. Round 5: on every tab the ring sits in the middle of the box with the name or
-    the game under it, and every tab is the same height. Retired opponents are always left out:
-    Round 4 removed this
-    box's Active switch and kept it on (`opponents` filters them). Every manager, retired ones
-    included, still has active opponents on all seven tabs. The Active switches on Standings and
-    Records stay.
+    game, live season included, in four tabs since Round 8 (his mockup): Favorites holds Faced
+    (most games), Easiest (most wins against) and Toughest (most losses against) as three small
+    rings side by side, each with its label above and the opponent's name below; Points holds Most
+    PF and Most PA (totals over every game against that opponent, not per game) the same way; Best
+    win (most points in a win) and Worst loss (fewest points in a loss) show the game with its
+    ring. The ring's middle holds games, wins, losses, or the PF or PA total; its red arc is the
+    win share (Faced, Easiest), loss share (Toughest) or points share. Every tab is the same
+    height. Retired opponents are always left out: Round 4 removed this box's Active switch and
+    kept it on (`opponents` filters them). The Active switches on Standings and Records stay.
   - Achievements (`achievements` in `lib/manager.ts`, `components/Achievements.tsx`): two tabs,
     GOAT Tier and Pancake Tier, of emoji icons greyed out until earned in a completed season.
     Tapping one shows the site owner's description and the seasons earned. GOAT Tier: 🐐 The
@@ -331,13 +393,15 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     placeholder for the site owner). Season PF
     and PA count every game that season, so a playoff bye's missing game is part of the game
     (site owner); ties share the award. The Trade and Commish awards were removed in Round 3.
-    The Below Zero award isn't the "Below Zero" season record (fewest wins).
-    Round 7 (2026-11-18) added one to each tier, both names placeholders until the site owner
-    names them: GOAT Tier 🧊 Ice in the Veins ("Won the Most Close Games": most close-game wins
-    that season) and Pancake Tier 💥 Got Blown Out ("Lost the Most Blowouts": most blowout
-    losses). Completed seasons only, ties share it (2018's top was 2 close wins, so seven teams
-    share that one), and a season where nobody has any awards nobody. Tapping one shows each
-    season's count ("2020 (3 close wins)").
+    The Below Zero award isn't the "Below Zero" season record (most losses since Round 8).
+    Round 7 added one to each tier; Round 8 (2026-11-20) redefined both. GOAT Tier 🧊 Ice in the
+    Veins ("Won a Game Within a Point"): won a game by 1.00 or less, against anyone, retired
+    managers included (one game was decided by exactly 1.00: 2021 week 8). Pancake Tier 💥 Dunzo,
+    Round 7's Got Blown Out renamed ("Lost a Game by More Than 84 Points"). 84 (`DUNZO_OVER`) makes
+    a loss that big as rare as a win within a point (`ICE_WITHIN`), as he asked: 26 of the 1,088
+    decided games from 2017 to 2026 week 10 each (2.39%), and 25 of 1,018 each through 2025
+    (2.46%). He guessed "something over 60", but more than 60 is 10.8% of games. Both count
+    completed seasons only, and a tap shows only the years.
 - Champions page (`/hall-of-mahaan-bakaree`): each title expands (`<details>`) to the
   championship game's lineup with the bench, the season's best game (the champion's highest
   score), and the best player (most points while in the starting lineup, playoffs included).
@@ -348,38 +412,57 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   with points, and is shown; `npm run check` compares them. A hand-entered lineup
   (`data/manual/lineups-{season}.json`, same shape) is used only when ESPN has none for that
   champion.
-- Records use the old site's 14 names. On a phone, Compact (on by default, `compact=0` turns it
-  off; Round 5) shows one line per record: its name and description with the holder's number
-  beside them; tapping it shows who holds it ("Luke def. Suny") and the game or season. Without
-  Compact, and on wider screens, each card lists 1st to 5th (no fold-out). Game records count every decided game, live season
-  included. Season records count completed seasons only. They're computed over all seasons,
-  2017 included. The old hand-kept Records pages skipped most 2017 entries, so 6 holders differ
-  from the old site, for example Cesar Vega's 33.72 in 2017 holds "The Vega".
-  `scripts/check-data.ts` notes each old value. Each card shows the holder; 2nd–5th fold out
-  (`<details>`). Active only is on by default. With it on, a game record counts only games between
-  two active managers, so a record set against a retired manager drops out (site owner,
-  2026-11-07: the @$$-Whooping becomes Luke def. Suny). Season records count the manager.
-  Luke added five more on 2026-11-15, each listed after the old site's: game records Riding the
-  Pine (most points left on the bench) and Self-Inflicted, and season records The Horseshoe, The
-  Black Cat and Asleep at the Wheel (most points left on the bench). Their names are
-  placeholders until the site owner names them. The bench ones cover 2018 on.
-  Round 5 descriptions: Self-Inflicted "Lost, but the best lineup would have won them the game"
-  (ranked by how much it would have won by); The Horseshoe "Outperformed season projection" and
-  The Black Cat "Underperformed season projection", which therefore count Odds (2018–2025), not
-  all-play luck.
-  Round 7 (2026-11-18) added four season records after those, names placeholders (Luke's pick):
-  The Steamroller "Most wins by more than 50 points", The Punching Bag "Most losses by more than
-  50 points", The Escape Artist "Most wins by under 7 points" and Heartbreak Hotel "Most losses by
-  under 7 points". Same rules as the other season records (completed seasons, 2017 included, top
-  5, Active counts the manager). The counts are small (at most 6 close games or 7 blowouts in a
-  season), so ties are common; Luke's tie-break is the margins added up: the smaller total
-  first on the close-game records, the bigger first on the blowout records. Jeremy's 4 close wins
-  in 2019 (by 14.3 in all) hold The Escape Artist over Abdi's 2023 (17.5) and 2021 (19.1). The
-  detail reads "2019 · 4-0 in close games, by 14.3 total · team", the margin before the team name
-  so a phone's truncated 2nd–5th rows still show it. Through 2025 the holders are AJ 2018 (5),
-  Tom 2018 (6, by 474.0 over Jordan 2021's 455.8), Jeremy 2019 (4) and Madison 2019 (5); with
-  Active on, Kaden 2019 and Robel 2024 hold the two loss records. The card grid is
-  `grid-cols-1` on a phone so a long detail line can't widen the page.
+- Records (`lib/league.ts` counts them; `lib/records.ts` words them and holds the sections;
+  `components/RecordsView.tsx`). The old site's names, plus Luke's and the rounds' additions. Three
+  tabs since Round 8 (the site owner, 2026-11-20), in his sections:
+  - Game: Match Up Records (The @$$-Whooping, The Clincher, Clash of Titans, The Snooze Fest) and
+    Individual Records (Mr. Clean, The Vega, Riding the Pine, The One Hit Wonder).
+  - Season: Result Records (The Special One, The Relentless, Below Zero, The Cursed), Point
+    Records (The Warrior, The Baby Zebra, The Lucky One, Asleep at the Wheel) and Playcall Records
+    (The Peaky Blinders, The Horseshoe, The Black Cat).
+  - League: League Records, the four Round 7 close-game and blowout records as all-time totals.
+
+  On a phone, Compact (on by default, `compact=0` turns it off) shows small cards two to a row, as
+  in his mockup: the name in red capitals, the description (none on the Match Up records, as
+  mocked), the number, the holder ("Luke def. Suny") and a small line with the game or season.
+  Tapping a card opens a panel under its row with the holder's whole detail line and 2nd–5th.
+  Without Compact, and on wider screens, the same sections hold cards listing 1st to 5th. Game
+  records count every decided game, live season included. Season records count completed seasons
+  only. League records count every decided game, live season included, like the career line.
+  They're computed over all seasons, 2017 included. The old hand-kept Records pages skipped most
+  2017 entries, so 6 holders differ from the old site, for example Cesar Vega's 33.72 in 2017
+  holds "The Vega". `scripts/check-data.ts` notes each old value. Active only is on by default.
+  With it on, a game record counts only games between two active managers, so a record set
+  against a retired manager drops out (site owner, 2026-11-07: the @$$-Whooping becomes Luke def.
+  Suny). Season and League records count the manager.
+  - Luke's additions (2026-11-15), names placeholders until the site owner names them: Riding the
+    Pine (most points left on the bench in a game), The Horseshoe "Outperformed season projection"
+    and The Black Cat "Underperformed season projection" (both count Odds, 2018–2025, not all-play
+    luck), and Asleep at the Wheel (most points left on the bench in a season). The bench ones
+    cover 2018 on.
+  - Below Zero is most losses since Round 8 (it was fewest wins); ties go to the fewer points
+    for. Cesar's 14 in 2017 holds it (Luke 2023 with Active on).
+  - The One Hit Wonder (Round 8) replaced Self-Inflicted, which the site owner didn't think much
+    of: "a manager started a player who had the lowest projection on their team and resulted as
+    the highest scorer on the team". No description (his call). The rule (`oneHitWonders`): that
+    week's starter with the team's lowest ESPN projection was its top scorer (ties count). Kickers
+    and D/STs are left out: they usually have the lowest projections, and with them in, 31 of the
+    34 games would be a kicker or D/ST. Projections of exactly 0 are left out too (ESPN expected the player not
+    to play, or, all over 2023 week 1, had none). Ranked by his points; 2018 on (projections).
+    62 games through 2026 week 10. Ryan's Taysom Hill holds it (41.52, 2024 week 11). The site
+    owner's example, Tre Tucker's 40 in 2025 week 3, can't be one: nobody had him that week (he
+    was picked up for week 5). Tucker Kraft's 33.3 for Nigel in 2025 week 8 is one.
+  - League records (Round 8; `leagueRecords`, `careerSplits`): The Steamroller "Most wins by more
+    than 50 points", The Punching Bag "Most losses by more than 50 points", The Escape Artist "Most
+    wins by under 7 points" and Heartbreak Hotel "Most losses by under 7 points", names Luke's
+    Round 7 placeholders. Career totals, ties broken by the margins added up (Luke's Round 7
+    pick): the smaller total first on the close-game records, the bigger first on the blowout
+    records. The detail reads "27-11 in blowouts, by 1,890.6 total · 10 seasons", the margin
+    before the seasons so a phone's truncated rows still show it. Through 2025: AJ 27, Jordan 20,
+    Kyle 15 (by 48.0 in all, over Abdi's 15 by 61.2) and AJ 16; with Active on, Kaden holds The
+    Punching Bag. As one-season records (Round 7) they were AJ 2018, Tom 2018, Jeremy 2019 and
+    Madison 2019.
+  - The full-card grid is `grid-cols-1` on a phone so a long detail line can't widen the page.
 - Luck (`luck` and `TeamSeason.expectedWins` in `lib/league.ts`, Luke 2026-11-15): all-play
   expected wins. Each week a team earns the share of the other teams that played that it
   outscored (ties count half), over every decided game, as with W-L. Luck is wins (ties half)
@@ -399,29 +482,63 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - Season pages (`lib/seasons.ts`, `components/Bracket.tsx`, Luke 2026-11-15). `/seasons` lists
   every season with champion, runner-up and last place. `/seasons/[year]` has:
   - the podium
-  - the standings table: final place, or the current seed while the season is on, with a line
-    under the last playoff spot. W-L, PF and PA count every game. Luck and Bench, plus PA and Seed
-    on wider screens.
+  - the standings table (`components/SeasonTable.tsx`): final place, or the current seed while the
+    season is on, with a line under the last playoff spot. Round 8 (the site owner, 2026-11-20)
+    gave it a switch between two stat sets, kept in the URL (`?stats=playcall`): Standard (W-L, PF,
+    PA and Rank Δ) and Playcall (Luck, Bench, Trades and Streaks: the Playcall Review's numbers,
+    Trades being the net trade points, "–" without trades or details, and Streaks W10 or L8). W-L,
+    PF and PA count every game; on a phone PF and PA show whole points so the four columns fit 375
+    px. Rank Δ (`rankChange` in `lib/seasons.ts`, Luke's pick): while the season is on, the seed's
+    change since the week before (seeds replayed as ESPN seeds them; over the regular season's last
+    two weeks once it's over); a finished season, the regular-season seed against the final place
+    (a 6 seed who won it all shows ▲5). Every season's moves add up to zero.
   - the playoff bracket: rounds named Quarterfinals, Semifinals, Final by weeks left, in ESPN's
     schedule order, byes shown, the champion starred
   - the pancake ladder (`LOSERS_CONSOLATION_LADDER`)
 
   `league.bracket` keeps every playoff-week schedule entry, byes and undecided games included.
-- Pancake Watch (`pancakeWatch` in `lib/seasons.ts`, `components/PancakeWatch.tsx`, home page,
-  only while a season is on). Last place isn't the worst regular-season team: every team that
-  misses the playoffs plays the consolation ladder for it (2019's 7 seed and 2018's and 2021's
-  first teams out finished last). So the watch lists everyone below the playoff line, worst first:
-  regular-season W-L, games behind the last playoff spot ("Tied, out on points" when level), and
-  "No playoffs" once a team can't catch enough teams to make it (ties at equal wins count as
-  catchable). Seeds are ESPN's live `playoffSeed`, which breaks ties on total points. After the
-  regular season it shows the ladder.
-  Round 6 (site owner, 2026-11-17) made it compact: folded shut (`<details>`), it shows only
-  who's in danger of last place, the name large in red with a pancake and a pulsing red light
-  (steady with reduced motion), and one line ("Last at 2-7, tied with Randy · 5 weeks left").
-  Tapping it opens the list above. During the regular season that's the bottom of the standings
-  (ESPN's last seed). After it, the bottom game of the ladder's latest week. In the ladder's last
-  week ESPN lists the last-place game last (every season 2017–2025; `npm run check` tests it), so
-  that game reads "The pancake game: the loser finishes last", and a bye there is last place.
+- Pancake Watch (`pancakeWatch` in `lib/seasons.ts`, `lib/pancake.ts`, `components/PancakeWatch.tsx`,
+  home page, only while a season is on). Last place isn't the worst regular-season team: every
+  team that misses the playoffs plays the consolation ladder for it (2019's 7 seed and 2018's and
+  2021's first teams out finished last). Seeds are ESPN's live `playoffSeed`, which breaks ties
+  on total points.
+  - The card (Round 6's rule, Round 8's card) names who's in danger of last place, in red with a
+    pulsing red light (steady with reduced motion). During the regular season that's the bottom
+    of the standings (ESPN's last seed). After it, the bottom game of the ladder's latest week. In
+    the ladder's last week ESPN lists the last-place game last (every season 2017–2025; `npm run
+    check` tests it), so that game reads "The pancake game: the loser finishes last", and a bye
+    there is last place.
+  - Opened (Round 8, his mockup): "7 weeks left", then one row per team below the playoff line,
+    14th up to 9th: seed, name, regular-season W-L and the chance of finishing last in the final
+    standings, which replaced "3 back" and "No playoffs" (he didn't follow "back"). The first row
+    (last place now) is bigger and red, as he drew it. A dashed rule, "Playoff line: 8. Andrew 5-5
+    · 1%", then "Above the line:" with every team above it that can still finish last (default:
+    the chances only add up to 100% with them, Kaden 8% at 6-4 on 2026 week 10), and one small
+    line ("Miss the top 8 and you play in the pancake ladder, where last place takes the
+    pancakes. 4 regular-season weeks left. % is the chance of finishing last, from ESPN's
+    projections."). After the regular season: the ladder's teams, most likely first, then the
+    ladder. A team that can no longer finish last shows 0% in green; under half a percent shows
+    "<1%".
+  - The chances (`pancakeOdds`, Luke picked ESPN's projections, 2026-11-20): the rest of the
+    season played 10,000 times (`SIMS`) with a seeded generator, so a build gives the same
+    numbers for the same data. Each team's score in a week to come is normal around its best
+    lineup by ESPN's projections for that week (`data/raw/projections/`, the bench's best-lineup
+    rule with projections for points) plus the mean miss, with the spread of the misses:
+    `calibration` over every team-week of 2018–2025, the score minus the best projected lineup,
+    is −2.0 ± 24.4 (1,800 team-weeks). Without a projection, the team's average score this season.
+    The regular season's games left are played and seeded as ESPN does (`regularSeeds`), then the
+    pancake ladder; the last game's loser (or a bye there) finishes last. Once ESPN has scheduled
+    ladder weeks, those pairings and results are used.
+  - The ladder rule (checked against every season 2017–2025, `firstLadder`/`nextLadder`): week
+    one pairs the seeds in order (9 v 10, 11 v 12, 13 v 14; an odd count gives the last seed a
+    bye). After each week, with its games in ESPN's order, the top game's winner meets the second
+    game's winner, each game's loser meets the winner two games down, and the last two games'
+    losers meet; a bye counts as a win with no loser. The final week's games give the places in
+    order (`ladderPlaces`): the top game's winner finishes highest, the last game's loser last.
+  - Safe (green): can't finish last whatever happens. During the regular season that's a team
+    that has clinched a playoff spot (fewer teams than there are spots can reach its wins even if
+    it loses out); every other team can still miss the playoffs and lose every ladder game. After
+    it, every outcome of the ladder's remaining games is played out.
 - PWA: `app/manifest.ts`, with icons generated by `app/icon.tsx` and `app/apple-icon.tsx`.
 
 ## Counting rules (settled 2026-11-01: they reproduce the Sheet exactly for all 23 managers)
@@ -452,7 +569,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   numbers give 15.7% close and 17.9% blowouts. A margin of exactly 7 or 50 is neither (one game:
   Randy's 148.98–98.98 over Kenny, 2018 week 16). The site owner picked these over an
   alternative based on bench swaps. A team plays a median of 3 close games and 3 blowouts a
-  season, so there are no per-season bar charts (considered and rejected).
+  season, so there are no per-season bar charts (considered and rejected). These rules stay for
+  the career line and the League records; Round 8's two awards use a point and 84 (above).
 - Last place (the league's "Loser", punished with pancakes) is `finalRank` equal to the season's
   team count (`lastPlace` on each team-season). It matches the 2024 pancake news post: 2018 Nigel,
   2019 Kaden, 2020 Ryan, 2021 Suny, Luke 2022–23; `npm run check` tests it. Pancakes (🥞) show
@@ -521,7 +639,14 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    Playcalls, and the Pancake Watch is compact. The site owner answered its 4 questions through
    Luke the same day (recorded above). Round 7 (2026-11-18) is built: close games and blowouts
    (the career line, Ice in the Veins and Got Blown Out, and four season records). Luke picked
-   the record names and the tie-break the same day (recorded above). Next: the domain.
+   the record names and the tie-break the same day (recorded above). Round 8 (2026-11-20) is
+   built: the four-card home page with the Pancake Watch's chances of finishing last (from ESPN's
+   projections, fetched daily) and record-break news; the season pages' Standard/Playcall switch;
+   W/L and no PDIFF on the standings; sectioned Records with small cards, The One Hit Wonder,
+   most-losses Below Zero and a League tab; the manager page's six-stat row, openable Roster and
+   Playcall boxes, reordered Playcall rows, Favorites and Points tabs, and the new Ice in the
+   Veins and Dunzo. Luke answered its 4 questions the same day (recorded above). Next: the
+   domain.
 
 Later, not v1: head-to-head records, photos for the Hall.
 

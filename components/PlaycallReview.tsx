@@ -1,6 +1,7 @@
 "use client";
 
 import { GREEN, GREY, RED, keep, plusMinus } from "@/components/ChartFrame";
+import { Toggle } from "@/components/RosterBox";
 import { ordinal } from "@/lib/format";
 import type { ReviewKey, ReviewRow, SeasonPoint } from "@/lib/manager";
 
@@ -20,19 +21,21 @@ type Stat = {
 const wins = (v: number) => plusMinus(v, Number.isInteger(v) ? 0 : 1);
 
 // The site owner's sketch (Round 6, 2026-11-17): his words for the ends, the verdicts and the lines
+// Roster IQ first and Luck last since Round 8 (the site owner, 2026-11-20)
 const STATS: Stat[] = [
   {
-    key: "luck",
-    label: "Luck",
-    bad: "Unlucky",
-    good: "Lucky",
+    key: "iq",
+    label: "Roster IQ",
+    bad: "Low",
+    good: "High",
     digits: 1,
     format: (v) => plusMinus(v, 1),
     words: {
-      good: ["Lucky", "Won more games than expected"],
-      bad: ["Unlucky", "Lost more games than expected"],
-      even: ["Even", "Won as many games as expected"],
+      good: ["High", "Made better roster calls than league mates"],
+      bad: ["Low", "Made worse roster calls than league mates"],
+      even: ["Even", "Made roster calls like the league average"],
     },
+    missing: (p) => `ESPN has no ${p.season} bench lineups`,
   },
   {
     key: "odds",
@@ -47,20 +50,6 @@ const STATS: Stat[] = [
       even: ["Even", "Won as many games as ESPN projected"],
     },
     missing: (p) => `ESPN has no ${p.season} projections`,
-  },
-  {
-    key: "iq",
-    label: "Roster IQ",
-    bad: "Low",
-    good: "High",
-    digits: 1,
-    format: (v) => plusMinus(v, 1),
-    words: {
-      good: ["High", "Made better roster calls than league mates"],
-      bad: ["Low", "Made worse roster calls than league mates"],
-      even: ["Even", "Made roster calls like the league average"],
-    },
-    missing: (p) => `ESPN has no ${p.season} bench lineups`,
   },
   {
     key: "trades",
@@ -89,21 +78,40 @@ const STATS: Stat[] = [
       even: ["Even", ""],
     },
   },
+  {
+    key: "luck",
+    label: "Luck",
+    bad: "Unlucky",
+    good: "Lucky",
+    digits: 1,
+    format: (v) => plusMinus(v, 1),
+    words: {
+      good: ["Lucky", "Won more games than expected"],
+      bad: ["Unlucky", "Lost more games than expected"],
+      even: ["Even", "Won as many games as expected"],
+    },
+  },
 ];
 
 const TONE_TEXT: Record<Tone | "none", string> = { good: "text-emerald-400", bad: "text-red-400", even: "text-zinc-400", none: "text-zinc-500" };
 const TONE_FILL: Record<Tone, string> = { good: GREEN, bad: RED, even: GREY };
 
 // The site owner's "Playcall Review" (Round 6, 2026-11-17): the selected season's decisions, under
-// the Roster box like its players. Each bar has zero in the middle and runs from that season's
+// the Roster box like its players. Since Round 8 it opens and closes from its title line. Each bar has zero in the middle and runs from that season's
 // league worst on the left to its best on the right, filled from zero to the season's number.
-export function PlaycallReview({ point, name }: { point: SeasonPoint; name: string }) {
+export function PlaycallReview({ point, name, open, onToggle }: { point: SeasonPoint; name: string; open: boolean; onToggle: () => void }) {
   return (
     <div className="mt-4 border-t border-zinc-800 pt-3" {...keep}>
-      <div className="text-xs font-medium text-zinc-400">
-        <span className="text-zinc-200">{name}&rsquo;s Playcall Review</span> · {point.season}
-        {point.live ? " so far" : ""}
-      </div>
+      <Toggle open={open} onToggle={onToggle}>
+        <span className="text-zinc-200">{name}&rsquo;s Playcall Review</span>
+        <span className="text-zinc-400">
+          {" "}
+          · {point.season}
+          {point.live ? " so far" : ""}
+        </span>
+      </Toggle>
+      {open && (
+        <>
       <ul className="mt-3 space-y-4">
         {STATS.map((s) => (
           <Row key={s.key} stat={s} row={point.review[s.key]} point={point} />
@@ -118,13 +126,15 @@ export function PlaycallReview({ point, name }: { point: SeasonPoint; name: stri
         </summary>
         <ul className="mt-2 space-y-1 text-xs text-zinc-500">
           <li>Each bar: zero in the middle, the league&rsquo;s worst that season on the left, its best on the right. The rank is among the league that season.</li>
-          <li>Luck: wins minus expected wins. Each week a team expects the share of the league it outscored.</li>
-          <li>Odds: wins minus ESPN&rsquo;s projected wins. ESPN&rsquo;s favorite each game is the lineup with the higher projected score. From 2018.</li>
           <li>Roster IQ: the league&rsquo;s average points left on the bench minus the team&rsquo;s. The bench is each week&rsquo;s best possible lineup minus the one started. From 2018.</li>
+          <li>Odds: wins minus ESPN&rsquo;s projected wins. ESPN&rsquo;s favorite each game is the lineup with the higher projected score. From 2018.</li>
           <li>Trades: what the players received scored in the starting lineup, minus what the players sent away scored for their new team, from the trade on. From 2018.</li>
           <li>Streaks: the season&rsquo;s longest winning (W) or losing (L) streak, whichever is longer.</li>
+          <li>Luck: wins minus expected wins. Each week a team expects the share of the league it outscored.</li>
         </ul>
       </details>
+        </>
+      )}
     </div>
   );
 }

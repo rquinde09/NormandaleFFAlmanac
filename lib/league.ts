@@ -2,7 +2,7 @@
 // The counting rules live in CLAUDE.md; scripts/check-data.ts checks them against the old Sheet.
 import fs from "node:fs";
 import path from "node:path";
-import { benchGames, readLineups, type BenchGame } from "@/lib/bench";
+import { benchGames, isStarter, lineupSides, readLineups, type BenchGame } from "@/lib/bench";
 import { optimizedSeeds, projectedWins, tradeNets } from "@/lib/playcalls";
 import type { Career } from "@/lib/standings";
 
@@ -89,7 +89,11 @@ export type SeasonInfo = {
   complete: boolean;
   throughWeek: number; // last week with a decided game
   share: number; // how much of the season has been played: 1 once complete, else throughWeek / weeks
+  slots: [number, number][]; // starting lineup slots ([lineupSlotId, count]), from the season's settings
 };
+
+// A game on the schedule that isn't decided yet (the season in progress), by ESPN team ID
+export type Upcoming = { season: number; week: number; kind: Kind; homeTeamId: number; awayTeamId: number };
 
 export type League = {
   managers: Manager[];
@@ -98,6 +102,7 @@ export type League = {
   games: Game[];
   bracket: BracketEntry[];
   bench: BenchGame[];
+  upcoming: Upcoming[];
   updatedAt: string | null;
 };
 
@@ -171,6 +176,14 @@ export function marginKind(g: Game): MarginKind {
 }
 const emptySplit = (): MarginSplit => ({ w: 0, l: 0, t: 0, wonBy: 0, lostBy: 0 });
 
+// Round 8's two achievements (the site owner, 2026-11-20). Ice in the Veins: won a game "within a
+// point", by 1.00 or less (one game was decided by exactly 1.00: 2021 week 8). Dunzo: lost a game by
+// more than DUNZO_OVER, chosen so that as many games were decided by more than it as by a point or
+// less: 26 of the 1,088 decided games from 2017 to 2026 week 10 each (2.39%), and 25 of 1,018 each
+// through 2025 (2.46%). He guessed "something over 60"; more than 60 is 10.8% of games.
+export const ICE_WITHIN = 1;
+export const DUNZO_OVER = 84;
+
 function readJson<T>(file: string): T {
   return JSON.parse(fs.readFileSync(file, "utf8")) as T;
 }
@@ -210,6 +223,7 @@ export function getLeague(): League {
   const games: Game[] = [];
   const bracket: BracketEntry[] = [];
   const bench: BenchGame[] = [];
+  const upcoming: Upcoming[] = [];
 
   for (const s of raw) {
     // Each team-season goes to the one person in managers.json among its owner IDs.
@@ -241,6 +255,9 @@ export function getLeague(): League {
       }))
       .sort((a, b) => a.week - b.week);
     games.push(...seasonGames);
+    for (const g of real.filter((x) => !decided.includes(x))) {
+      upcoming.push({ season: s.seasonId, week: g.matchupPeriodId, kind: KINDS[g.playoffTierType ?? "NONE"], homeTeamId: g.home.teamId, awayTeamId: g.away!.teamId });
+    }
 
     // All-play: each week, the share of the other teams that played that this team outscored
     const expected = new Map<number, number>();
@@ -291,6 +308,7 @@ export function getLeague(): League {
       complete,
       throughWeek,
       share: complete ? 1 : Math.min(1, throughWeek / weeks),
+      slots,
     });
 
     for (const team of s.teams) {
@@ -350,7 +368,7 @@ export function getLeague(): League {
   const metaFile = path.join(DATA_DIR, "meta.json");
   const updatedAt = fs.existsSync(metaFile) ? readJson<{ updatedAt: string }>(metaFile).updatedAt : null;
 
-  cached = { managers, seasons, teamSeasons, games, bracket, bench, updatedAt };
+  cached = { managers, seasons, teamSeasons, games, bracket, bench, upcoming, updatedAt };
   return cached;
 }
 
@@ -465,7 +483,7 @@ export function gameRecords(league: League, top = 5, counts: (person: string) =>
 
 const flip = (w: Game["winner"]): Game["winner"] => (w === "HOME" ? "AWAY" : w === "AWAY" ? "HOME" : "TIE");
 
-// Season records count completed seasons only, so a half-played season can't hold "fewest points against".
+/// Season records count completed seasons only, so a half-played season can't hold "fewest points against".
 export function seasonRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<SeasonRecordEntry>[] {
   const complete = new Set(league.seasons.filter((s) => s.complete).map((s) => s.season));
   const rows = league.teamSeasons.filter((ts) => complete.has(ts.season) && counts(ts.person));
@@ -476,8 +494,10 @@ export function seasonRecords(league: League, top = 5, counts: (person: string) 
   return [
     { key: "best", title: "The Special One", subtitle: "Most wins in a season", unit: "wins",
       entries: pick((t) => t.all.w, (a, b) => b.all.w - a.all.w || b.all.pf - a.all.pf) },
-    { key: "worst", title: "Below Zero", subtitle: "Fewest wins in a season", unit: "wins",
-      entries: pick((t) => t.all.w, (a, b) => a.all.w - b.all.w || a.all.pf - b.all.pf) },
+    // Most losses since Round 8 (the site owner, 2026-11-20; it was fewest wins). Ties go to the
+    // fewer points for, as fewest wins did.
+    { key: "worst", title: "Below Zero", subtitle: "Most losses in a season", unit: "losses",
+      entries: pick((t) => t.all.l, (a, b) => b.all.l - a.all.l || a.all.pf - b.all.pf) },
     { key: "most-pf", title: "The Warrior", subtitle: "Most points for", unit: "pts",
       entries: pick((t) => t.all.pf, (a, b) => b.all.pf - a.all.pf) },
     { key: "most-pa", title: "The Baby Zebra", subtitle: "Most points against", unit: "pts",
@@ -498,48 +518,124 @@ export function seasonRecords(league: League, top = 5, counts: (person: string) 
       entries: pick((t) => odds(t)!, (a, b) => odds(a)! - odds(b)!, projectedRows) },
     { key: "bench-season", title: "Asleep at the Wheel", subtitle: "Most points left on the bench", unit: "pts",
       entries: pick((t) => t.bench!, (a, b) => b.bench! - a.bench!, benched) },
-    // Round 7 (2026-11-18): close games and blowouts. The counts are small, so ties are common:
-    // Luke's pick breaks them by the margins added up, the closer games first on the close-game
-    // records and the bigger margins first on the blowout records.
-    { key: "blowout-wins", title: "The Steamroller", subtitle: "Most wins by more than 50 points", unit: "wins",
-      entries: pick((t) => t.blowout.w, (a, b) => b.blowout.w - a.blowout.w || cents(b.blowout.wonBy) - cents(a.blowout.wonBy)) },
-    { key: "blowout-losses", title: "The Punching Bag", subtitle: "Most losses by more than 50 points", unit: "losses",
-      entries: pick((t) => t.blowout.l, (a, b) => b.blowout.l - a.blowout.l || cents(b.blowout.lostBy) - cents(a.blowout.lostBy)) },
-    { key: "close-wins", title: "The Escape Artist", subtitle: "Most wins by under 7 points", unit: "wins",
-      entries: pick((t) => t.close.w, (a, b) => b.close.w - a.close.w || cents(a.close.wonBy) - cents(b.close.wonBy)) },
-    { key: "close-losses", title: "Heartbreak Hotel", subtitle: "Most losses by under 7 points", unit: "losses",
-      entries: pick((t) => t.close.l, (a, b) => b.close.l - a.close.l || cents(a.close.lostBy) - cents(b.close.lostBy)) },
   ];
 }
 
-// ---- Bench records (Luke, 2026-11-15) ----
+// ---- League records (Round 8): close games and blowouts over a whole career ----
+
+// Round 7 made these four season records; Round 8 (the site owner, 2026-11-20) moved them to their
+// own League tab as all-time totals. Every decided game counts, the season in progress included,
+// like the career line on the manager pages. Ties go to the margins added up (Luke's Round 7 pick):
+// the closer games first on the close-game records, the bigger margins first on the blowout records.
+export type CareerSplit = MarginSplit & { seasons: number };
+export type LeagueRecordEntry = { person: string; split: CareerSplit; value: number };
+
+// Counted from the games, so a league cut at any week (the record-break news) counts to that week.
+// `seasons` are the seasons the person has played a game in.
+export function careerSplits(league: League, kind: "close" | "blowout"): Map<string, CareerSplit> {
+  const out = new Map<string, MarginSplit & { years: Set<number> }>();
+  for (const g of league.games) {
+    for (const side of ["home", "away"] as const) {
+      const me = g[side].person;
+      const row = out.get(me) ?? { w: 0, l: 0, t: 0, wonBy: 0, lostBy: 0, years: new Set<number>() };
+      row.years.add(g.season);
+      out.set(me, row);
+      if (marginKind(g) !== kind) continue;
+      if (g.winner === "TIE") row.t += 1;
+      else if (g.winner === side.toUpperCase()) {
+        row.w += 1;
+        row.wonBy += marginCents(g);
+      } else {
+        row.l += 1;
+        row.lostBy += marginCents(g);
+      }
+    }
+  }
+  return new Map([...out].map(([p, { years, ...r }]) => [p, { ...r, wonBy: r.wonBy / 100, lostBy: r.lostBy / 100, seasons: years.size }]));
+}
+
+// `counts` keeps the managers the Active switch shows, as on the season records
+export function leagueRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<LeagueRecordEntry>[] {
+  const list = (kind: "close" | "blowout", value: (s: CareerSplit) => number, tie: (a: CareerSplit, b: CareerSplit) => number) =>
+    [...careerSplits(league, kind)]
+      .filter(([person, s]) => counts(person) && value(s) > 0)
+      .sort(([pa, a], [pb, b]) => value(b) - value(a) || tie(a, b) || pa.localeCompare(pb))
+      .slice(0, top)
+      .map(([person, split]) => ({ person, split, value: value(split) }));
+  return [
+    { key: "blowout-wins", title: "The Steamroller", subtitle: `Most wins by more than ${BLOWOUT_OVER} points`, unit: "wins",
+      entries: list("blowout", (s) => s.w, (a, b) => cents(b.wonBy) - cents(a.wonBy)) },
+    { key: "blowout-losses", title: "The Punching Bag", subtitle: `Most losses by more than ${BLOWOUT_OVER} points`, unit: "losses",
+      entries: list("blowout", (s) => s.l, (a, b) => cents(b.lostBy) - cents(a.lostBy)) },
+    { key: "close-wins", title: "The Escape Artist", subtitle: `Most wins by under ${CLOSE_UNDER} points`, unit: "wins",
+      entries: list("close", (s) => s.w, (a, b) => cents(a.wonBy) - cents(b.wonBy)) },
+    { key: "close-losses", title: "Heartbreak Hotel", subtitle: `Most losses by under ${CLOSE_UNDER} points`, unit: "losses",
+      entries: list("close", (s) => s.l, (a, b) => cents(a.lostBy) - cents(b.lostBy)) },
+  ];
+}
+
+// ---- Lineup records: Riding the Pine (Luke, 2026-11-15) and The One Hit Wonder (Round 8) ----
 
 // The holder is on the home side of `game`, as in the other single-team records
-export type BenchRecordEntry = GameRecordEntry & { bench: BenchGame };
+export type LineupRecordEntry = GameRecordEntry & {
+  bench?: BenchGame;
+  player?: { name: string; position: number | null; projected: number; points: number };
+};
+
+// The One Hit Wonder (the site owner, Round 8): a team's starter with the lowest ESPN projection
+// that week was its highest scorer. Kickers and D/STs are left out (they usually have the lowest
+// projections, so they'd fill the list), and so are projections of exactly 0 (ESPN expected the
+// player not to play, or, all over 2023 week 1, had no projection). A tie for the lowest projection
+// or the most points still counts. Ranked by his points. Projections exist from 2018 on.
+const NOT_ONE_HIT = new Set([5, 16]); // defaultPositionId: K, D/ST
+const oneHitCache = new WeakMap<Game[], LineupRecordEntry[]>();
+export function oneHitWonders(league: League): LineupRecordEntry[] {
+  const cached = oneHitCache.get(league.games);
+  if (cached) return cached;
+  const out: LineupRecordEntry[] = [];
+  const bySeason = new Map<number, Game[]>();
+  for (const g of league.games) bySeason.set(g.season, [...(bySeason.get(g.season) ?? []), g]);
+  for (const [season, seasonGames] of bySeason) {
+    const lineup = new Map(lineupSides(readLineups(season)).map(({ week, side }) => [`${week}:${side.teamId}`, side.lineup]));
+    for (const g of seasonGames) {
+      for (const holder of [g, { ...g, home: g.away, away: g.home, winner: flip(g.winner) }]) {
+        const starters = (lineup.get(`${g.week}:${holder.home.teamId}`) ?? []).filter(isStarter);
+        const pool = starters.filter((p) => !NOT_ONE_HIT.has(p.defaultPositionId ?? -1) && cents(p.projectedTotal ?? 0) > 0);
+        if (!pool.length) continue;
+        const low = Math.min(...pool.map((p) => cents(p.projectedTotal!)));
+        const top = Math.max(...starters.map((p) => cents(p.appliedStatTotal ?? 0)));
+        for (const p of pool.filter((x) => cents(x.projectedTotal!) === low && cents(x.appliedStatTotal ?? 0) === top && top > 0)) {
+          const points = top / 100;
+          out.push({ game: holder, value: points, player: { name: p.fullName ?? `Player ${p.playerId}`, position: p.defaultPositionId, projected: low / 100, points } });
+        }
+      }
+    }
+  }
+  oneHitCache.set(league.games, out);
+  return out;
+}
 
 // Same Active rule as the game records: both managers must count.
-export function benchRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<BenchRecordEntry>[] {
+export function lineupRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<LineupRecordEntry>[] {
   const gameOf = new Map<string, Game>();
   for (const g of league.games) {
     gameOf.set(`${g.season}:${g.week}:${g.home.teamId}`, g);
     gameOf.set(`${g.season}:${g.week}:${g.away.teamId}`, { ...g, home: g.away, away: g.home, winner: flip(g.winner) });
   }
-  const rows = league.bench
-    .map((bench) => ({ bench, game: gameOf.get(`${bench.season}:${bench.week}:${bench.teamId}`)! }))
-    .filter(({ game }) => game && counts(game.home.person) && counts(game.away.person));
-  const list = (from: typeof rows, value: (r: (typeof rows)[number]) => number) =>
-    from
-      .map((r) => ({ ...r, value: value(r) }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, top);
-  // Lost, though the best lineup would have outscored the opponent
-  const blown = rows.filter(({ game, bench }) => game.winner === "AWAY" && cents(bench.best) > cents(game.away.points));
+  const both = (g: Game) => counts(g.home.person) && counts(g.away.person);
+  const benched = league.bench
+    .map((bench) => ({ bench, game: gameOf.get(`${bench.season}:${bench.week}:${bench.teamId}`)!, value: bench.left }))
+    .filter(({ game }) => game && both(game))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, top);
+  const hits = oneHitWonders(league)
+    .filter((e) => both(e.game))
+    .sort((a, b) => b.value - a.value || a.player!.projected - b.player!.projected)
+    .slice(0, top);
   return [
-    { key: "bench-game", title: "Riding the Pine", subtitle: "Most points left on the bench", unit: "pts",
-      entries: list(rows, (r) => r.bench.left) },
-    // The site owner's wording (Round 5); ranked by how much the best lineup would have won by
-    { key: "bench-loss", title: "Self-Inflicted", subtitle: "Lost, but the best lineup would have won them the game", unit: "pts",
-      entries: list(blown, (r) => r.bench.best - r.game.away.points) },
+    { key: "bench-game", title: "Riding the Pine", subtitle: "Most points left on the bench", unit: "pts", entries: benched },
+    // No description: the site owner says the name explains it
+    { key: "one-hit", title: "The One Hit Wonder", subtitle: "", unit: "pts", entries: hits },
   ];
 }
 

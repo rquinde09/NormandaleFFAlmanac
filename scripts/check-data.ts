@@ -11,30 +11,44 @@
 // - luck, bench numbers, playoff brackets and the Pancake Watch's premise
 // - Round 5: Odds, trade points, the best-lineup seed and the Roster box
 // - Round 6: the Playcall Review against the site owner's 2023 sketch, and the pancake game
-// - Round 7: close games and blowouts, their awards, records and career lines
+// - Round 7: close games and blowouts, their records and career lines
+// - Round 8: The One Hit Wonder, Below Zero, the League records, Ice in the Veins and Dunzo, the
+//   pancake ladder and chances, record-break news, the standings' W/L and the season pages' Rank Δ
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
 import {
   BLOWOUT_OVER,
   CLOSE_UNDER,
+  DUNZO_OVER,
+  ICE_WITHIN,
+  careerSplits,
   careerTotals,
   champions,
   gameRecords,
   getLeague,
+  leagueRecords,
+  lineupRecords,
   luck,
   marginCents,
   marginKind,
   odds,
+  oneHitWonders,
   seasonRecords,
+  type Game,
   type League,
+  type RecordDef,
 } from "../lib/league";
+import { isStarter, lineupSides, readLineups } from "../lib/bench";
+import { firstLadder, ladderPlaces, lastOf, nextLadder, pancakeOdds } from "../lib/pancake";
+import { FIRST_NEWS_SEASON, recordPosts, weekDate } from "../lib/recordNews";
+import { gameEntry, leagueEntry, lineupEntry, seasonEntry } from "../lib/records";
 import { VIEWS, rankOrder } from "../lib/standings";
 import { championDetails, topStarters } from "../lib/champions";
 import { achievements, marginCareer, performance } from "../lib/manager";
 import { readTrades, regularSeeds } from "../lib/playcalls";
 import { rosterBox } from "../lib/roster";
-import { rounds } from "../lib/seasons";
+import { rounds, seasonTable } from "../lib/seasons";
 
 const THROUGH = 2025;
 const SHEET = path.join(process.cwd(), "data", "reference", "google-sheet-through-2025.csv");
@@ -48,6 +62,7 @@ const league: League = {
   games: full.games.filter((g) => g.season <= THROUGH),
   bracket: full.bracket.filter((b) => b.season <= THROUGH),
   bench: full.bench.filter((b) => b.season <= THROUGH),
+  upcoming: [],
 };
 
 let failures = 0;
@@ -98,7 +113,9 @@ for (const [key, people, value, tol] of gameExpect) {
 const seasons = Object.fromEntries(seasonRecords(league).map((r) => [r.key, r.entries[0]]));
 const seasonExpect: [string, string, number, number, number][] = [
   ["best", "nigel", 2022, 15, 0],
-  ["worst", "cesar", 2017, 3, 0], // old site: Jordan (2025); same 3 wins, Cesar has lower PF
+  // Most losses since Round 8 (fewest wins before). Cesar's 14 in 2017 has the fewest PF of the four
+  // 14-loss seasons (Jordan 2021, Luke 2022 and 2023). The old site's fewest wins: Jordan (2025).
+  ["worst", "cesar", 2017, 14, 0],
   ["most-pa", "jordan", 2018, 2159, 0.5],
   ["least-pa", "tom", 2017, 1502.88, 0.005], // old site: Suny 1531 (2017); Suny's is really 1511.04
   ["win-streak", "aj", 2023, 10, 0],
@@ -351,40 +368,33 @@ const blowoutShare = league.games.filter((g) => marginKind(g) === "blowout").len
 check(Math.abs(closeShare - 0.154) < 0.025 && Math.abs(blowoutShare - 0.163) < 0.025 && Math.abs(meanMargin - sdMargin - CLOSE_UNDER) < 1 && Math.abs(meanMargin + sdMargin - BLOWOUT_OVER) < 3,
   "close games and blowouts are each about a sixth of the games",
   `${(closeShare * 100).toFixed(1)}% close, ${(blowoutShare * 100).toFixed(1)}% blowouts; margin ${meanMargin.toFixed(1)} ± ${sdMargin.toFixed(1)} through ${THROUGH}`);
-// Each achievement's holders are the matching season record's top holders, season by season (ties
-// share the award), and each record's holder has the award that season
-const awardsMatch = (awardKey: string, recordKey: string) => {
-  const list = seasonRecords(league, Infinity).find((r) => r.key === recordKey)!.entries;
-  const tops = league.seasons.filter((s) => s.complete).flatMap((s) => {
-    const inSeason = list.filter((e) => e.teamSeason.season === s.season);
-    return inSeason.filter((e) => e.value > 0 && e.value === inSeason[0].value).map((e) => `${s.season} ${e.teamSeason.person}`);
-  });
-  const holder = list[0].teamSeason;
-  return { ok: award(awardKey).join() === tops.sort().join() && award(awardKey).includes(`${holder.season} ${holder.person}`), detail: award(awardKey).join(", ") };
-};
-const ice = awardsMatch("ice", "close-wins");
-const blownOut = awardsMatch("blown-out", "blowout-losses");
-check(ice.ok, "Ice in the Veins matches the Escape Artist's top holders each season", ice.detail);
-check(blownOut.ok, "Got Blown Out matches the Punching Bag's top holders each season", blownOut.detail);
-// The four records' holders through 2025, ties broken by the margins added up (Luke's pick):
-// the closer games first on close-game records, the bigger margins first on blowout records.
-// Jeremy's 4 close wins in 2019 (by 14.30 in all) beat Abdi's 2023 (17.46) and 2021 (19.06).
-const marginExpect: [string, string, number, number, number][] = [
-  ["blowout-wins", "aj", 2018, 5, 403.78],
-  ["blowout-losses", "tom", 2018, 6, 474.0], // Jordan also lost 6 in 2021, by 455.80
-  ["close-wins", "jeremy", 2019, 4, 14.3],
-  ["close-losses", "madison", 2019, 5, 26.1],
+// Round 8 moved the four close-game and blowout records to the League tab as all-time totals, and
+// changed the two awards (section 14). The career totals through 2025, ties broken by the margins
+// added up (Luke's Round 7 pick): Kyle's 15 close wins (by 48.0 in all) beat Abdi's 15 (by 61.2).
+const leagueTops = (counts?: (p: string) => boolean) => Object.fromEntries(leagueRecords(league, 5, counts).map((r) => [r.key, r.entries]));
+const careerAll = leagueTops();
+const careerActive = leagueTops((p) => activeSet.has(p));
+const careerExpect: [string, string, number][] = [
+  ["blowout-wins", "aj", 27],
+  ["blowout-losses", "jordan", 20],
+  ["close-wins", "kyle", 15],
+  ["close-losses", "aj", 16],
 ];
-for (const [key, person, season, value, by] of marginExpect) {
-  const e = seasons[key];
-  const t = e.teamSeason;
-  const split = key.startsWith("close") ? t.close : t.blowout;
-  const total = key.endsWith("wins") ? split.wonBy : split.lostBy;
-  check(t.person === person && t.season === season && e.value === value && close(total, by), `season record ${key}`,
-    `${t.person} ${e.value} in ${t.season}, by ${total.toFixed(2)} in all`);
+for (const [key, person, value] of careerExpect) {
+  const e = careerAll[key][0];
+  check(e.person === person && e.value === value, `league record ${key} through 2025`, `${e.person} ${e.value}`);
 }
-const order = seasonRecords(league).find((r) => r.key === "close-wins")!.entries.map((e) => `${e.teamSeason.season} ${e.teamSeason.person}`);
-check(order.slice(0, 3).join() === "2019 jeremy,2023 abdi,2021 abdi", "close-win ties go to the closer games", order.join(", "));
+check(careerAll["close-wins"].slice(0, 2).map((e) => e.person).join() === "kyle,abdi" && careerActive["blowout-losses"][0].person === "kaden",
+  "close-win ties go to the closer games; with Active on Kaden holds The Punching Bag",
+  `${careerAll["close-wins"].map((e) => `${e.person} ${e.value} by ${e.split.wonBy.toFixed(1)}`).join(", ")}; active ${careerActive["blowout-losses"][0].person}`);
+// The League records count the same games as each manager's career line, live season included
+const splitsOff = full.managers.filter((m) => {
+  const line = marginCareer(full, m.slug);
+  const close = careerSplits(full, "close").get(m.slug);
+  const blow = careerSplits(full, "blowout").get(m.slug);
+  return !close || !blow || close.w !== line.close.w || close.l !== line.close.l || blow.w !== line.blowout.w || blow.l !== line.blowout.l;
+});
+check(splitsOff.length === 0, "League records match every career close-game and blowout line", splitsOff.map((m) => m.slug).join(", ") || `${full.managers.length} managers`);
 // Career lines through 2025, so the season in progress doesn't move them
 const lineOf = (p: string) => {
   const m = marginCareer(league, p);
@@ -393,6 +403,130 @@ const lineOf = (p: string) => {
 const lineExpect: Record<string, string> = { kyle: "15-4 4-11", randy: "8-15 8-14", aj: "8-16 27-11" };
 check(Object.entries(lineExpect).every(([p, s]) => lineOf(p) === s), "career close-game and blowout lines through 2025",
   Object.keys(lineExpect).map((p) => `${p} ${lineOf(p)}`).join("; "));
+
+// 14. Round 8 (2026-11-20)
+// Self-Inflicted is gone; The One Hit Wonder took its place. Each entry's player was the team's
+// lowest-projected starter (kickers, D/STs and projections of 0 aside) and its top scorer that week.
+const lineupKeys = lineupRecords(full).map((r) => r.key).join();
+const hits = oneHitWonders(full);
+const lineupOf = (season: number, week: number, teamId: number) =>
+  lineupSides(readLineups(season)).find((s) => s.week === week && s.side.teamId === teamId)?.side.lineup.filter(isStarter) ?? [];
+const hitsOff = hits.filter((h) => {
+  const starters = lineupOf(h.game.season, h.game.week, h.game.home.teamId);
+  const pool = starters.filter((p) => p.defaultPositionId !== 5 && p.defaultPositionId !== 16 && Math.round((p.projectedTotal ?? 0) * 100) > 0);
+  const low = Math.min(...pool.map((p) => p.projectedTotal!));
+  const top = Math.max(...starters.map((p) => p.appliedStatTotal ?? 0));
+  return !close(h.player!.projected, low) || !close(h.value, top) || h.player!.position === 5 || h.player!.position === 16;
+});
+check(lineupKeys === "bench-game,one-hit" && hitsOff.length === 0 && hits.every((h) => h.game.season >= 2018),
+  "The One Hit Wonder replaces Self-Inflicted; every entry is the lowest projection and the top score", `${hits.length} games, ${hitsOff.length} off`);
+const oneHit = lineupRecords(league).find((r) => r.key === "one-hit")!.entries[0];
+check(oneHit.game.home.person === "ryan" && oneHit.game.season === 2024 && oneHit.game.week === 11 && oneHit.player!.name === "Taysom Hill" && close(oneHit.value, 41.52),
+  "The One Hit Wonder through 2025: Ryan's Taysom Hill, 41.52 in 2024 week 11", `${oneHit.game.home.person} ${oneHit.player!.name} ${oneHit.value}`);
+// The site owner's example, Tre Tucker in 2025 week 3, can't be one: nobody had him that week (he was
+// picked up for week 5). Tucker Kraft's 33.3 for Nigel in 2025 week 8 is one.
+const treWeek3 = lineupSides(readLineups(2025)).filter((s) => s.week === 3 && s.side.lineup.some((p) => p.fullName === "Tre Tucker"));
+const kraft = hits.find((h) => h.game.season === 2025 && h.game.week === 8 && h.player!.name === "Tucker Kraft");
+check(treWeek3.length === 0 && !!kraft && kraft.game.home.person === "nigel", "Tre Tucker wasn't on a roster in 2025 week 3; Tucker Kraft's 2025 week 8 is a One Hit Wonder",
+  kraft ? `${kraft.game.home.person} ${kraft.value}` : "Kraft missing");
+
+// Below Zero is most losses now (it was fewest wins): checked with the season records above.
+
+// Ice in the Veins: a win by a point or less; Dunzo: a loss by more than DUNZO_OVER, picked so that
+// as many games fall beyond it as within a point (25 each through 2025, 2.46%).
+const within = (games: Game[]) => games.filter((g) => marginCents(g) <= ICE_WITHIN * 100).length;
+const beyond = (games: Game[]) => games.filter((g) => marginCents(g) > DUNZO_OVER * 100).length;
+check(within(league.games) === 25 && beyond(league.games) === 25 && Math.abs(within(full.games) - beyond(full.games)) <= 2,
+  `Dunzo's ${DUNZO_OVER} matches the share of games won within a point`,
+  `through 2025: ${within(league.games)} and ${beyond(league.games)} of ${league.games.length} (${((within(league.games) / league.games.length) * 100).toFixed(2)}%); now ${within(full.games)} and ${beyond(full.games)} of ${full.games.length}`);
+// Each award goes to every completed season with such a game, against anyone; 2021 week 8's game
+// decided by exactly 1.00 counts for its winner
+const sideOf = (g: Game, won: boolean) => (g.winner === "HOME") === won ? g.home : g.away;
+const earned = (pick: (g: Game) => boolean, won: boolean) =>
+  [...new Set(league.games.filter((g) => g.winner !== "TIE" && pick(g)).map((g) => `${g.season} ${sideOf(g, won).person}`))].sort().join(", ");
+const exactlyOne = league.games.find((g) => marginCents(g) === 100)!;
+check(award("ice").join(", ") === earned((g) => marginCents(g) <= ICE_WITHIN * 100, true) && award("ice").includes(`2021 ${sideOf(exactlyOne, true).person}`),
+  "Ice in the Veins: every season with a win by a point or less, 1.00 included", `${award("ice").length} awards; 1.00: ${exactlyOne.season} week ${exactlyOne.week}`);
+check(award("dunzo").join(", ") === earned((g) => marginCents(g) > DUNZO_OVER * 100, false), "Dunzo: every season with a loss by more than 84", `${award("dunzo").length} awards`);
+
+// The pancake ladder: ESPN's pairings and final places in every completed season, from the rule
+const ladderOff = league.seasons.filter((s) => s.complete).filter((s) => {
+  const weeks = rounds(league, s, "consolation");
+  const teams = league.teamSeasons.filter((t) => t.season === s.season);
+  const bySeed = teams.filter((t) => t.seed > s.playoffTeams).sort((a, b) => a.seed - b.seed).map((t) => t.teamId);
+  const pairsOf = (r: (typeof weeks)[number]) => r.games.map((g) => [g.home.teamId, g.away?.teamId ?? null].sort().join("v")).join(" ");
+  const asPairs = (p: [number, number | null][]) => p.map(([a, b]) => [a, b].sort().join("v")).join(" ");
+  let prev: { winner: number; loser: number | null }[] | null = null;
+  for (const r of weeks) {
+    const expected = prev ? nextLadder(prev) : firstLadder(bySeed);
+    if (asPairs(expected) !== pairsOf(r)) return true;
+    prev = r.games.map((g) => (!g.away ? { winner: g.home.teamId, loser: null } : g.winner === "AWAY" ? { winner: g.away.teamId, loser: g.home.teamId } : { winner: g.home.teamId, loser: g.away.teamId }));
+  }
+  const places = ladderPlaces(prev!, s.playoffTeams + 1);
+  return teams.some((t) => places.has(t.teamId) && places.get(t.teamId) !== t.finalRank) || teams.find((t) => t.lastPlace)!.teamId !== lastOf(prev!);
+});
+check(ladderOff.length === 0, "the pancake ladder rule gives ESPN's pairings and places in every season", ladderOff.map((s) => s.season).join(", ") || `${league.seasons.filter((s) => s.complete).length} seasons`);
+// The chances: they add up to 100% over the season's teams, a safe team never finishes last, and the
+// replay of the decided games gives ESPN's live seeds (the simulation's starting point)
+const odds8 = pancakeOdds(full);
+const liveInfo = full.seasons.at(-1)!;
+if (odds8) {
+  const total = [...odds8.chance.values()].reduce((n, c) => n + c, 0);
+  const safeOff = [...odds8.safe].filter((p) => (odds8.chance.get(p) ?? 0) > 0);
+  const liveTeams = full.teamSeasons.filter((t) => t.season === liveInfo.season);
+  const liveSeeds = regularSeeds(full.games.filter((g) => g.season === liveInfo.season), new Map(liveTeams.map((t) => [t.teamId, t.division])));
+  check(Math.abs(total - 1) < 1e-9 && safeOff.length === 0 && liveTeams.every((t) => liveSeeds.get(t.teamId) === t.seed),
+    "pancake chances add up to 100%, safe teams never finish last, the replay gives ESPN's live seeds",
+    `${odds8.sims} runs; ${liveTeams.map((t) => `${t.person} ${(odds8.chance.get(t.person)! * 100).toFixed(1)}%`).join(", ")}; projections ${odds8.projected ? "found" : "missing"}; miss ${odds8.calibration.mean.toFixed(1)} ± ${odds8.calibration.sd.toFixed(1)}`);
+} else {
+  console.log("info no season in progress: no pancake chances");
+}
+
+// Record-break news: posts in date order, and each post's record is that record's holder as of that
+// date. Checked over the history from 2018 too, so the rule is tested before 2026's breaks come in.
+const history = recordPosts(full, 2018);
+const cutAt = (season: number, week: number | null): League => ({
+  ...full,
+  seasons: full.seasons.filter((s) => s.season <= season),
+  teamSeasons: full.teamSeasons.filter((t) => t.season <= season),
+  games: full.games.filter((g) => g.season < season || (g.season === season && (week === null || g.week <= week))),
+  bench: full.bench.filter((b) => b.season < season || (b.season === season && (week === null || b.week <= week))),
+});
+const holderAt = (post: (typeof history)[number]) => {
+  const at = cutAt(post.season, post.week);
+  const find = <E,>(defs: RecordDef<E>[], entry: (d: RecordDef<E>, e: E) => { who: string; value: string }) => {
+    const d = defs.find((x) => x.key === post.record.key);
+    return d && d.entries[0] ? entry(d, d.entries[0]) : null;
+  };
+  return post.week === null
+    ? find(seasonRecords(at, 1), (d, e) => seasonEntry(at, d, e))
+    : (find(gameRecords(at, 1), (d, e) => gameEntry(at, d.key, e)) ??
+        find(lineupRecords(at, 1), (_d, e) => lineupEntry(at, e)) ??
+        find(leagueRecords(at, 1), (d, e) => leagueEntry(at, d, e)));
+};
+const postsOff = history.filter((p) => {
+  const h = holderAt(p);
+  return !h || h.who !== p.entry.who || h.value !== p.entry.value || p.date !== (p.week === null ? weekDate(p.season, full.seasons.find((s) => s.season === p.season)!.weeks) : weekDate(p.season, p.week));
+});
+const ordered = history.every((p, i) => i === 0 || history[i - 1].date <= p.date);
+const current = recordPosts(full);
+check(ordered && postsOff.length === 0 && current.map((p) => p.slug).join() === history.filter((p) => p.season >= FIRST_NEWS_SEASON).map((p) => p.slug).join(),
+  "record-break posts are in date order and each names the record's holder as of its date",
+  postsOff.map((p) => p.slug).join(", ") || `${history.length} since 2018, ${current.length} from ${FIRST_NEWS_SEASON}: ${current.map((p) => `${p.date} ${p.title}`).join("; ")}`);
+check(weekDate(2026, 1) === "2026-09-15" && weekDate(2026, 10) === "2026-11-17" && weekDate(2025, 1) === "2025-09-09",
+  "posts are dated the Tuesday after each NFL week", `${weekDate(2026, 1)}, ${weekDate(2026, 10)}, ${weekDate(2025, 1)}`);
+
+// Standings: Per game lost PDIFF; All-time's phone W/L shows the record and sorts by wins
+const game = VIEWS.find((v) => v.key === "game")!;
+const allTime = VIEWS.find((v) => v.key === "all")!;
+const winsStat = allTime.stats.find((s) => s.key === "wins")!;
+check(!game.stats.some((s) => s.key === "pdiff") && !game.phoneSorts.some((s) => s.value === "pdiff") && allTime.phoneSorts[0].label === "W/L" &&
+  winsStat.phone?.show(totals.get("aj")!) === `${totals.get("aj")!.w}-${totals.get("aj")!.l}`,
+  "Per game has no PDIFF; All-time's W/L shows the record", winsStat.phone?.show(totals.get("aj")!));
+
+// Season pages: Rank Δ moves add up to zero (every seed is someone's place)
+const rankOff = full.seasons.filter((s) => seasonTable(full, s).reduce((n, r) => n + (r.rankChange ?? 0), 0) !== 0);
+check(rankOff.length === 0, "season-page Rank Δ adds up to zero in every season", rankOff.map((s) => s.season).join(", ") || `${full.seasons.length} seasons`);
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

@@ -83,6 +83,12 @@ def fetch_trade_transactions(req, scoring_period):
     return unwrap(data).get("transactions", []) or []
 
 
+def fetch_rosters(req, scoring_period):
+    """Every team's roster for one scoring period (mRoster), each player with his stats. For a week
+    still to come, ESPN carries the current lineup forward and includes its weekly projections."""
+    return unwrap(req.league_get(params={"view": ["mRoster"], "scoringPeriodId": scoring_period})).get("teams", [])
+
+
 def fetch_player_cards(req, season, ids):
     """Player cards (kona_playercard), which list each player's transactions, trades included with
     both teams' players. mTransactions2 leaves other teams' trade legs out."""

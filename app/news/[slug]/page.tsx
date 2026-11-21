@@ -22,13 +22,13 @@ export default async function NewsPost({ params }: Params) {
   if (!post) notFound();
   return (
     <article>
-      <Link href="/" className="text-sm text-zinc-400 hover:text-zinc-200">
-        ← Home
+      <Link href="/?view=news" className="text-sm text-zinc-400 hover:text-zinc-200">
+        ← News
       </Link>
       <Card className="mt-3">
         <div className="text-xs text-zinc-500">{dayLabel(post.date)}</div>
         <h1 className="mt-1 text-2xl font-bold tracking-tight text-zinc-50">{post.title}</h1>
-        {/* Posts come from the repo, written by league admins */}
+        {/* Posts come from the repo, written by league admins, or from the data (record breaks) */}
         <div className="prose-news mt-2" dangerouslySetInnerHTML={{ __html: post.html }} />
       </Card>
     </article>

@@ -9,6 +9,9 @@
   on, again whenever another week is decided.
 - data/raw/trades/{season}.json: executed trades with every player in them, read from player
   cards. Once a season is over; while it's on, whenever ESPN's trade count changes.
+- data/raw/projections/{season}.json: while a season is on, every team's roster for each week not
+  yet decided, each player with ESPN's projection for that week (Round 8: the Pancake Watch's
+  chances of finishing last). Fetched on every run, so it changes most days.
 
 Usage: .venv/Scripts/python scripts/fetch_seasons.py [season ...] [--force] [--force-extras] [--env FILE]
 
@@ -39,6 +42,7 @@ from espn_client import (
     fetch_draft,
     fetch_player_cards,
     fetch_player_info,
+    fetch_rosters,
     fetch_season,
     fetch_trade_transactions,
     load_config,
@@ -52,6 +56,7 @@ LINEUP_DIR = RAW_DIR / "lineups"
 DRAFT_DIR = RAW_DIR / "drafts"
 PLAYER_DIR = RAW_DIR / "players"
 TRADE_DIR = RAW_DIR / "trades"
+PROJECTION_DIR = RAW_DIR / "projections"
 META_PATH = RAW_DIR.parent / "meta.json"  # when the data last changed; the site shows it
 BENCH_SLOTS = {20, 21}  # lineupSlotId for bench and IR; every other slot is a starter
 DECIDED = ("HOME", "AWAY", "TIE")
@@ -419,6 +424,49 @@ def update_trades(req, season, data, force):
     return changed
 
 
+# ---- Projections for the weeks still to come (Round 8) ----
+
+def update_projections(req, season, data):
+    """While a season is on: each team's roster for every week not yet decided, with each player's
+    slot, position and ESPN's projection for that week. The site turns them into each team's best
+    projected lineup and simulates the rest of the season (lib/pancake.ts). Returns True if the
+    file changed. A finished season's file is left as it was; the site no longer reads it."""
+    path = PROJECTION_DIR / f"{season}.json"
+    if season_complete(data):
+        return False
+    periods = data["settings"]["scheduleSettings"]["matchupPeriods"]  # {"1": [1], ...}
+    decided = set(decided_weeks(data))
+    todo = sorted(int(w) for w in periods if int(w) not in decided)
+    weeks = []
+    for week in todo:
+        for scoring_period in periods[str(week)]:
+            teams = []
+            for team in fetch_rosters(req, scoring_period):
+                players = []
+                for e in (team.get("roster") or {}).get("entries") or []:
+                    player = (e.get("playerPoolEntry") or {}).get("player") or {}
+                    projected = week_stat(player, scoring_period, 1)
+                    players.append({
+                        "playerId": e.get("playerId") or player.get("id"),
+                        "defaultPositionId": player.get("defaultPositionId"),
+                        "lineupSlotId": e.get("lineupSlotId"),
+                        "projectedTotal": None if projected is None else round(projected, 2),
+                    })
+                teams.append({"teamId": team["id"], "players": sorted(players, key=lambda p: p["playerId"] or 0)})
+            weeks.append({"matchupPeriodId": week, "scoringPeriodId": scoring_period, "teams": sorted(teams, key=lambda t: t["teamId"])})
+            time.sleep(0.4)
+    if not weeks:
+        return False
+    # The week coming up must have a projection for every team; later weeks are saved as they come
+    first = weeks[0]
+    bare = [t["teamId"] for t in first["teams"] if not any(p["projectedTotal"] for p in t["players"])]
+    if len(first["teams"]) != len(data["teams"]) or bare:
+        raise DataProblem("projections", [f"week {first['matchupPeriodId']}: {len(first['teams'])} teams, {len(bare)} without projections"])
+    changed = write_json(path, {"seasonId": season, "weeks": weeks})
+    print(f"{season} projections: {'saved' if changed else 'unchanged'}, weeks {todo[0]}–{todo[-1]}")
+    return changed
+
+
 def main():
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     args = sys.argv[1:]
@@ -431,7 +479,7 @@ def main():
     current = current_season()
     seasons = [int(a) for a in args if not a.startswith("--")] or list(range(FIRST_SEASON, current + 1))
     league_id, cookies = load_config(env_path)
-    for d in (LINEUP_DIR, DRAFT_DIR, PLAYER_DIR, TRADE_DIR):
+    for d in (LINEUP_DIR, DRAFT_DIR, PLAYER_DIR, TRADE_DIR, PROJECTION_DIR):
         d.mkdir(parents=True, exist_ok=True)
 
     failed = False
@@ -466,6 +514,7 @@ def main():
             lambda: update_draft(req, season, force_extras),
             lambda: update_players(req, season, data, force_extras),
             lambda: update_trades(req, season, data, force_extras),
+            lambda: update_projections(req, season, data),
         ):
             try:
                 any_changed = update() or any_changed

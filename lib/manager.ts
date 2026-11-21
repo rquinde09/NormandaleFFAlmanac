@@ -3,7 +3,7 @@
 // Rounds 2–7, 2026-11-07 to 2026-11-18). Counting rules are in CLAUDE.md.
 import { topStarters } from "@/lib/champions";
 import { pts, record } from "@/lib/format";
-import { BLOWOUT_OVER, CLOSE_UNDER, type Game, type Kind, type League, type TeamSeason, luck, managerBySlug, odds } from "@/lib/league";
+import { DUNZO_OVER, ICE_WITHIN, type Game, type Kind, type League, type TeamSeason, luck, managerBySlug, marginCents, odds } from "@/lib/league";
 import { rosterBox, type RosterBox } from "@/lib/roster";
 
 export type OpponentLine = {
@@ -278,18 +278,17 @@ export function achievements(league: League, person: string): Achievement[] {
       const field = league.teamSeasons.filter((x) => x.season === t.season).map((x) => cents(value(x)));
       return cents(value(t)) === (most ? Math.max(...field) : Math.min(...field));
     });
-  // Most of something countable that season; a season where nobody has any awards nobody
-  const mostOf = (count: (t: TeamSeason) => number) =>
-    years((t) => count(t) > 0 && count(t) === Math.max(...league.teamSeasons.filter((x) => x.season === t.season).map(count)));
-  const MARGINS = "In one season, every game counted: regular season and playoffs.";
-  // Like bySeasons, with the season's count beside each year when tapped ("2019 (4 close wins)")
-  const withCounts = (seasons: number[], count: (t: TeamSeason) => number, unit: string) => ({
-    ...bySeasons(seasons),
-    seasons: seasons.map((season) => {
-      const n = count(done.find((t) => t.season === season)!);
-      return { season, extra: `${n} ${n === 1 ? unit.replace(/(es|s)$/, "") : unit}` };
-    }),
-  });
+  // Round 8 (the site owner, 2026-11-20): a season with any game won by a point or less (Ice in the
+  // Veins), or lost by more than DUNZO_OVER (Dunzo), against anyone, retired managers included
+  const anyGame = (pick: (g: Game, won: boolean) => boolean) =>
+    years((t) =>
+      league.games.some((g) => {
+        if (g.season !== t.season || g.winner === "TIE") return false;
+        const side = g.home.teamId === t.teamId ? "HOME" : g.away.teamId === t.teamId ? "AWAY" : null;
+        return side !== null && pick(g, g.winner === side);
+      }),
+    );
+  const MARGINS = "Every game counts: regular season and playoffs, against anyone.";
 
   const mvfp = [...topStarters(league).values()].flat().filter((p) => p.person === person).sort((a, b) => a.season - b.season);
   const EVERY_GAME = "In one season, every game counted: regular season and playoffs.";
@@ -309,9 +308,9 @@ export function achievements(league: League, person: string): Achievement[] {
       note: short([...new Set(mvfp.map((p) => p.season))]),
       seasons: mvfp.map((p) => ({ season: p.season, extra: `${p.name}, ${pts(p.points)} pts` })),
     },
-    // Round 7 (2026-11-18); the name is a placeholder until the site owner names it
-    { key: "ice", tier: "goat", icon: "🧊", title: "Ice in the Veins", detail: "Won the Most Close Games",
-      fine: `Most wins by under ${CLOSE_UNDER} points. ${MARGINS}`, ...withCounts(mostOf((t) => t.close.w), (t) => t.close.w, "close wins") },
+    // Round 7 (2026-11-18); Round 8 made it any win within a point (2026-11-20)
+    { key: "ice", tier: "goat", icon: "🧊", title: "Ice in the Veins", detail: "Won a Game Within a Point",
+      fine: `Won by ${ICE_WITHIN} point or less. ${MARGINS}`, ...bySeasons(anyGame((g, won) => won && marginCents(g) <= ICE_WITHIN * 100)) },
     { key: "pancake", tier: "pancake", icon: "🥞", title: "The Pancake House", detail: "Last Place", ...bySeasons(years((t) => t.lastPlace)) },
     { key: "choke", tier: "pancake", icon: "🧑‍🎨", title: "The Choke Artist", detail: "Runner Up", ...bySeasons(years((t) => t.finalRank === 2)) },
     { key: "below-zero", tier: "pancake", icon: "🥶", title: "Below Zero", detail: "Scored the Least Points For", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, false)) },
@@ -331,8 +330,9 @@ export function achievements(league: League, person: string): Achievement[] {
         }),
       ),
     },
-    // Round 7 (2026-11-18); the name is a placeholder until the site owner names it
-    { key: "blown-out", tier: "pancake", icon: "💥", title: "Got Blown Out", detail: "Lost the Most Blowouts",
-      fine: `Most losses by more than ${BLOWOUT_OVER} points. ${MARGINS}`, ...withCounts(mostOf((t) => t.blowout.l), (t) => t.blowout.l, "blowout losses") },
+    // Round 7's Got Blown Out, renamed Dunzo in Round 8: any loss by more than DUNZO_OVER, as rare as a
+    // game decided by a point or less (2026-11-20)
+    { key: "dunzo", tier: "pancake", icon: "💥", title: "Dunzo", detail: `Lost a Game by More Than ${DUNZO_OVER} Points`,
+      fine: `As rare as a game won within a point. ${MARGINS}`, ...bySeasons(anyGame((g, won) => !won && marginCents(g) > DUNZO_OVER * 100)) },
   ];
 }
