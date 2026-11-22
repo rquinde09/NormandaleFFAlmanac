@@ -4255,10 +4255,10 @@
       2025
     ],
     "requestedMatchupPeriodId": 11,
-    "standingsUpdateDate": 1795250059155,
+    "standingsUpdateDate": 1795336282409,
     "teamsJoined": 14,
     "transactionScoringPeriod": 11,
-    "waiverLastExecutionDate": 1795250058868,
+    "waiverLastExecutionDate": 1795336282282,
     "waiverProcessStatus": {
       "2026-08-28T07:08:41.999+00:00": 3,
       "2026-08-31T07:09:32.025+00:00": 1,
@@ -5088,7 +5088,7 @@
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
         "acquisitions": 38,
-        "drops": 39,
+        "drops": 40,
         "matchupAcquisitionTotals": {
           "10": 3,
           "11": 3,
@@ -5159,7 +5159,7 @@
     },
     {
       "abbrev": "BC",
-      "currentProjectedRank": 5,
+      "currentProjectedRank": 6,
       "divisionId": 0,
       "draftDayProjectedRank": 14,
       "eliminated": false,
@@ -5300,7 +5300,7 @@
     },
     {
       "abbrev": "MAYO",
-      "currentProjectedRank": 3,
+      "currentProjectedRank": 4,
       "divisionId": 0,
       "draftDayProjectedRank": 6,
       "eliminated": false,
@@ -5521,7 +5521,7 @@
           "9": 4
         },
         "misc": 0,
-        "moveToActive": 39,
+        "moveToActive": 40,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5722,7 +5722,7 @@
     },
     {
       "abbrev": "LFY",
-      "currentProjectedRank": 6,
+      "currentProjectedRank": 5,
       "divisionId": 0,
       "draftDayProjectedRank": 2,
       "eliminated": false,
@@ -5937,12 +5937,12 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 37,
+        "acquisitions": 38,
         "drops": 40,
         "matchupAcquisitionTotals": {
           "1": 2,
           "10": 4,
-          "11": 6,
+          "11": 7,
           "2": 2,
           "3": 5,
           "4": 3,
@@ -5953,7 +5953,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 103,
+        "moveToActive": 104,
         "moveToIR": 8,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -6011,7 +6011,7 @@
     },
     {
       "abbrev": "AMON",
-      "currentProjectedRank": 4,
+      "currentProjectedRank": 3,
       "divisionId": 0,
       "draftDayProjectedRank": 5,
       "eliminated": false,
