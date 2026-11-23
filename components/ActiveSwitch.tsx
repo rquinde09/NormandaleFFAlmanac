@@ -1,7 +1,6 @@
 "use client";
 
-// A labeled checkbox in a small box: "Active" on the standings, records and manager pages, and
-// "Compact" on the standings
+// A labeled checkbox in a small box: "Active" on the Leaderboard and the Records page
 export function CheckSwitch({ label, checked, onChange, className = "" }: { label: string; checked: boolean; onChange: (on: boolean) => void; className?: string }) {
   return (
     <label className={`flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300 ${className}`}>

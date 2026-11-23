@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Achievements } from "@/components/Achievements";
+import { FromHomePills } from "@/components/HomePills";
 import { ManagerCharts } from "@/components/ManagerCharts";
 import { Opponents } from "@/components/Opponents";
 import { Card, Pancakes, Stars } from "@/components/ui";
-import { pct, pts, record } from "@/lib/format";
-import { BLOWOUT_OVER, CLOSE_UNDER, careerTotals, getLeague, managerBySlug, winPct } from "@/lib/league";
-import { achievements, marginCareer, opponents, performance } from "@/lib/manager";
+import { record } from "@/lib/format";
+import { BLOWOUT_OVER, CLOSE_UNDER, careerTotals, getLeague, homeLinks, managerBySlug } from "@/lib/league";
+import { achievements, careerStats, opponents, performance } from "@/lib/manager";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -28,14 +29,15 @@ export default async function ManagerPage({ params }: Params) {
   if (!manager) notFound();
 
   const career = careerTotals(league).get(slug)!;
-  const margins = marginCareer(league, slug);
   const seasons = league.teamSeasons.filter((ts) => ts.person === slug).sort((a, b) => a.season - b.season);
   const titleYears = seasons.filter((s) => s.finalRank === 1).map((s) => s.season);
   const lastYears = seasons.filter((s) => s.lastPlace).map((s) => s.season);
 
   return (
     <div className="space-y-4">
-      <Link href="/teams" className="text-sm text-zinc-400 hover:text-zinc-200">
+      {/* Opened from the home page's Mahaan Bakaree card: the other three cards (Round 9) */}
+      <FromHomePills current="champ" links={homeLinks(league)} />
+      <Link href="/teams" className="block text-sm text-zinc-400 hover:text-zinc-200">
         ← Teams
       </Link>
 
@@ -71,15 +73,13 @@ export default async function ManagerPage({ params }: Params) {
             <span className="text-3xl font-bold tabular-nums text-zinc-50">{record(career)}</span>
             <span className="text-sm text-zinc-400">all-time</span>
           </div>
-          {/* All six side by side, on a phone too (the site owner, Round 8: "I intentionally want the stats all
-              next to each other"); Close games and Blowouts are Round 7's W-L over every decided game */}
+          {/* All side by side, on a phone too (the site owner, Round 8: "I intentionally want the stats all
+              next to each other"), in his Round 9 order; Close games and Blowouts are Round 7's W-L over
+              every decided game */}
           <dl className="mt-3 flex items-start justify-between gap-1.5 sm:justify-start sm:gap-8">
-            <CareerStat label="Seasons" value={String(career.seasons)} />
-            <CareerStat label="Win %" value={pct(winPct(career))} />
-            <CareerStat label="Close games" value={record(margins.close)} />
-            <CareerStat label="Blowouts" value={record(margins.blowout)} />
-            <CareerStat label="PF/G" value={pts(career.games ? career.pf / career.games : 0)} />
-            <CareerStat label="Total PF" value={pts(career.pf)} />
+            {careerStats(league, slug).map((s) => (
+              <CareerStat key={s.label} label={s.label} value={s.value} />
+            ))}
           </dl>
           <p className="mt-2 text-xs text-zinc-500">
             Close games: by under {CLOSE_UNDER} points · Blowouts: by over {BLOWOUT_OVER}
@@ -87,7 +87,7 @@ export default async function ManagerPage({ params }: Params) {
         </details>
       </Card>
 
-      <ManagerCharts name={manager.nickname} seasons={performance(league, slug)} />
+      <ManagerCharts seasons={performance(league, slug)} />
       <Opponents data={opponents(league, slug)} />
       <Achievements list={achievements(league, slug)} />
     </div>

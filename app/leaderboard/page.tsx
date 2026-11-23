@@ -4,9 +4,11 @@ import { PageTitle } from "@/components/ui";
 import { StandingsView } from "@/components/StandingsView";
 import { getLeague, latestSeason, standingsRows } from "@/lib/league";
 
-export const metadata = { title: "Standings" };
+export const metadata = { title: "Leaderboard" };
 
-export default function StandingsPage() {
+// The all-time standings, named the Leaderboard since Round 9 (the site owner, 2026-11-23). Per game,
+// by Win %, is the main view.
+export default function LeaderboardPage() {
   const league = getLeague();
   const latest = latestSeason(league);
   const meta = {
@@ -25,7 +27,7 @@ export default function StandingsPage() {
           </Link>
         }
       >
-        Standings
+        Leaderboard
       </PageTitle>
       <Suspense>
         <StandingsView rows={standingsRows(league)} meta={meta} />

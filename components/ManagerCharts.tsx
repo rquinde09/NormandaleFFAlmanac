@@ -9,7 +9,7 @@ import type { SeasonPoint } from "@/lib/manager";
 // page opens on the season in progress (Round 5), or a retired manager's last season. Tapping the
 // selected season again, or anywhere outside the chart's points, tabs and the boxes about the
 // selection, clears it (Round 4).
-export function ManagerCharts({ name, seasons }: { name: string; seasons: SeasonPoint[] }) {
+export function ManagerCharts({ seasons }: { seasons: SeasonPoint[] }) {
   const [selected, setSelected] = useState<number | null>(seasons.find((s) => s.live)?.season ?? seasons.at(-1)?.season ?? null);
 
   useEffect(() => {
@@ -23,6 +23,6 @@ export function ManagerCharts({ name, seasons }: { name: string; seasons: Season
 
   const select = (season: number) => setSelected(season === selected ? null : season);
   return (
-    <ManagerPerformance name={name} seasons={seasons} selected={selected} onSelect={select} />
+    <ManagerPerformance seasons={seasons} selected={selected} onSelect={select} />
   );
 }

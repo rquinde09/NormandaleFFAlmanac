@@ -28,9 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Link href="/" className="text-lg font-bold tracking-tight text-zinc-50">
               Normandale Nation
             </Link>
-            <div className="mt-2 md:mt-0">
-              <Nav />
-            </div>
+            <Nav />
           </div>
         </header>
         <main className="mx-auto max-w-5xl px-4 py-5">{children}</main>

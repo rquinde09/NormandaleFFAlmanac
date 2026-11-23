@@ -174,8 +174,11 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   ladder rule against every season's pairings and places; the pancake chances add up to 100%,
   safe teams never finish last and the replay gives ESPN's live seeds; record-break posts are in
   date order and each names the record's holder as of its date (checked over every break since
-  2018); post dates; Per game has no PDIFF and All-time's W/L shows the record; the season
-  pages' Rank Δ adds up to zero. Run it after any change to `lib/league.ts`, `lib/standings.ts`,
+  2018); post dates; Per game has no PDIFF; the season pages' Rank Δ adds up to zero. Round 9
+  adds: All-time's Record sorts by Wins or Losses and shows the record either way (no W/L sort
+  left); the career row is Seasons, Win %, Total PF, Close games, Blowouts, with no PF/G; the home
+  cards go to the latest season and the reigning champion. Run it after any change to
+  `lib/league.ts`, `lib/standings.ts`,
   `lib/champions.ts`, `lib/manager.ts`, `lib/bench.ts`, `lib/seasons.ts`, `lib/playcalls.ts`,
   `lib/roster.ts`, `lib/pancake.ts`, `lib/records.ts` or `lib/recordNews.ts`.
 - Python lives in `.venv` (`python -m venv .venv`, then `.venv/Scripts/python -m pip install -r
@@ -218,31 +221,52 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   `ESPN_S2`, `ESPN_SWID`. Collaborators on a personal repo can add them.
 
 ## Site
-- Routes: `/` (four cards; `?view=pancake` and `?view=news` open two of them in place, see Home
-  page), `/standings` (`?view=all|season`; no `view` is Per game), `/teams`, `/teams/[slug]`,
-  `/records` (`?view=season|league`),
+- Routes: `/` (four cards and the menu boxes; `?view=pancake` and `?view=news` open two of the
+  cards in place, see Home page), `/leaderboard` (`?view=all|season`; no `view` is Per game; it was
+  `/standings` until Round 9), `/teams`, `/teams/[slug]`, `/records` (`?view=season|league`),
   `/hall-of-mahaan-bakaree` (champions computed from final ranks; the nav tab says "Champions"),
-  `/seasons` and `/seasons/[year]` (`?stats=playcall`), `/news/[slug]`. Seasons has no nav tab (a
-  sixth doesn't fit a 375 px phone): the home page's season card, the Champions page (each year
-  and "Every season") and the Standings page link to it.
-- Home page (`app/page.tsx`, `components/Home.tsx`; the site owner's Round 8 mockup, 2026-11-20).
-  Four square cards, two by two on a phone and one row on wider screens; a card grows taller only
-  if its content needs it. He left the old home page's other parts out on purpose.
+  `/seasons` and `/seasons/[year]` (`?stats=playcall`), `/news/[slug]`. `?from=home` on a season
+  page or a manager page adds the home pills (see Home page).
+- Nav (`components/Nav.tsx`): Home, Leaderboard, Teams, Records, Seasons, Champions. Seasons
+  joined after Records in Round 9 (the site owner, 2026-11-23); before that it had no tab because
+  a sixth didn't fit. On a phone the tabs are 12px with 4px padding (13px before), so all six fit
+  375 px (370 of 375); a narrower screen scrolls them sideways. The home page shows no tabs (Round
+  9) until a card opens in place; every other page has them. The Champions page (each year and
+  "Every season") and the Leaderboard also link to `/seasons`.
+- Home page (`app/page.tsx`, `components/Home.tsx`; the site owner's Round 8 mockup, 2026-11-20,
+  and Round 9, 2026-11-23). The home page is the site's menu: the site title, no nav tabs, four
+  square cards (two by two on a phone, one row on wider screens; a card grows taller only if its
+  content needs it), then four smaller boxes for the other pages. He left the old home page's
+  other parts out on purpose.
   - "2026 Standings": the red N, "Season 10", "Week 10 of 14 complete" and a thin red bar (during
-    the playoffs "Playoffs · week 16 of 17", then "Final"). Opens `/seasons/<year>`.
+    the playoffs "Playoffs · week 16 of 17", then "Final"). Opens `/seasons/<year>?from=home`.
   - "The Mahaan Bakaree": 👑, "Reigning champion", the name with stars, the team name and that
-    season's W-L. Opens the Champions page.
+    season's W-L. Opens the reigning champion's page, `/teams/<slug>?from=home` (Round 9: "I
+    changed my mind … taken to AJ's page"; `homeLinks` in `lib/league.ts` computes it from the
+    champion, so it follows next year's). With no champion yet it opens the Champions page.
   - "Pancake Watch": 🥞, a pulsing red light and the name of whoever is in danger of last place
     (as Round 6 defined it, below), and "7 weeks left" (weeks left in the season, playoffs
     included). In the off-season (default): the last season's last place, "2025 last place".
   - "News": 📰, the latest post's title and date.
   - Pancake Watch and News open in place (`?view=pancake`, `?view=news`; opening one pushes a
-    history entry, so Back returns to the grid). The other three cards become pills along the top
-    (the mockup's News view repeated NEWS there; the third pill is Pancake Watch), and the title
-    reads "PANCAKE WATCH 🥞" or "NEWS". Opened views are at most `max-w-2xl` wide on big screens.
-    News shows every post in full, newest first (a written post before record posts on the same
-    day); each title links to its own page, whose back link returns to the opened News.
-  - The static page renders the grid; the URL is read once the page loads.
+    history entry, so Back returns to the grid), and the nav tabs come back. The other three cards
+    become pills along the top (the mockup's News view repeated NEWS there; the third pill is
+    Pancake Watch), and the title reads "PANCAKE WATCH 🥞" or "NEWS". Opened views are at most
+    `max-w-2xl` wide on big screens. News shows every post in full, newest first (a written post
+    before record posts on the same day); each title links to its own page, whose back link
+    returns to the opened News.
+  - Round 9 (note 1.1, Luke's pick of the reading, 2026-11-23): the season's page and the
+    champion's page show the same row of pills, the other three cards, under the nav when opened
+    from home, so a visitor can switch between the four home views. The home links add
+    `?from=home`, which those pages read once they load (`components/HomePills.tsx`), so they stay
+    static; the pages themselves are unchanged. Opening those two in place on the home page was
+    the alternative.
+  - The menu boxes (Round 9): Leaderboard 📊, Hall of Mahaan Bakaree 🏆, Records 📜 and Teams
+    👥, each an icon and its name, two by two on a phone (rows of equal height, since "Hall of
+    Mahaan Bakaree" takes three lines there) and one row on wider screens. The site owner asked
+    for the first three; Luke added Teams (2026-11-23), since without the nav every manager page
+    would be two taps from home.
+  - The static page renders the grid, without tabs; the URL is read once the page loads.
 - Record-break news (`lib/recordNews.ts`; the site owner's Round 8, Luke's answers 2026-11-20).
   A post for every record on the Records page broken from 2026 on (`FIRST_NEWS_SEASON`, this
   season back-filled to week 1), counting every manager: the true record, so a change only the
@@ -258,11 +282,16 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   Title: "Abdi breaks The Escape Artist". Through 2026 week 10 there are two, both League records
   in week 3 (Abdi's Escape Artist, Randy's Heartbreak Hotel); since 2018 there would be 42.
 - Old Google Sites URLs redirect in `next.config.ts`: `/home`, `/league-history` (to
-  `/standings?view=all`), `/leaderboard` (to `?view=season`), `/retired-teams`,
-  `/records/game-records`, `/records/season-records`. `/teams/<name>` and
-  `/hall-of-mahaan-bakaree` keep their old paths. The Teams tab stays "Teams" (site owner,
-  2026-11-05).
-- Standings has three views, defined in `lib/standings.ts`: All-time totals (W, L, PF, PA,
+  `/leaderboard?view=all`), `/retired-teams`, `/records/game-records`, `/records/season-records`.
+  `/teams/<name>`, `/hall-of-mahaan-bakaree` and, since Round 9, `/leaderboard` keep their old
+  paths. The old Leaderboard was the per-season averages, so its links now open the new default,
+  Per game, which the site owner calls the main leaderboard (Luke's pick, 2026-11-23). `/standings`
+  redirects to `/leaderboard`, its query (view, sort) carried over. The Teams tab stays "Teams"
+  (site owner, 2026-11-05).
+- Leaderboard (`app/leaderboard/page.tsx`, `components/StandingsView.tsx`): the all-time
+  standings, named "Standings" until Round 9 (the site owner, 2026-11-23), in the nav, the title
+  and links. The season pages' standings and the "2026 Standings" home card keep "Standings":
+  those are a season's. It has three views, defined in `lib/standings.ts`: All-time totals (W, L, PF, PA,
   Seasons, Titles, Trades), Per season averages (W, L, PF, PA per season, Seasons; through 2025
   its numbers match the old Leaderboard page), and Per game averages (Win %, PF and PA per game;
   Round 8 removed PDIFF everywhere). Per game is the default (`DEFAULT_VIEW`, site owner 2026-11-07); All-time is
@@ -270,15 +299,19 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   end of the previous season, counted among the managers shown, so the Active switch renumbers.
   Active only is on by default (`active=0` turns it off). First names only, with stars and
   pancakes (site owner, 2026-11-14). "No last names" covers how the site shows managers; the old
-  news posts keep their wording and the record "The Vega" keeps its name. On a phone, Compact (on by default, `compact=0` turns it off)
-  replaced the name search: one line per manager, "1. Jeremy ★★ 🥞 ▲2 58.8%", the number being
-  the sorted stat and ▲2 the view's Rank Δ (Round 5, 2026-11-15). The small stats show only with
-  Compact off. Round 8 (the site owner; Luke confirmed the reading, 2026-11-20): All-time's phone
-  sort "Wins" is "W/L", and Compact and the cards show the record ("84-76") in its place, still
-  sorted by wins, high to low (`Stat.phone` in `lib/standings.ts`). Per season keeps separate Wins
-  and Losses. The desktop table keeps its W and L columns. He called the rest of the page
-  "perfect as it is", so the season pages' stat switch isn't here. The desktop table has no
-  Compact switch. View, sort, direction, Compact and Active live in the URL, updated with
+  news posts keep their wording and the record "The Vega" keeps its name. On a phone, one line per
+  manager (Compact, Round 5, which replaced the name search): "1. Jeremy ★★ 🥞 ▲2 58.8%", the
+  number being the sorted stat and ▲2 the view's Rank Δ. Round 9 hid the Compact switch ("I think
+  all look really good"), so phones always get these lines; the cards with small stats that
+  `compact=0` showed are gone, and so is the parameter. All-time's phone sorts are Record, PF, PA
+  and Titles. Round 8 made the first one "W/L"; Round 9 renamed it "Record" with a second control
+  beside High/Low that picks Wins (the default) or Losses (`PhoneSort.within`) and keeps the
+  direction (default), so "Losses, high to low" puts the most losses first. Either way the line
+  shows the record ("84-76") in place of the number (`Stat.phone`), and the URL holds it like any
+  sort (`sort=losses`). Per season keeps
+  separate Wins and Losses sorts. The desktop table keeps its W and L columns and has neither
+  control. The site owner called the rest of the page "perfect as it is" (Round 8), so the season
+  pages' stat switch isn't here. View, sort, direction and Active live in the URL, updated with
   `window.history.replaceState` (`lib/url.ts`), which Next keeps in sync with `useSearchParams`.
   Per season and Per game rank only managers with `MIN_SEASONS` (3, a placeholder) seasons;
   shorter careers list after them.
@@ -287,12 +320,14 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   (`<details>`) below (site owner, 2026-11-10).
 - Manager pages (the site owner's Round 2 spec, 2026-11-07, answers 2026-11-10; Round 3,
   2026-11-14; Round 4, 2026-11-14; Round 5, 2026-11-15, with Luke's answers the same day; Round 8,
-  2026-11-20, from his mockup of AJ's page at phone width), top to bottom:
+  2026-11-20, from his mockup of AJ's page at phone width; Round 9, 2026-11-23), top to bottom
+  (the home pills first when opened from home):
   - First card: first name with stars and pancakes, Active/Retired, "Champion: years" (gold,
     larger since Round 8) and "Loser: years" (last place). No full name. The career numbers fold
-    out under "Career stats": the all-time record large, then all six stats in one row on a phone
-    too (Round 8: "I intentionally want the stats all next to each other"): Seasons, Win %, Close
-    games, Blowouts, PF/G and Total PF. No rank, best finish or PDIFF. Close games and Blowouts
+    out under "Career stats": the all-time record large, then the stats in one row on a phone
+    too (Round 8: "I intentionally want the stats all next to each other"), in Round 9's order:
+    Seasons, Win %, Total PF, Close games, Blowouts (`careerStats` in `lib/manager.ts`). Round 9
+    removed PF/G. No rank, best finish or PDIFF. Close games and Blowouts
     (Round 7, `marginCareer` in `lib/manager.ts`) are W-L over every decided game, the season in
     progress included; 0-0 without any. A small line under them gives the definitions ("Close
     games: by under 7 points · Blowouts: by over 50"). It all fits 375 px.
@@ -312,25 +347,30 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     its point and year. The selection stays when the tab changes, and the Roster box and Playcall
     Review below follow it (`components/ManagerCharts.tsx` holds it); tapping it again, or anywhere outside the points,
     tabs and the boxes about the selection, clears it. Round 8: the Roster box and the Playcall
-    Review each open and close from a title line ("2025 roster ▾", "AJ's Playcall Review · 2025
-    ▾"), shut when the page opens; once opened, each stays open as other seasons are selected. Round 5: the page opens with the season in
+    Review each open and close from a title line, shut when the page opens; once opened, each
+    stays open as other seasons are selected. Round 9 renamed the title lines (the site owner):
+    "Players to Remember · 2025 ▾" (was "2025 roster") and "Playcalling Analysis · 2025 ▾" (was
+    "AJ's Playcall Review · 2025"), "· 2026 so far" for the season in progress. The year stays,
+    since they follow the selected season; the component names stayed. Round 5: the page opens with the season in
     progress selected (a retired manager's last season), and a line under the chart says where
     the selected season ranked ("2019 · 7 wins (7-9) · 6th of 12"; the season in progress: "Season
     in progress").
-  - Roster box (`lib/roster.ts`, `components/RosterBox.tsx`, Round 5, inspired by Luke): inside
-    Manager Performance while a season is selected, opened from its title line. Four players side by side, title above,
+  - Players to Remember, the Roster box (`lib/roster.ts`, `components/RosterBox.tsx`, Round 5,
+    inspired by Luke; titled "Players to Remember" since Round 9): inside Manager Performance
+    while a season is selected, opened from its title line. Four players side by side, title above,
     photo, name and stat below. Best Player: most points in his starting lineup (the MVFP rule).
     Best Drafted: the most points that fantasy season by one of his draft picks, wherever he
     played. Inconsistent (Luke's pick over "Most Hated"): the starter furthest below ESPN's
     weekly projections, added up over his starts there (2018–2025 and 2026; none for 2017).
     Franchise Player: the most starts; a tie goes to ESPN's higher preseason projection. The
     season in progress counts its decided weeks. 2017 has no Inconsistent (no projections).
-  - Playcall Review (`components/PlaycallReview.tsx`, `review` in `lib/manager.ts`; the site
-    owner's Round 6 sketch, 2026-11-17, with his answers relayed by Luke the same day). It
-    replaced Round 5's Manager Playcalls box (five tabs of season-by-season bar charts with
-    medals), which the site owner found confusing. Inside Manager Performance under the Roster
-    box while a season is selected, opened from its title line: "AJ's Playcall Review · 2023", or
-    "· 2026 so far" for the season in progress, which counts its decided weeks. Five rows, each
+  - Playcalling Analysis, the Playcall Review (`components/PlaycallReview.tsx`, `review` in
+    `lib/manager.ts`; the site owner's Round 6 sketch, 2026-11-17, with his answers relayed by
+    Luke the same day; titled "Playcalling Analysis" since Round 9). It replaced Round 5's Manager
+    Playcalls box (five tabs of season-by-season bar charts with medals), which the site owner
+    found confusing. Inside Manager Performance under the Roster box while a season is selected,
+    opened from its title line: "Playcalling Analysis · 2023", or "· 2026 so far" for the season
+    in progress, which counts its decided weeks. Five rows, each
     a thin bar with zero in the middle: the bad word and that season's league worst at the left
     end, the good word and its best at the right (the site owner's pick; his sketch's end numbers
     came off the old Luck chart). Each half is scaled to its own end, so a full half is the
@@ -379,7 +419,7 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     ring. The ring's middle holds games, wins, losses, or the PF or PA total; its red arc is the
     win share (Faced, Easiest), loss share (Toughest) or points share. Every tab is the same
     height. Retired opponents are always left out: Round 4 removed this box's Active switch and
-    kept it on (`opponents` filters them). The Active switches on Standings and Records stay.
+    kept it on (`opponents` filters them). The Active switches on the Leaderboard and Records stay.
   - Achievements (`achievements` in `lib/manager.ts`, `components/Achievements.tsx`): two tabs,
     GOAT Tier and Pancake Tier, of emoji icons greyed out until earned in a completed season.
     Tapping one shows the site owner's description and the seasons earned. GOAT Tier: 🐐 The
@@ -422,11 +462,12 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     (The Peaky Blinders, The Horseshoe, The Black Cat).
   - League: League Records, the four Round 7 close-game and blowout records as all-time totals.
 
-  On a phone, Compact (on by default, `compact=0` turns it off) shows small cards two to a row, as
-  in his mockup: the name in red capitals, the description (none on the Match Up records, as
-  mocked), the number, the holder ("Luke def. Suny") and a small line with the game or season.
-  Tapping a card opens a panel under its row with the holder's whole detail line and 2nd–5th.
-  Without Compact, and on wider screens, the same sections hold cards listing 1st to 5th. Game
+  On a phone, small cards two to a row, as in his mockup: the name in red capitals, the
+  description (none on the Match Up records, as mocked), the number, the holder ("Luke def.
+  Suny") and a small line with the game or season. Tapping a card opens a panel under its row
+  with the holder's whole detail line and 2nd–5th. Round 9 hid the Compact switch, so phones
+  always get the small cards (the `compact` parameter is gone). On wider screens the same
+  sections hold cards listing 1st to 5th. Game
   records count every decided game, live season included. Season records count completed seasons
   only. League records count every decided game, live season included, like the career line.
   They're computed over all seasons, 2017 included. The old hand-kept Records pages skipped most
@@ -511,7 +552,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   - Opened (Round 8, his mockup): "7 weeks left", then one row per team below the playoff line,
     14th up to 9th: seed, name, regular-season W-L and the chance of finishing last in the final
     standings, which replaced "3 back" and "No playoffs" (he didn't follow "back"). The first row
-    (last place now) is bigger and red, as he drew it. A dashed rule, "Playoff line: 8. Andrew 5-5
+    (last place now) is bigger and red, as he drew it; since Round 9 its W-L and chance are as
+    large as the name (they were much smaller). A dashed rule, "Playoff line: 8. Andrew 5-5
     · 1%", then "Above the line:" with every team above it that can still finish last (default:
     the chances only add up to 100% with them, Kaden 8% at 6-4 on 2026 week 10), and one small
     line ("Miss the top 8 and you play in the pancake ladder, where last place takes the
@@ -588,9 +630,9 @@ Copy the food logger (https://food-logger-rust.vercel.app/): page `#09090b`, car
 `bg-zinc-900 border border-zinc-800 rounded-2xl`, Inter, segmented-control toggles, thin
 progress bars, PWA manifest. Mobile first: nothing should need a rotated phone.
 
-## Standings UX
-- Phone: a sort control (four stats per view), an up/down toggle, and Compact (one line each,
-  on by default) or cards.
+## Leaderboard UX (was Standings UX)
+- Phone: a sort control (four stats per view; All-time's Record adds Wins or Losses), an up/down
+  toggle, and one line per manager (the Compact switch and the cards went in Round 9).
 - Desktop: a table whose name column stays put while the other columns scroll.
 - An "Active only" switch. No name search (removed in Round 3). Sort and filter state live in
   the URL.
@@ -645,8 +687,14 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    W/L and no PDIFF on the standings; sectioned Records with small cards, The One Hit Wonder,
    most-losses Below Zero and a League tab; the manager page's six-stat row, openable Roster and
    Playcall boxes, reordered Playcall rows, Favorites and Points tabs, and the new Ice in the
-   Veins and Dunzo. Luke answered its 4 questions the same day (recorded above). Next: the
-   domain.
+   Veins and Dunzo. Luke answered its 4 questions the same day (recorded above). Round 9
+   (2026-11-23) is built: the home page as the menu (no nav tabs; Leaderboard, Hall of Mahaan
+   Bakaree, Records and Teams boxes; the Mahaan Bakaree card opens the champion's page; home pills
+   on the pages 2026 Standings and The Mahaan Bakaree open), the Pancake Watch's last-place row all
+   large, a Seasons nav tab, Standings renamed Leaderboard at `/leaderboard`, All-time's Record
+   sort by Wins or Losses, no Compact switch on the Leaderboard and Records, the five-stat career
+   row, and "Players to Remember" and "Playcalling Analysis". Luke answered its 3 questions the
+   same day (recorded above). Next: the domain.
 
 Later, not v1: head-to-head records, photos for the Hall.
 

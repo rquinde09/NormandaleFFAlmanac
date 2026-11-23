@@ -2,10 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Bracket } from "@/components/Bracket";
+import { FromHomePills } from "@/components/HomePills";
 import { SeasonTable, SeasonTableView, type SeasonTableRow } from "@/components/SeasonTable";
 import { Card, PageTitle, SectionLabel } from "@/components/ui";
 import { record } from "@/lib/format";
-import { getLeague, managerBySlug } from "@/lib/league";
+import { getLeague, homeLinks, managerBySlug } from "@/lib/league";
 import { rounds, seasonTable, type SeasonRow } from "@/lib/seasons";
 
 type Params = { params: Promise<{ year: string }> };
@@ -56,6 +57,8 @@ export default async function SeasonPage({ params }: Params) {
 
   return (
     <div className="space-y-5">
+      {/* Opened from the home page's 2026 Standings card: the other three cards (Round 9) */}
+      <FromHomePills current="standings" links={homeLinks(league)} />
       <div>
         <Link href="/seasons" className="text-sm text-zinc-400 hover:text-zinc-200">
           ← Seasons

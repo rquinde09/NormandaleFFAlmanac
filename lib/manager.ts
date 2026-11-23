@@ -2,8 +2,8 @@
 // Review, head-to-head numbers against each opponent and the achievements (the site owner's notes,
 // Rounds 2–7, 2026-11-07 to 2026-11-18). Counting rules are in CLAUDE.md.
 import { topStarters } from "@/lib/champions";
-import { pts, record } from "@/lib/format";
-import { DUNZO_OVER, ICE_WITHIN, type Game, type Kind, type League, type TeamSeason, luck, managerBySlug, marginCents, odds } from "@/lib/league";
+import { pct, pts, record } from "@/lib/format";
+import { DUNZO_OVER, ICE_WITHIN, type Game, type Kind, type League, type TeamSeason, careerTotals, luck, managerBySlug, marginCents, odds, winPct as careerWinPct } from "@/lib/league";
 import { rosterBox, type RosterBox } from "@/lib/roster";
 
 export type OpponentLine = {
@@ -244,6 +244,20 @@ export function marginCareer(league: League, person: string): { close: WLT; blow
     }
   }
   return sum;
+}
+
+// The row under the all-time record in Career stats, in the site owner's Round 9 order (2026-11-23):
+// Seasons, Win %, Total PF, Close games, Blowouts. Round 9 removed PF/G.
+export function careerStats(league: League, person: string): { label: string; value: string }[] {
+  const career = careerTotals(league).get(person)!;
+  const margins = marginCareer(league, person);
+  return [
+    { label: "Seasons", value: String(career.seasons) },
+    { label: "Win %", value: pct(careerWinPct(career)) },
+    { label: "Total PF", value: pts(career.pf) },
+    { label: "Close games", value: record(margins.close) },
+    { label: "Blowouts", value: record(margins.blowout) },
+  ];
 }
 
 // ---- Achievements ----

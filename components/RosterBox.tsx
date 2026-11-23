@@ -8,7 +8,8 @@ import type { RosterKey, RosterPlayer } from "@/lib/roster";
 // The Roster box (the site owner's Round 5, inspired by Luke): four of the selected season's
 // players side by side, the title above, the name and the stat below. Since Round 8 (2026-11-20) it
 // opens and closes from its title line, shut at first, and stays as it is when another season is
-// selected. "Inconsistent" is Luke's pick over "Most Hated" (2026-11-15).
+// selected. Since Round 9 (2026-11-23) the title is "Players to Remember · 2025". "Inconsistent" is
+// Luke's pick over "Most Hated" (2026-11-15).
 const TILES: { key: RosterKey; title: string; about: string }[] = [
   { key: "best", title: "Best Player", about: "Most points in his starting lineup" },
   { key: "drafted", title: "Best Drafted", about: "Most points by one of his draft picks, wherever he played" },
@@ -21,7 +22,12 @@ export function RosterBox({ point, open, onToggle }: { point: SeasonPoint; open:
   return (
     <div className="mt-4 border-t border-zinc-800 pt-3" {...keep}>
       <Toggle open={open} onToggle={onToggle}>
-        {point.season} roster{point.live ? " so far" : ""}
+        <span className="text-zinc-200">Players to Remember</span>
+        <span className="text-zinc-400">
+          {" "}
+          · {point.season}
+          {point.live ? " so far" : ""}
+        </span>
       </Toggle>
       {open && (
         <>

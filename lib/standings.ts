@@ -1,5 +1,5 @@
-// The three standings views (all-time totals, per-season and per-game averages) and how each
-// ranks. No Node imports, so the client-side standings page uses it directly.
+// The Leaderboard's three views (all-time totals, per-season and per-game averages) and how each
+// ranks. No Node imports, so the client-side Leaderboard page uses it directly.
 import { pct, pts } from "@/lib/format";
 
 // The per-season and per-game views rank only managers with this many seasons, so a short career
@@ -28,14 +28,18 @@ export type ViewKey = "all" | "season" | "game";
 export type Stat = {
   key: string;
   label: string; // table header
-  name: string; // phone label under the big number
+  name: string; // the full name, on the desktop header's tooltip
   value: (c: Career) => number;
   show: (c: Career) => string;
   tiesOnly?: boolean; // shown only once the league has a tie
-  // On a phone, shown in place of the number: All-time's Wins shows the record (the site owner's
-  // Round 8: "W/L", still sorted by wins)
-  phone?: { name: string; show: (c: Career) => string };
+  // On a phone, shown in place of the number: All-time's Wins and Losses show the record (the site
+  // owner's Round 8 "W/L", Round 9's "Record")
+  phone?: { show: (c: Career) => string };
 };
+
+// A phone sort option. Record (All-time, Round 9) sorts by one of its stats, picked by a second
+// control: Wins or Losses.
+export type PhoneSort = { value: string; label: string; within?: { value: string; label: string }[] };
 
 export type View = {
   key: ViewKey;
@@ -44,9 +48,7 @@ export type View = {
   stats: Stat[];
   rankStat: string; // the default sort, which Rank Δ follows
   rank: (a: Career, b: Career) => number;
-  phoneSorts: { value: string; label: string }[];
-  // Small stats on each phone card: the first four that aren't the sorted stat (shown big)
-  phoneMinis: { key: string; label: string; show: (c: Career) => string }[];
+  phoneSorts: PhoneSort[];
 };
 
 export const winPctOf = (c: Career) => (c.games ? (c.w + c.t / 2) / c.games : 0);
@@ -60,8 +62,8 @@ function stat(key: string, label: string, name: string, value: (c: Career) => nu
 }
 
 const ALL: Stat[] = [
-  { ...stat("wins", "W", "Wins", (c) => c.w, String), phone: { name: "Record", show: recordOf } },
-  stat("losses", "L", "Losses", (c) => c.l, String),
+  { ...stat("wins", "W", "Wins", (c) => c.w, String), phone: { show: recordOf } },
+  { ...stat("losses", "L", "Losses", (c) => c.l, String), phone: { show: recordOf } },
   stat("ties", "T", "Ties", (c) => c.t, String, true),
   stat("pf", "PF", "Points for", (c) => c.pf, pts),
   stat("pa", "PA", "Points against", (c) => c.pa, pts),
@@ -85,9 +87,7 @@ const GAME: Stat[] = [
   stat("pa", "PA/G", "PA per game", (c) => perGame(c.pa, c), pts),
 ];
 
-const mini = (stats: Stat[], key: string, label: string) => ({ key, label, show: stats.find((s) => s.key === key)!.show });
-const RECORD = { key: "record", label: "Record", show: recordOf };
-const sorts = (...pairs: string[]) => pairs.map((p) => ({ value: p.split(":")[0], label: p.split(":")[1] }));
+const sorts = (...pairs: string[]): PhoneSort[] => pairs.map((p) => ({ value: p.split(":")[0], label: p.split(":")[1] }));
 
 export const VIEWS: View[] = [
   {
@@ -98,8 +98,8 @@ export const VIEWS: View[] = [
     rankStat: "wins",
     // Like the old Sheet: by wins, then points for
     rank: (a, b) => b.w - a.w || b.pf - a.pf,
-    phoneSorts: sorts("wins:W/L", "pf:PF", "pa:PA", "titles:Titles"),
-    phoneMinis: [RECORD, mini(ALL, "pf", "PF"), mini(ALL, "pa", "PA"), mini(ALL, "trades", "Trades"), mini(ALL, "titles", "Titles")],
+    // Round 9: "Record", sorted by Wins (the default) or Losses
+    phoneSorts: [{ value: "record", label: "Record", within: sorts("wins:Wins", "losses:Losses") }, ...sorts("pf:PF", "pa:PA", "titles:Titles")],
   },
   {
     key: "season",
@@ -110,7 +110,6 @@ export const VIEWS: View[] = [
     // Like the old Leaderboard: by wins per season, then points for per season
     rank: (a, b) => perSeason(b.w, b) - perSeason(a.w, a) || perSeason(b.pf, b) - perSeason(a.pf, a),
     phoneSorts: sorts("wins:Wins", "losses:Losses", "pf:PF", "pa:PA"),
-    phoneMinis: [mini(SEASON, "wins", "W/S"), mini(SEASON, "losses", "L/S"), mini(SEASON, "pf", "PF/S"), mini(SEASON, "pa", "PA/S"), RECORD],
   },
   {
     key: "game",
@@ -121,12 +120,11 @@ export const VIEWS: View[] = [
     rank: (a, b) => winPctOf(b) - winPctOf(a) || perGame(b.pf, b) - perGame(a.pf, a),
     // PDIFF removed in Round 8 (the site owner, 2026-11-20)
     phoneSorts: sorts("winpct:Win %", "pf:PF", "pa:PA"),
-    phoneMinis: [mini(GAME, "winpct", "Win %"), mini(GAME, "pf", "PF/G"), mini(GAME, "pa", "PA/G"), RECORD],
   },
 ];
 
-// The view a bare /standings shows (the site owner, 2026-11-07). Every other view, All-time
-// included, has its own ?view= value.
+// The view a bare /leaderboard shows (the site owner, 2026-11-07; Round 9 calls it "the main
+// leaderboard"). Every other view, All-time included, has its own ?view= value.
 export const DEFAULT_VIEW: ViewKey = "game";
 
 export const qualifies = (view: View, c: Career) => !view.rate || c.seasons >= MIN_SEASONS;

@@ -24,14 +24,13 @@ const MODES: { value: Mode; label: string; ranks: string }[] = [
 // 1st–3rd, a pancake for last (Round 3). Tapping a season selects it (Round 4); the line under the
 // chart then says where it ranked, the Roster box opens with that season's players (Round 5), and
 // the Playcall Review below it with that season's decisions (Round 6). Since Round 8 those two open
-// on a tap, shut at first. The season in progress is selected at first.
+// on a tap, shut at first; since Round 9 they're titled "Players to Remember" and "Playcalling
+// Analysis". The season in progress is selected at first.
 export function ManagerPerformance({
-  name,
   seasons,
   selected,
   onSelect,
 }: {
-  name: string; // the manager's first name, for "<name>'s Playcall Review"
   seasons: SeasonPoint[];
   selected: number | null;
   onSelect: (season: number) => void;
@@ -57,7 +56,7 @@ export function ManagerPerformance({
           <p>{ranks}</p>
         </div>
         {point && <RosterBox point={point} open={rosterOpen} onToggle={() => setRosterOpen(!rosterOpen)} />}
-        {point && <PlaycallReview point={point} name={name} open={reviewOpen} onToggle={() => setReviewOpen(!reviewOpen)} />}
+        {point && <PlaycallReview point={point} open={reviewOpen} onToggle={() => setReviewOpen(!reviewOpen)} />}
       </Card>
     </section>
   );

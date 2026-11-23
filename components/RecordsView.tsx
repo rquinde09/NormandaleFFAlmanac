@@ -2,7 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { ActiveSwitch, CheckSwitch } from "@/components/ActiveSwitch";
+import { ActiveSwitch } from "@/components/ActiveSwitch";
 import { Segmented } from "@/components/Segmented";
 import type { RecordCard, RecordEntry, RecordSet, RecordTab } from "@/lib/records";
 import { updateParams } from "@/lib/url";
@@ -14,24 +14,23 @@ const TABS: { value: RecordTab; label: string }[] = [
 ];
 
 // `all` counts every manager; `active` only today's (the default). Three tabs since Round 8 (the
-// site owner, 2026-11-20), each in his sections. On a phone, Compact (on unless `compact=0`) shows
-// small cards two to a row, like the home page: the name, the number, the holder and the game or
-// season; tapping one widens it to list 2nd to 5th. Without Compact, and on wider screens, each
-// record is a card listing 1st to 5th.
+// site owner, 2026-11-20), each in his sections. On a phone, small cards two to a row, like the home
+// page: the name, the number, the holder and the game or season; tapping one opens a panel listing
+// 2nd to 5th (Round 9 removed the Compact switch that turned them off). On wider screens each record
+// is a card listing 1st to 5th.
 export function RecordsView({ all, active }: { all: RecordSet; active: RecordSet }) {
   const params = useSearchParams();
   const pathname = usePathname();
   const view = TABS.find((t) => t.value === params.get("view"))?.value ?? "game";
   const activeOnly = params.get("active") !== "0";
-  const compact = params.get("compact") !== "0";
   const sections = (activeOnly ? active : all)[view];
   const [open, setOpen] = useState<string | null>(null);
 
   return (
     <div className="space-y-4">
-      {/* One row from md up; on a phone the switches go under the tabs */}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="w-full md:w-auto md:min-w-0 md:flex-1">
+      {/* The tabs, then the Active switch */}
+      <div className="flex items-center gap-2">
+        <div className="min-w-0 flex-1">
           <Segmented
             label="Record type"
             options={TABS}
@@ -42,8 +41,6 @@ export function RecordsView({ all, active }: { all: RecordSet; active: RecordSet
             }}
           />
         </div>
-        <div className="flex-1 md:hidden" />
-        <CheckSwitch label="Compact" checked={compact} onChange={(on) => updateParams(pathname, { compact: on ? null : "0" })} className="md:hidden" />
         <ActiveSwitch checked={activeOnly} onChange={(on) => updateParams(pathname, { active: on ? null : "0" })} />
       </div>
 
@@ -51,24 +48,21 @@ export function RecordsView({ all, active }: { all: RecordSet; active: RecordSet
         <section key={section.title}>
           <h2 className="mb-2 px-1 text-sm font-semibold text-zinc-400">{section.title}</h2>
 
-          {/* Phone, compact: two small cards to a row; tapping one opens a panel under its row with the
-              whole detail and 2nd–5th */}
-          {compact && (
-            <ul className="grid grid-cols-2 gap-2.5 md:hidden">
-              {section.cards.map((c, i) => {
-                const row = section.cards.slice(i - (i % 2), i - (i % 2) + 2);
-                const picked = i % 2 === 1 || i === section.cards.length - 1 ? row.find((x) => x.key === open) : undefined;
-                return [
-                  <SmallCard key={c.key} c={c} open={open === c.key} onToggle={() => setOpen(open === c.key ? null : c.key)} />,
-                  picked && <Panel key={`${picked.key}-panel`} c={picked} />,
-                ];
-              })}
-            </ul>
-          )}
+          {/* Phone: two small cards to a row; tapping one opens a panel under its row with the whole
+              detail and 2nd–5th */}
+          <ul className="grid grid-cols-2 gap-2.5 md:hidden">
+            {section.cards.map((c, i) => {
+              const row = section.cards.slice(i - (i % 2), i - (i % 2) + 2);
+              const picked = i % 2 === 1 || i === section.cards.length - 1 ? row.find((x) => x.key === open) : undefined;
+              return [
+                <SmallCard key={c.key} c={c} open={open === c.key} onToggle={() => setOpen(open === c.key ? null : c.key)} />,
+                picked && <Panel key={`${picked.key}-panel`} c={picked} />,
+              ];
+            })}
+          </ul>
 
-          {/* Cards with 1st to 5th: on a phone with Compact off, and on wider screens */}
-          {/* grid-cols-1 (minmax(0, 1fr)) keeps a long detail line from widening the page on a phone */}
-          <ul className={`grid grid-cols-1 gap-3 md:grid-cols-2 ${compact ? "hidden md:grid" : ""}`}>
+          {/* Wider screens: cards with 1st to 5th */}
+          <ul className="hidden grid-cols-2 gap-3 md:grid">
             {section.cards.map((c) => (
               <FullCard key={c.key} c={c} />
             ))}

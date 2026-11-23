@@ -41,7 +41,8 @@ function chance(r: WatchRow) {
 }
 
 // Opened (Round 8): "7 weeks left", then one row per team below the playoff line, last place first
-// and largest, each with its chance of finishing last, and the playoff line under a dashed rule.
+// and largest (its W-L and chance as large as its name since Round 9), each with its chance of
+// finishing last, and the playoff line under a dashed rule.
 // After the regular season, the ladder's teams, most likely first, and the ladder itself.
 export function PancakeWatchView({ watch, name }: { watch: Watch; name: (slug: string) => string }) {
   return (
@@ -93,8 +94,8 @@ function Row({ r, big }: { r: WatchRow; big: boolean }) {
           {r.seed}.
         </span>
         <span className={`min-w-0 flex-1 truncate font-semibold ${tone} ${big ? "text-2xl" : "text-lg"}`}>{r.nickname}</span>
-        <span className={`shrink-0 tabular-nums ${big ? "text-lg" : "text-base"} ${r.safe ? "text-emerald-400" : "text-zinc-200"}`}>{record(r)}</span>
-        <span className={`w-14 shrink-0 text-right tabular-nums ${big ? "text-lg font-semibold text-red-500" : r.safe ? "text-emerald-400" : "text-zinc-400"}`}>
+        <span className={`shrink-0 tabular-nums ${big ? "text-2xl" : "text-base"} ${r.safe ? "text-emerald-400" : "text-zinc-200"}`}>{record(r)}</span>
+        <span className={`min-w-14 shrink-0 text-right tabular-nums ${big ? "text-2xl font-semibold text-red-500" : r.safe ? "text-emerald-400" : "text-zinc-400"}`}>
           {chance(r)}
         </span>
       </Link>

@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { ReactNode } from "react";
 import { Bracket } from "@/components/Bracket";
+import { HomePills, homeHref, homeTitle, type HomeLinks } from "@/components/HomePills";
 import { PancakeWatchView, RedLight, inDanger } from "@/components/PancakeWatch";
 import { Bar, Stars } from "@/components/ui";
 import type { PancakeWatch, Round } from "@/lib/seasons";
 
 export type HomeData = {
   standings: { season: number; number: number; status: string; share: number };
-  champ: { nickname: string; stars: number; teamName: string; record: string } | null;
+  champ: { person: string; nickname: string; stars: number; teamName: string; record: string } | null;
   watch: PancakeWatch | null;
   // The off-season: the season just finished, its last place and its pancake ladder
   lastPancake: { season: number; person: string; nickname: string; ladder: Round[] } | null;
@@ -34,24 +35,22 @@ export function HomeWithParams({ data }: { data: HomeData }) {
 }
 
 // The site owner's Round 8 home page (2026-11-20): four square cards, two by two on a phone and one
-// row on wider screens. 2026 Standings opens the season's page and The Mahaan Bakaree the Champions
-// page; Pancake Watch and News open in place, with the other three cards as pills along the top.
+// row on wider screens. Since Round 9 (2026-11-23) the home page is the site's menu: no nav tabs, and
+// four smaller boxes under the cards for the other pages. 2026 Standings opens the season's page and
+// The Mahaan Bakaree the reigning champion's page; Pancake Watch and News open in place. Each shows
+// the other three cards as pills along the top.
 export function Home({ data, view }: { data: HomeData; view: View | null }) {
   const name = (slug: string) => data.names[slug] ?? slug;
-  const titles = { standings: `${data.standings.season} Standings`, champ: "The Mahaan Bakaree", pancake: "Pancake Watch", news: "News" };
+  const links: HomeLinks = { season: data.standings.season, champ: data.champ?.person ?? null };
+  const title = (card: "standings" | "champ" | View) => homeTitle(card, links.season);
 
   if (view) {
-    const other: View = view === "pancake" ? "news" : "pancake";
     // Opened: no wider than a column on a big screen
     return (
       <div className="mx-auto max-w-2xl space-y-4">
-        <div className="grid grid-cols-3 gap-2">
-          <Pill href={`/seasons/${data.standings.season}`}>{titles.standings}</Pill>
-          <Pill href="/hall-of-mahaan-bakaree">{titles.champ}</Pill>
-          <Pill onClick={() => open(other)}>{titles[other]}</Pill>
-        </div>
+        <HomePills current={view} links={links} />
         <h1 className="text-center text-lg font-semibold tracking-wider text-zinc-400 uppercase">
-          {titles[view]}
+          {title(view)}
           {view === "pancake" && " 🥞"}
         </h1>
         {view === "pancake" ? <PancakeOpen data={data} name={name} /> : <NewsOpen data={data} />}
@@ -61,59 +60,82 @@ export function Home({ data, view }: { data: HomeData; view: View | null }) {
 
   const latest = data.news[0];
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-      <Square title={titles.standings} href={`/seasons/${data.standings.season}`}>
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-600 text-4xl font-extrabold text-white" aria-hidden>
-          N
-        </span>
-        <span className="mt-2 text-2xl font-semibold text-zinc-200">Season {data.standings.number}</span>
-        <span className="mt-0.5 text-[11px] text-zinc-400">{data.standings.status}</span>
-        <span className="mt-1.5 w-3/4">
-          <Bar value={data.standings.share} />
-        </span>
-      </Square>
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Square title={title("standings")} href={homeHref("standings", links)}>
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-600 text-4xl font-extrabold text-white" aria-hidden>
+            N
+          </span>
+          <span className="mt-2 text-2xl font-semibold text-zinc-200">Season {data.standings.number}</span>
+          <span className="mt-0.5 text-[11px] text-zinc-400">{data.standings.status}</span>
+          <span className="mt-1.5 w-3/4">
+            <Bar value={data.standings.share} />
+          </span>
+        </Square>
 
-      <Square title={titles.champ} href="/hall-of-mahaan-bakaree">
-        <span className="text-4xl leading-none" aria-hidden>
-          👑
-        </span>
-        {data.champ ? (
-          <>
-            <span className="mt-1.5 text-[9px] tracking-widest text-zinc-500 uppercase">Reigning champion</span>
-            <span className="text-xl leading-tight font-bold text-zinc-50">
-              {data.champ.nickname} <Stars count={data.champ.stars} />
+        <Square title={title("champ")} href={homeHref("champ", links)}>
+          <span className="text-4xl leading-none" aria-hidden>
+            👑
+          </span>
+          {data.champ ? (
+            <>
+              <span className="mt-1.5 text-[9px] tracking-widest text-zinc-500 uppercase">Reigning champion</span>
+              <span className="text-xl leading-tight font-bold text-zinc-50">
+                {data.champ.nickname} <Stars count={data.champ.stars} />
+              </span>
+              <span className="max-w-full shrink-0 truncate text-xs text-zinc-400 sm:text-sm">{data.champ.teamName}</span>
+              <span className="text-sm tabular-nums text-zinc-300">{data.champ.record}</span>
+            </>
+          ) : (
+            <span className="mt-2 text-sm text-zinc-500">No champion yet</span>
+          )}
+        </Square>
+
+        <Square title={title("pancake")} onClick={() => open("pancake")}>
+          <span className="text-[44px] leading-none" aria-hidden>
+            🥞
+          </span>
+          <PancakeCardBody data={data} name={name} />
+        </Square>
+
+        <Square title={title("news")} onClick={() => open("news")}>
+          <span className="text-[44px] leading-none" aria-hidden>
+            📰
+          </span>
+          {latest ? (
+            <>
+              <span className="mt-2 line-clamp-2 text-base leading-tight font-semibold text-zinc-50">{latest.title}</span>
+              <span className="mt-0.5 text-sm text-zinc-400">{latest.date}</span>
+            </>
+          ) : (
+            <span className="mt-2 text-sm text-zinc-500">No posts yet</span>
+          )}
+        </Square>
+      </div>
+
+      {/* The rest of the site, in place of the nav tabs (Round 9) */}
+      {/* Rows of equal height, though "Hall of Mahaan Bakaree" takes three lines on a phone */}
+      <nav aria-label="Pages" className="grid auto-rows-fr grid-cols-2 gap-3 md:grid-cols-4">
+        {MENU.map((m) => (
+          <Link key={m.href} href={m.href} className="flex min-h-16 items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 px-3.5 py-3 transition-colors hover:border-zinc-700">
+            <span className="text-2xl leading-none" aria-hidden>
+              {m.icon}
             </span>
-            <span className="max-w-full shrink-0 truncate text-xs text-zinc-400 sm:text-sm">{data.champ.teamName}</span>
-            <span className="text-sm tabular-nums text-zinc-300">{data.champ.record}</span>
-          </>
-        ) : (
-          <span className="mt-2 text-sm text-zinc-500">No champion yet</span>
-        )}
-      </Square>
-
-      <Square title={titles.pancake} onClick={() => open("pancake")}>
-        <span className="text-[44px] leading-none" aria-hidden>
-          🥞
-        </span>
-        <PancakeCardBody data={data} name={name} />
-      </Square>
-
-      <Square title={titles.news} onClick={() => open("news")}>
-        <span className="text-[44px] leading-none" aria-hidden>
-          📰
-        </span>
-        {latest ? (
-          <>
-            <span className="mt-2 line-clamp-2 text-base leading-tight font-semibold text-zinc-50">{latest.title}</span>
-            <span className="mt-0.5 text-sm text-zinc-400">{latest.date}</span>
-          </>
-        ) : (
-          <span className="mt-2 text-sm text-zinc-500">No posts yet</span>
-        )}
-      </Square>
+            <span className="text-xs leading-tight font-semibold tracking-wider text-zinc-200 uppercase sm:text-sm">{m.label}</span>
+          </Link>
+        ))}
+      </nav>
     </div>
   );
 }
+
+// The site owner's three boxes (Round 9), plus Teams (Luke's pick), since the home page has no nav
+const MENU = [
+  { href: "/leaderboard", label: "Leaderboard", icon: "📊" },
+  { href: "/hall-of-mahaan-bakaree", label: "Hall of Mahaan Bakaree", icon: "🏆" },
+  { href: "/records", label: "Records", icon: "📜" },
+  { href: "/teams", label: "Teams", icon: "👥" },
+];
 
 // Who's in danger of last place, or, in the off-season, the season's last place
 function PancakeCardBody({ data, name }: { data: HomeData; name: (slug: string) => string }) {
@@ -197,20 +219,6 @@ function Square({ title, href, onClick, children }: { title: string; href?: stri
   ) : (
     <button type="button" onClick={onClick} className={SQUARE}>
       {inner}
-    </button>
-  );
-}
-
-const PILL = "flex h-10 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 px-1.5 text-center text-[10px] leading-tight font-medium tracking-wider text-zinc-400 uppercase hover:border-zinc-700 sm:text-xs";
-
-function Pill({ href, onClick, children }: { href?: string; onClick?: () => void; children: ReactNode }) {
-  return href ? (
-    <Link href={href} className={PILL}>
-      {children}
-    </Link>
-  ) : (
-    <button type="button" onClick={onClick} className={PILL}>
-      {children}
     </button>
   );
 }

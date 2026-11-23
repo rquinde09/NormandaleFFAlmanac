@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ActiveSwitch, CheckSwitch } from "@/components/ActiveSwitch";
+import { ActiveSwitch } from "@/components/ActiveSwitch";
 import { Segmented } from "@/components/Segmented";
-import { Bar, Pancakes, RankChange, Stars } from "@/components/ui";
+import { Pancakes, RankChange, Stars } from "@/components/ui";
 import type { StandingsRow } from "@/lib/league";
 import { DEFAULT_VIEW, MIN_SEASONS, VIEWS, qualifies, rankOrder, type Career, type Stat } from "@/lib/standings";
 import { updateParams } from "@/lib/url";
@@ -28,8 +28,6 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
   const col = stats.find((s) => s.key === params.get("sort")) ?? stats.find((s) => s.key === view.rankStat)!;
   const dir = params.get("dir") === "asc" ? "asc" : "desc";
   const activeOnly = params.get("active") !== "0"; // on unless switched off
-  // One line per manager on a phone (the site owner, 2026-11-14), on unless switched off
-  const compact = params.get("compact") !== "0";
 
   const update = (next: Record<string, string | null>) => updateParams(pathname, next);
   const setSort = (key: string) =>
@@ -54,14 +52,11 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
     return before === -1 || now === -1 ? null : before - now;
   };
 
-  // On a phone the sorted stat can show differently: All-time's "W/L" shows the record (Round 8)
+  // On a phone the sorted stat can show differently: All-time's Record shows the record (Round 9)
   const phoneShow = col.phone?.show ?? col.show;
-  const phoneName = col.phone?.name ?? col.name;
-
-  const values = sorted.filter(ok).map((e) => col.value(e.now));
-  const lo = Math.min(...values, 0);
-  const hi = Math.max(...values);
-  const barValue = (e: Entry) => (ok(e) && hi > lo ? (col.value(e.now) - lo) / (hi - lo) : 0);
+  // The phone sort option in use; Record covers its Wins and Losses
+  const phoneSort = view.phoneSorts.find((s) => (s.within ? s.within.some((o) => o.value === col.key) : s.value === col.key));
+  const sortBy = (key: string) => update({ sort: key === view.rankStat ? null : key, dir: null });
 
   const shown = sorted;
   const firstUnranked = view.rate ? shown.findIndex((e) => !ok(e)) : -1;
@@ -81,7 +76,7 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
     <div className="space-y-3">
       <div className="space-y-2">
         <Segmented
-          label="Standings"
+          label="Leaderboard"
           options={VIEWS.map((v) => ({ value: v.key, label: v.label }))}
           value={view.key}
           onChange={(key) => update({ view: key === DEFAULT_VIEW ? null : key, sort: null, dir: null })}
@@ -93,8 +88,8 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
           <Segmented
             label="Sort by"
             options={view.phoneSorts}
-            value={col.key}
-            onChange={(key) => update({ sort: key === view.rankStat ? null : key, dir: null })}
+            value={phoneSort?.value ?? ""}
+            onChange={(key) => sortBy(view.phoneSorts.find((s) => s.value === key)?.within?.[0].value ?? key)}
           />
         </div>
         <div className="flex items-center gap-2">
@@ -105,77 +100,43 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
           >
             {dir === "desc" ? "↓ High" : "↑ Low"}
           </button>
+          {/* Record: by Wins or Losses (Round 9), keeping the direction beside it */}
+          {phoneSort?.within && (
+            <div className="md:hidden">
+              <Segmented
+                label="Sort record by"
+                options={phoneSort.within}
+                value={col.key}
+                onChange={(key) => update({ sort: key === view.rankStat ? null : key })}
+              />
+            </div>
+          )}
           <div className="flex-1" />
-          <CheckSwitch label="Compact" checked={compact} onChange={(on) => update({ compact: on ? null : "0" })} className="md:hidden" />
           <ActiveSwitch checked={activeOnly} onChange={(on) => update({ active: on ? null : "0" })} />
         </div>
       </div>
 
-      {/* Phone, compact: one line each, "1. Jeremy ★★ ▲2 58.8%", the number being the sorted stat and
-          ▲2 the view's Rank Δ (the site owner's Round 5); All-time's W/L shows the record (Round 8) */}
-      {compact && (
-        <ol className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 md:hidden">
-          {shown.map((e, i) => (
-            <li key={e.row.slug} className="border-zinc-800 not-first:border-t">
-              {i === firstUnranked && <Unranked inList />}
-              <Link href={`/teams/${e.row.slug}`} className="flex items-baseline gap-2 px-4 py-2.5 active:bg-zinc-800">
-                <span className="w-6 shrink-0 text-right text-sm tabular-nums text-zinc-500">
-                  {ok(e) ? `${position.get(e.row.slug)}.` : "–"}
-                </span>
-                <span className="min-w-0 flex-1 truncate font-semibold text-zinc-50">
-                  {e.row.nickname} <Stars count={e.row.now.titles} /> <Pancakes count={e.row.now.lastPlaces} />
-                  {!e.row.active && <span className="ml-1 text-xs font-normal text-zinc-500">retired</span>}
-                </span>
-                {ok(e) && (
-                  <span className="w-8 shrink-0 text-right">
-                    <RankChange change={rankChange(e.row.slug)} />
-                  </span>
-                )}
-                <span className="shrink-0 font-semibold tabular-nums text-zinc-50">{phoneShow(e.now)}</span>
-              </Link>
-            </li>
-          ))}
-        </ol>
-      )}
-
-      {/* Phone: cards */}
-      <ol className={`space-y-2 md:hidden ${compact ? "hidden" : ""}`}>
+      {/* Phone: one line each, "1. Jeremy ★★ ▲2 58.8%", the number being the sorted stat and ▲2 the
+          view's Rank Δ (the site owner's Round 5); All-time's Record shows the record. Round 9 made
+          this the only phone layout (no Compact switch). */}
+      <ol className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 md:hidden">
         {shown.map((e, i) => (
-          <li key={e.row.slug}>
+          <li key={e.row.slug} className="border-zinc-800 not-first:border-t">
             {i === firstUnranked && <Unranked />}
-            <Link
-              href={`/teams/${e.row.slug}`}
-              className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4 transition-colors active:border-zinc-600"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 items-baseline gap-3">
-                  <span className="w-5 shrink-0 text-right text-sm tabular-nums text-zinc-500">
-                    {ok(e) ? position.get(e.row.slug) : "–"}
-                  </span>
-                  <div className="min-w-0">
-                    <div className="truncate font-semibold text-zinc-50">
-                      {e.row.nickname} <Stars count={e.row.now.titles} /> <Pancakes count={e.row.now.lastPlaces} />
-                    </div>
-                    <div className="truncate text-xs text-zinc-500">
-                      {e.now.seasons} season{e.now.seasons === 1 ? "" : "s"}
-                      {!e.row.active && " · retired"}
-                    </div>
-                  </div>
-                </div>
-                <div className="shrink-0 text-right">
-                  <div className="text-lg font-semibold tabular-nums text-zinc-50">{phoneShow(e.now)}</div>
-                  <div className="text-xs text-zinc-500">{phoneName}</div>
-                </div>
-              </div>
-              <div className="mt-3 grid grid-cols-4 gap-2 text-xs">
-                {view.phoneMinis.filter((m) => m.key !== col.key && !(col.phone && m.key === "record")).slice(0, 4).map((m) => (
-                  <Mini key={m.label} label={m.label} value={m.show(e.now)} />
-                ))}
-              </div>
-              <div className="mt-3 flex items-center gap-3">
-                <Bar value={barValue(e)} />
-                {col.key === view.rankStat && ok(e) && <RankChange change={rankChange(e.row.slug)} />}
-              </div>
+            <Link href={`/teams/${e.row.slug}`} className="flex items-baseline gap-2 px-4 py-2.5 active:bg-zinc-800">
+              <span className="w-6 shrink-0 text-right text-sm tabular-nums text-zinc-500">
+                {ok(e) ? `${position.get(e.row.slug)}.` : "–"}
+              </span>
+              <span className="min-w-0 flex-1 truncate font-semibold text-zinc-50">
+                {e.row.nickname} <Stars count={e.row.now.titles} /> <Pancakes count={e.row.now.lastPlaces} />
+                {!e.row.active && <span className="ml-1 text-xs font-normal text-zinc-500">retired</span>}
+              </span>
+              {ok(e) && (
+                <span className="w-8 shrink-0 text-right">
+                  <RankChange change={rankChange(e.row.slug)} />
+                </span>
+              )}
+              <span className="shrink-0 font-semibold tabular-nums text-zinc-50">{phoneShow(e.now)}</span>
             </Link>
           </li>
         ))}
@@ -230,18 +191,9 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
   );
 }
 
-function Mini({ label, value }: { label: string; value: string }) {
+function Unranked() {
   return (
-    <div className="min-w-0">
-      <div className="text-zinc-500">{label}</div>
-      <div className="truncate font-medium tabular-nums text-zinc-200">{value}</div>
-    </div>
-  );
-}
-
-function Unranked({ inList = false }: { inList?: boolean }) {
-  return (
-    <div className={`pb-2 text-xs font-medium uppercase tracking-wider text-zinc-500 ${inList ? "px-4 pt-3" : "px-1 pt-2"}`}>
+    <div className="px-4 pt-3 pb-2 text-xs font-medium uppercase tracking-wider text-zinc-500">
       Fewer than {MIN_SEASONS} seasons
     </div>
   );

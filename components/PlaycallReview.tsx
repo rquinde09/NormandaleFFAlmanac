@@ -97,13 +97,14 @@ const TONE_TEXT: Record<Tone | "none", string> = { good: "text-emerald-400", bad
 const TONE_FILL: Record<Tone, string> = { good: GREEN, bad: RED, even: GREY };
 
 // The site owner's "Playcall Review" (Round 6, 2026-11-17): the selected season's decisions, under
-// the Roster box like its players. Since Round 8 it opens and closes from its title line. Each bar has zero in the middle and runs from that season's
+// the Roster box like its players. Since Round 8 it opens and closes from its title line, and since
+// Round 9 (2026-11-23) the title is "Playcalling Analysis · 2025". Each bar has zero in the middle and runs from that season's
 // league worst on the left to its best on the right, filled from zero to the season's number.
-export function PlaycallReview({ point, name, open, onToggle }: { point: SeasonPoint; name: string; open: boolean; onToggle: () => void }) {
+export function PlaycallReview({ point, open, onToggle }: { point: SeasonPoint; open: boolean; onToggle: () => void }) {
   return (
     <div className="mt-4 border-t border-zinc-800 pt-3" {...keep}>
       <Toggle open={open} onToggle={onToggle}>
-        <span className="text-zinc-200">{name}&rsquo;s Playcall Review</span>
+        <span className="text-zinc-200">Playcalling Analysis</span>
         <span className="text-zinc-400">
           {" "}
           · {point.season}

@@ -644,3 +644,9 @@ export function champions(league: League) {
     .filter((ts) => ts.finalRank === 1)
     .sort((a, b) => b.season - a.season);
 }
+
+// Where the home page's 2026 Standings and The Mahaan Bakaree cards go (Round 9): the latest
+// season's page and the reigning champion's page
+export function homeLinks(league: League) {
+  return { season: latestSeason(league).season, champ: champions(league)[0]?.person ?? null };
+}

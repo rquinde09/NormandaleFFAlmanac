@@ -6,7 +6,8 @@ import { dayLabel, getNews } from "@/lib/news";
 import { pancakeWatch, rounds } from "@/lib/seasons";
 
 // The site owner's Round 8 home page (2026-11-20): the season, the reigning champion, the Pancake
-// Watch and the news as four cards. The opened Pancake Watch and News live in the URL.
+// Watch and the news as four cards, and since Round 9 (2026-11-23) boxes for the other pages in
+// place of the nav tabs. The opened Pancake Watch and News live in the URL.
 export default function HomePage() {
   const league = getLeague();
   const latest = latestSeason(league);
@@ -28,7 +29,7 @@ export default function HomePage() {
       share: latest.complete ? 1 : inPlayoffs ? latest.throughWeek / latest.weeks : Math.min(latest.throughWeek / latest.regularWeeks, 1),
     },
     champ: champ
-      ? { nickname: managerBySlug(league, champ.person)!.nickname, stars: titles(league, champ.person).length, teamName: champ.teamName, record: record(champ.all) }
+      ? { person: champ.person, nickname: managerBySlug(league, champ.person)!.nickname, stars: titles(league, champ.person).length, teamName: champ.teamName, record: record(champ.all) }
       : null,
     watch,
     lastPancake:

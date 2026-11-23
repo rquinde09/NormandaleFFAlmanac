@@ -14,6 +14,7 @@
 // - Round 7: close games and blowouts, their records and career lines
 // - Round 8: The One Hit Wonder, Below Zero, the League records, Ice in the Veins and Dunzo, the
 //   pancake ladder and chances, record-break news, the standings' W/L and the season pages' Rank Δ
+// - Round 9: the Leaderboard's Record sort, the career row and where the home cards go
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
@@ -27,6 +28,7 @@ import {
   champions,
   gameRecords,
   getLeague,
+  homeLinks,
   leagueRecords,
   lineupRecords,
   luck,
@@ -45,7 +47,7 @@ import { FIRST_NEWS_SEASON, recordPosts, weekDate } from "../lib/recordNews";
 import { gameEntry, leagueEntry, lineupEntry, seasonEntry } from "../lib/records";
 import { VIEWS, rankOrder } from "../lib/standings";
 import { championDetails, topStarters } from "../lib/champions";
-import { achievements, marginCareer, performance } from "../lib/manager";
+import { achievements, careerStats, marginCareer, performance } from "../lib/manager";
 import { readTrades, regularSeeds } from "../lib/playcalls";
 import { rosterBox } from "../lib/roster";
 import { rounds, seasonTable } from "../lib/seasons";
@@ -516,13 +518,25 @@ check(ordered && postsOff.length === 0 && current.map((p) => p.slug).join() === 
 check(weekDate(2026, 1) === "2026-09-15" && weekDate(2026, 10) === "2026-11-17" && weekDate(2025, 1) === "2025-09-09",
   "posts are dated the Tuesday after each NFL week", `${weekDate(2026, 1)}, ${weekDate(2026, 10)}, ${weekDate(2025, 1)}`);
 
-// Standings: Per game lost PDIFF; All-time's phone W/L shows the record and sorts by wins
+// Leaderboard: Per game lost PDIFF (Round 8); All-time's phone sort Record (Round 9, was W/L) sorts by
+// Wins (the default) or Losses, and shows the record either way
 const game = VIEWS.find((v) => v.key === "game")!;
 const allTime = VIEWS.find((v) => v.key === "all")!;
-const winsStat = allTime.stats.find((s) => s.key === "wins")!;
-check(!game.stats.some((s) => s.key === "pdiff") && !game.phoneSorts.some((s) => s.value === "pdiff") && allTime.phoneSorts[0].label === "W/L" &&
-  winsStat.phone?.show(totals.get("aj")!) === `${totals.get("aj")!.w}-${totals.get("aj")!.l}`,
-  "Per game has no PDIFF; All-time's W/L shows the record", winsStat.phone?.show(totals.get("aj")!));
+const recordSort = allTime.phoneSorts[0];
+const ajLine = `${totals.get("aj")!.w}-${totals.get("aj")!.l}`;
+const recordShows = ["wins", "losses"].map((k) => allTime.stats.find((s) => s.key === k)!.phone?.show(totals.get("aj")!));
+check(!game.stats.some((s) => s.key === "pdiff") && !game.phoneSorts.some((s) => s.value === "pdiff") && recordSort.label === "Record" &&
+  recordSort.within?.map((o) => `${o.value}:${o.label}`).join() === "wins:Wins,losses:Losses" && allTime.rankStat === "wins" &&
+  recordShows.every((r) => r === ajLine) && !VIEWS.some((v) => v.phoneSorts.some((s) => s.label === "W/L")),
+  "Per game has no PDIFF; All-time's Record sorts by Wins or Losses and shows the record", `${recordSort.label}: ${recordShows.join(", ")}`);
+
+// Round 9: the career row is Seasons, Win %, Total PF, Close games, Blowouts (no PF/G); the home
+// page's Mahaan Bakaree card opens the reigning champion's page and 2026 Standings the latest season
+const row = careerStats(full, "aj").map((s) => s.label).join(", ");
+const links = homeLinks(full);
+check(row === "Seasons, Win %, Total PF, Close games, Blowouts", "the career row is in the Round 9 order, without PF/G", row);
+check(links.champ === champions(full)[0].person && links.season === full.seasons.at(-1)!.season,
+  "the home cards go to the reigning champion's page and the latest season", `${links.champ}, ${links.season}`);
 
 // Season pages: Rank Δ moves add up to zero (every seed is someone's place)
 const rankOff = full.seasons.filter((s) => seasonTable(full, s).reduce((n, r) => n + (r.rankChange ?? 0), 0) !== 0);
