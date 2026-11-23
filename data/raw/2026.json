@@ -2871,7 +2871,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 0.0
+          "11": 45.5
         },
         "teamId": 19,
         "tiebreak": 0.0,
@@ -2888,7 +2888,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 0.0
+          "11": 115.02
         },
         "teamId": 9,
         "tiebreak": 0.0,
@@ -2911,7 +2911,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 0.0
+          "11": 101.8
         },
         "teamId": 3,
         "tiebreak": 0.0,
@@ -2928,7 +2928,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 6.0
+          "11": 161.04
         },
         "teamId": 1,
         "tiebreak": 0.0,
@@ -2951,7 +2951,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 0.0
+          "11": 147.4
         },
         "teamId": 12,
         "tiebreak": 0.0,
@@ -2968,7 +2968,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 5.7
+          "11": 83.98
         },
         "teamId": 11,
         "tiebreak": 0.0,
@@ -2991,7 +2991,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 14.8
+          "11": 108.66
         },
         "teamId": 16,
         "tiebreak": 0.0,
@@ -3008,7 +3008,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 6.7
+          "11": 127.36
         },
         "teamId": 13,
         "tiebreak": 0.0,
@@ -3031,7 +3031,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 0.0
+          "11": 111.2
         },
         "teamId": 17,
         "tiebreak": 0.0,
@@ -3048,7 +3048,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 15.0
+          "11": 94.74
         },
         "teamId": 15,
         "tiebreak": 0.0,
@@ -3071,7 +3071,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 20.46
+          "11": 89.46
         },
         "teamId": 2,
         "tiebreak": 0.0,
@@ -3088,7 +3088,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 0.0
+          "11": 78.16
         },
         "teamId": 8,
         "tiebreak": 0.0,
@@ -3111,7 +3111,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 18.6
+          "11": 83.28
         },
         "teamId": 20,
         "tiebreak": 0.0,
@@ -3128,7 +3128,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "11": 0.0
+          "11": 47.4
         },
         "teamId": 18,
         "tiebreak": 0.0,
@@ -4255,10 +4255,10 @@
       2025
     ],
     "requestedMatchupPeriodId": 11,
-    "standingsUpdateDate": 1795336282409,
+    "standingsUpdateDate": 1795421526718,
     "teamsJoined": 14,
     "transactionScoringPeriod": 11,
-    "waiverLastExecutionDate": 1795336282282,
+    "waiverLastExecutionDate": 1795421526300,
     "waiverProcessStatus": {
       "2026-08-28T07:08:41.999+00:00": 3,
       "2026-08-31T07:09:32.025+00:00": 1,
@@ -4376,10 +4376,11 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 21,
-        "drops": 21,
+        "acquisitions": 22,
+        "drops": 22,
         "matchupAcquisitionTotals": {
           "10": 3,
+          "11": 1,
           "2": 4,
           "3": 4,
           "4": 1,
@@ -4448,7 +4449,7 @@
     },
     {
       "abbrev": "BBL",
-      "currentProjectedRank": 12,
+      "currentProjectedRank": 11,
       "divisionId": 0,
       "draftDayProjectedRank": 4,
       "eliminated": false,
@@ -5027,7 +5028,7 @@
       "isTransactionLocked": false,
       "logo": "https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/ab7fff80-d08b-11f1-ae49-bf9761a04fdb",
       "logoType": "CUSTOM_UPLOAD",
-      "name": "The Most Complete Puka ",
+      "name": "The Most Complete DUNZO ",
       "owners": [
         "{DA75791D-63C1-4BA1-BC7A-B0074CE19036}"
       ],
@@ -5159,7 +5160,7 @@
     },
     {
       "abbrev": "BC",
-      "currentProjectedRank": 6,
+      "currentProjectedRank": 5,
       "divisionId": 0,
       "draftDayProjectedRank": 14,
       "eliminated": false,
@@ -5242,7 +5243,7 @@
           "8": 3
         },
         "misc": 0,
-        "moveToActive": 45,
+        "moveToActive": 46,
         "moveToIR": 0,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5300,7 +5301,7 @@
     },
     {
       "abbrev": "MAYO",
-      "currentProjectedRank": 4,
+      "currentProjectedRank": 3,
       "divisionId": 0,
       "draftDayProjectedRank": 6,
       "eliminated": false,
@@ -5370,10 +5371,11 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 8,
+        "acquisitions": 9,
         "drops": 8,
         "matchupAcquisitionTotals": {
           "10": 2,
+          "11": 1,
           "2": 1,
           "4": 1,
           "6": 1,
@@ -5382,7 +5384,7 @@
         },
         "misc": 0,
         "moveToActive": 24,
-        "moveToIR": 1,
+        "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
         "trades": 0
@@ -5722,7 +5724,7 @@
     },
     {
       "abbrev": "LFY",
-      "currentProjectedRank": 5,
+      "currentProjectedRank": 6,
       "divisionId": 0,
       "draftDayProjectedRank": 2,
       "eliminated": false,
@@ -5808,7 +5810,7 @@
           "9": 4
         },
         "misc": 0,
-        "moveToActive": 64,
+        "moveToActive": 66,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5866,7 +5868,7 @@
     },
     {
       "abbrev": "RA",
-      "currentProjectedRank": 11,
+      "currentProjectedRank": 12,
       "divisionId": 0,
       "draftDayProjectedRank": 11,
       "eliminated": false,
@@ -5953,7 +5955,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 104,
+        "moveToActive": 105,
         "moveToIR": 8,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -6011,7 +6013,7 @@
     },
     {
       "abbrev": "AMON",
-      "currentProjectedRank": 3,
+      "currentProjectedRank": 4,
       "divisionId": 0,
       "draftDayProjectedRank": 5,
       "eliminated": false,
