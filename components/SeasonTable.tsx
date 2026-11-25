@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Segmented } from "@/components/Segmented";
 import { RankChange } from "@/components/ui";
+import type { ReviewKey } from "@/lib/review";
 import { updateParams } from "@/lib/url";
 
 export type SeasonTableRow = {
@@ -16,14 +17,13 @@ export type SeasonTableRow = {
   pf: number;
   pa: number;
   rankChange: number | null;
-  luck: number;
-  bench: number | null;
   trades: number; // how many
-  tradeNet: number | null; // null: no trade details that season
-  streak: number; // W6 = 6, L4 = −4
+  // The Playcall Review's numbers (null: none that season). Streaks: W6 = 6, L4 = −4.
+  review: Record<ReviewKey, number | null>;
 };
 
-type Stats = "standard" | "playcall";
+type Stats = "standard" | "playcall" | "odds";
+const STATS: Stats[] = ["standard", "playcall", "odds"];
 
 const plusMinus = (n: number, digits: number) => {
   const r = Math.round(n * 10 ** digits) / 10 ** digits;
@@ -34,23 +34,38 @@ const toneOf = (n: number, digits: number) => {
   return r > 0 ? "text-emerald-400" : r < 0 ? "text-red-400" : "text-zinc-400";
 };
 
-// A season's standings with the site owner's two stat sets (Round 8, 2026-11-20): Standard (W-L, PF,
-// PA and Rank Δ) and Playcall (Luck, Bench, Trades and Streaks, the Playcall Review's numbers). The
-// choice lives in the URL (?stats=playcall).
+// A season's standings with the site owner's stat sets (Round 8, 2026-11-20): Standard (W-L, PF, PA
+// and Rank Δ) and Playcall. Round 10 (2026-11-25) made Playcall the manager's decisions (Draft IQ,
+// Roster IQ, Waiver IQ, Trade IQ) and added Odds (Odds, Luck, Streaks), as on the manager pages. The
+// choice lives in the URL (?stats=playcall, ?stats=odds).
 type Props = { rows: SeasonTableRow[]; complete: boolean; playoffTeams: number };
 
 export function SeasonTable(props: Props) {
   const params = useSearchParams();
   const pathname = usePathname();
-  const stats: Stats = params.get("stats") === "playcall" ? "playcall" : "standard";
+  const stats: Stats = STATS.find((v) => v === params.get("stats")) ?? "standard";
   return <SeasonTableView {...props} stats={stats} onChange={(v) => updateParams(pathname, { stats: v === "standard" ? null : v })} />;
 }
 
+const HEADERS: Record<Stats, string[]> = {
+  standard: ["W-L", "PF", "PA", "Rank Δ"],
+  playcall: ["Draft IQ", "Roster IQ", "Waiver IQ", "Trade IQ"],
+  odds: ["Odds", "Luck", "Streaks"],
+};
+
+const NOTES: Record<Exclude<Stats, "standard">, string> = {
+  playcall:
+    "Each is the team against the league that season, in points its starting lineup scored. Draft IQ and Waiver IQ: what its draft picks and its pickups scored for it, minus the league’s average. Roster IQ: the league’s average points left on the bench minus the team’s. Trade IQ: what its trades gained or lost. ESPN has bench lineups, pickups and trades from 2018 on.",
+  odds:
+    "Odds: wins minus ESPN’s projected wins, where ESPN favors the lineup with the higher projected score (from 2018). Luck: wins above or below expected, where each week a team expects the share of the league it outscored. Streaks: the season’s longest winning (W) or losing (L) streak, whichever is longer.",
+};
+
 // The page's static HTML shows the Standard view until it reads its URL
 export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange }: Props & { stats: Stats; onChange?: (v: Stats) => void }) {
-  const th = "px-1.5 py-2.5 text-right font-medium whitespace-nowrap sm:px-3";
+  // Two-word headers ("Draft IQ") may wrap on a phone, so four Playcall columns fit 375 px
+  const th = "px-1.5 py-2.5 text-right leading-tight font-medium sm:px-3 sm:whitespace-nowrap";
   const td = "px-1.5 py-2.5 text-right whitespace-nowrap sm:px-3";
-  const headers = stats === "standard" ? ["W-L", "PF", "PA", "Rank Δ"] : ["Luck", "Bench", "Trades", "Streaks"];
+  const headers = HEADERS[stats];
 
   return (
     <div className="space-y-2">
@@ -59,6 +74,7 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
         options={[
           { value: "standard", label: "Standard" },
           { value: "playcall", label: "Playcall" },
+          { value: "odds", label: "Odds" },
         ]}
         value={stats}
         onChange={(v) => onChange?.(v)}
@@ -102,15 +118,19 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
                     </td>
                     <td className={td}>{r.rankChange === null ? <span className="text-xs text-zinc-600">–</span> : <RankChange change={r.rankChange} />}</td>
                   </>
+                ) : stats === "playcall" ? (
+                  <>
+                    <Signed td={td} n={r.review.draft} digits={0} />
+                    <Signed td={td} n={r.review.roster} digits={0} />
+                    <Signed td={td} n={r.review.waiver} digits={0} />
+                    <Signed td={td} n={r.trades === 0 ? null : r.review.trade} digits={0} />
+                  </>
                 ) : (
                   <>
-                    <td className={`${td} ${toneOf(r.luck, 1)}`}>{plusMinus(r.luck, 1)}</td>
-                    <td className={`${td} ${r.bench === null ? "text-zinc-600" : "text-zinc-300"}`}>{r.bench === null ? "–" : Math.round(r.bench).toLocaleString("en-US")}</td>
-                    <td className={`${td} ${r.tradeNet === null || r.trades === 0 ? "text-zinc-600" : toneOf(r.tradeNet, 0)}`}>
-                      {r.tradeNet === null || r.trades === 0 ? "–" : plusMinus(r.tradeNet, 0)}
-                    </td>
-                    <td className={`${td} ${r.streak > 0 ? "text-emerald-400" : r.streak < 0 ? "text-red-400" : "text-zinc-400"}`}>
-                      {r.streak > 0 ? `W${r.streak}` : r.streak < 0 ? `L${-r.streak}` : "–"}
+                    <Signed td={td} n={r.review.odds} digits={r.review.odds !== null && !Number.isInteger(r.review.odds) ? 1 : 0} />
+                    <Signed td={td} n={r.review.luck} digits={1} />
+                    <td className={`${td} ${r.review.streak! > 0 ? "text-emerald-400" : r.review.streak! < 0 ? "text-red-400" : "text-zinc-400"}`}>
+                      {r.review.streak! > 0 ? `W${r.review.streak}` : r.review.streak! < 0 ? `L${-r.review.streak!}` : "–"}
                     </td>
                   </>
                 )}
@@ -123,12 +143,18 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
         {complete ? "Final place. " : `Current seed: the top ${playoffTeams} make the playoffs. `}
         {stats === "standard"
           ? `W-L, PF and PA count every game: regular season, playoffs and consolation. Rank Δ: ${
-              complete ? "the final place against the regular-season seed" : "the seed's change since last week"
+              complete ? "the final place against the regular-season seed" : "the seed’s change since last week"
             }.`
-          : "Luck is wins above or below expected, where each week a team expects the share of the league it outscored. Bench is the points left on the bench: each week's best possible lineup minus the one started (from 2018). Trades are the points a team's trades gained or lost in its starting lineups (from 2018). Streaks: the season's longest winning (W) or losing (L) streak, whichever is longer."}
+          : NOTES[stats]}
       </p>
     </div>
   );
+}
+
+// A number above or below the league: green above zero, red below, "–" without one
+function Signed({ td, n, digits }: { td: string; n: number | null; digits: number }) {
+  if (n === null) return <td className={`${td} text-zinc-600`}>–</td>;
+  return <td className={`${td} ${toneOf(n, digits)}`}>{plusMinus(n, digits)}</td>;
 }
 
 // Whole points on a phone, so the four columns fit 375 px; tenths from sm up

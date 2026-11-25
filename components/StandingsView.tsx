@@ -9,13 +9,7 @@ import type { StandingsRow } from "@/lib/league";
 import { DEFAULT_VIEW, MIN_SEASONS, VIEWS, qualifies, rankOrder, type Career, type Stat } from "@/lib/standings";
 import { updateParams } from "@/lib/url";
 
-export type StandingsMeta = {
-  first: number;
-  latest: number;
-  latestComplete: boolean;
-  throughWeek: number;
-  weeks: number; // in the latest season, playoffs included
-};
+export type StandingsMeta = { latest: number }; // the latest season: Rank Δ counts since the end of the one before
 
 type Entry = { row: StandingsRow; now: Career; prev: Career | null };
 
@@ -61,29 +55,19 @@ export function StandingsView({ rows, meta }: { rows: StandingsRow[]; meta: Stan
   const shown = sorted;
   const firstUnranked = view.rate ? shown.findIndex((e) => !ok(e)) : -1;
 
-  const live = meta.latestComplete ? "" : ` ${meta.latest} through week ${meta.throughWeek}.`;
-  const partial = meta.latestComplete
-    ? ""
-    : ` ${meta.latest} counts as ${meta.throughWeek}/${meta.weeks} of a season so far.`;
   const since = meta.latest - 1;
-  const describe = {
-    all: `Totals over every game since ${meta.first}: regular season, playoffs and consolation.${live}`,
-    season: `Averages per season since ${meta.first}.${partial}`,
-    game: `Averages per game over every game since ${meta.first}.${live}`,
-  }[view.key];
 
   return (
     <div className="space-y-3">
       <div className="space-y-2">
+        {/* No description under the tabs (Round 10); Rank Δ's meaning is on the desktop header */}
         <Segmented
-          label="Leaderboard"
+          label="Standings"
           options={VIEWS.map((v) => ({ value: v.key, label: v.label }))}
           value={view.key}
           onChange={(key) => update({ view: key === DEFAULT_VIEW ? null : key, sort: null, dir: null })}
+          small
         />
-        <p className="text-sm text-zinc-400">
-          {describe} Rank Δ is the change since the end of {since}.
-        </p>
         <div className="md:hidden">
           <Segmented
             label="Sort by"

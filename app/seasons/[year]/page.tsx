@@ -48,16 +48,13 @@ export default async function SeasonPage({ params }: Params) {
     pf: r.t.all.pf,
     pa: r.t.all.pa,
     rankChange: r.rankChange,
-    luck: r.luck,
-    bench: r.t.bench,
     trades: r.t.trades,
-    tradeNet: r.t.tradeNet,
-    streak: r.streak,
+    review: r.review,
   }));
 
   return (
     <div className="space-y-5">
-      {/* Opened from the home page's 2026 Standings card: the other three cards (Round 9) */}
+      {/* Opened from the home page's 2026 Season card: the other three cards (Round 9) */}
       <FromHomePills current="standings" links={homeLinks(league)} />
       <div>
         <Link href="/seasons" className="text-sm text-zinc-400 hover:text-zinc-200">

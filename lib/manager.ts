@@ -1,9 +1,11 @@
 // What a manager's page shows beyond the standings: the Manager Performance chart with its Playcall
 // Review, head-to-head numbers against each opponent and the achievements (the site owner's notes,
 // Rounds 2–7, 2026-11-07 to 2026-11-18). Counting rules are in CLAUDE.md.
+import { seasonAwards, type Stint, type TradeResult } from "@/lib/acquisitions";
 import { topStarters } from "@/lib/champions";
-import { pct, pts, record } from "@/lib/format";
+import { pct, pts, record, signed } from "@/lib/format";
 import { DUNZO_OVER, ICE_WITHIN, type Game, type Kind, type League, type TeamSeason, careerTotals, luck, managerBySlug, marginCents, odds, winPct as careerWinPct } from "@/lib/league";
+import { DECISIONS, FATE, type ReviewKey } from "@/lib/review";
 import { rosterBox, type RosterBox } from "@/lib/roster";
 
 export type OpponentLine = {
@@ -108,9 +110,12 @@ export type SeasonFacts = {
   trades: number;
 };
 
-// The Playcall Review (the site owner's Round 6, 2026-11-17): one season's decisions, each a bar
-// from Bad to Good with zero in the middle. Higher is better on every one.
-export type ReviewKey = "luck" | "odds" | "iq" | "trades" | "streak";
+// The Playcall Review (the site owner's Round 6, 2026-11-17): one season's numbers, each a bar from
+// Bad to Good with zero in the middle. Higher is better on every one. Round 10 (2026-11-25) split them
+// in two (lib/review.ts): the manager's decisions (Draft IQ, Roster IQ, Waiver IQ, Trade IQ) in
+// Playcalling Analysis, and what the season was expected to bring (Odds, Luck, Streaks) in Against
+// the Odds.
+export { DECISIONS, FATE, type ReviewKey };
 
 export type ReviewRow = {
   value: number | null; // null: no number that season (no projections, bench lineups or trade details)
@@ -162,30 +167,42 @@ function mark(mode: ChartMode, t: TeamSeason, everyone: TeamSeason[]): Mark {
 
 const MODES = Object.keys(RANKINGS) as ChartMode[];
 
-// Each Playcall Review number for every team of one season. Roster IQ is the league's average
-// points left on the bench minus the team's own, so it adds up to zero each season, like Luck, Odds
-// and Trades. Trades is 0 for a team that made none.
-function reviewValues(field: TeamSeason[]): Map<TeamSeason, Record<ReviewKey, number | null>> {
-  const benched = field.filter((o) => o.bench !== null);
-  const average = benched.length ? benched.reduce((n, o) => n + o.bench!, 0) / benched.length : null;
+// The league's average of a number that season, over the teams that have it
+function average(field: TeamSeason[], value: (t: TeamSeason) => number | null) {
+  const have = field.map(value).filter((v): v is number => v !== null);
+  return have.length ? have.reduce((n, v) => n + v, 0) / have.length : null;
+}
+
+// Each Playcall Review number for every team of one season (the manager pages and the season pages'
+// standings). Draft IQ (Round 10) is the starting-lineup points of the team's draft picks while it had
+// them, minus the league's average; Waiver IQ the same for its pickups; Roster IQ the league's average
+// points left on the bench minus the team's own. So each adds up to zero over a season, like Luck,
+// Odds and Trade IQ. Trade IQ is 0 for a team that made no trade.
+export function playcallValues(field: TeamSeason[]): Map<TeamSeason, Record<ReviewKey, number | null>> {
+  const drafted = average(field, (t) => t.draftPoints);
+  const picked = average(field, (t) => t.pickupPoints);
+  const benched = average(field, (t) => t.bench);
+  const minus = (value: number | null, avg: number | null) => (value === null || avg === null ? null : value - avg);
   return new Map(
     field.map((t) => [
       t,
       {
-        luck: luck(t),
+        draft: minus(t.draftPoints, drafted),
+        roster: t.bench === null || benched === null ? null : benched - t.bench,
+        waiver: minus(t.pickupPoints, picked),
+        trade: t.tradeNet,
         odds: odds(t),
-        iq: average === null || t.bench === null ? null : average - t.bench,
-        trades: t.tradeNet,
+        luck: luck(t),
         streak: signedStreak(t),
       },
     ]),
   );
 }
 
-const REVIEW_KEYS: ReviewKey[] = ["luck", "odds", "iq", "trades", "streak"];
+const REVIEW_KEYS: ReviewKey[] = [...DECISIONS, ...FATE];
 
 function review(t: TeamSeason, field: TeamSeason[]): Record<ReviewKey, ReviewRow> {
-  const all = reviewValues(field);
+  const all = playcallValues(field);
   return Object.fromEntries(
     REVIEW_KEYS.map((key) => {
       const value = all.get(t)![key];
@@ -307,6 +324,27 @@ export function achievements(league: League, person: string): Achievement[] {
   const mvfp = [...topStarters(league).values()].flat().filter((p) => p.person === person).sort((a, b) => a.season - b.season);
   const EVERY_GAME = "In one season, every game counted: regular season and playoffs.";
 
+  // Round 10 (the site owner, 2026-11-25): the season's best pickup and the costliest drop, and both
+  // sides of its most lopsided trade (lib/acquisitions.ts). Each needs whole rosters, from 2018 on.
+  const nick = (season: number, teamId: number) => {
+    const slug = league.teamSeasons.find((x) => x.season === season && x.teamId === teamId)?.person;
+    return (slug && managerBySlug(league, slug)?.nickname) ?? "another team";
+  };
+  const listed = (seasons: { season: number; extra?: string }[]) => ({
+    earned: seasons.length > 0,
+    note: short([...new Set(seasons.map((x) => x.season))]),
+    seasons,
+  });
+  const players = (list: Stint[]) => (list.length > 1 ? `${list[0].name} and ${list.length - 1} more` : (list[0]?.name ?? "nobody"));
+  const partners = (r: TradeResult) => r.partners.map((team) => nick(r.season, team)).join(" and ");
+  const won = <T,>(pick: (t: TeamSeason) => T[], extra: (x: T, t: TeamSeason) => string) =>
+    done.flatMap((t) => pick(t).map((x) => ({ season: t.season, extra: extra(x, t) })));
+  const waiverPicks = won((t) => seasonAwards(t.season).waiver.filter((x) => x.teamId === t.teamId), (x) => `${x.name}, ${pts(x.points)} pts`);
+  const drops = won((t) => seasonAwards(t.season).drop.filter((x) => x.from === t.teamId), (x, t) => `${x.name}, ${pts(x.points)} pts for ${nick(t.season, x.teamId)}`);
+  const bestTrades = won((t) => seasonAwards(t.season).trade.filter((r) => r.teamId === t.teamId), (r) => `got ${players(r.got)} from ${partners(r)}: ${signed(r.net)} pts`);
+  const fleeces = won((t) => seasonAwards(t.season).fleece.filter((r) => r.teamId === t.teamId), (r) => `sent ${players(r.sent)} to ${partners(r)}: ${signed(r.net)} pts`);
+  const ROSTERS = "ESPN has whole rosters from 2018 on.";
+
   return [
     { key: "goat", tier: "goat", icon: "🐐", title: "The Mahaan Bakaree", detail: "Won a Championship", ...bySeasons(years((t) => t.finalRank === 1)) },
     { key: "moty", tier: "goat", icon: "🔥", title: "Manager of the Year", detail: "Scored the Most Points For", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, true)) },
@@ -325,6 +363,13 @@ export function achievements(league: League, person: string): Achievement[] {
     // Round 7 (2026-11-18); Round 8 made it any win within a point (2026-11-20)
     { key: "ice", tier: "goat", icon: "🧊", title: "Ice in the Veins", detail: "Won a Game Within a Point",
       fine: `Won by ${ICE_WITHIN} point or less. ${MARGINS}`, ...bySeasons(anyGame((g, won) => won && marginCents(g) <= ICE_WITHIN * 100)) },
+    // Round 10 (2026-11-25)
+    { key: "waiver", tier: "goat", icon: "💎", title: "Waiver Pick of the Year", detail: "Had the Season's Best Waiver Pick",
+      fine: `The pickup (off waivers or free agency) who scored the most for his new team that season: in its starting lineup, every game, while it had him. ${ROSTERS}`,
+      ...listed(waiverPicks) },
+    { key: "trade", tier: "goat", icon: "🤝", title: "Trade of the Year", detail: "Got the Most Points out of a Trade",
+      fine: "The season's biggest gain in one trade: what the players received scored in the starting lineup, minus what the players sent scored for their new team, each until he left that roster. ESPN has trade details from 2018 on.",
+      ...listed(bestTrades) },
     { key: "pancake", tier: "pancake", icon: "🥞", title: "The Pancake House", detail: "Last Place", ...bySeasons(years((t) => t.lastPlace)) },
     { key: "choke", tier: "pancake", icon: "🧑‍🎨", title: "The Choke Artist", detail: "Runner Up", ...bySeasons(years((t) => t.finalRank === 2)) },
     { key: "below-zero", tier: "pancake", icon: "🥶", title: "Below Zero", detail: "Scored the Least Points For", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, false)) },
@@ -348,5 +393,12 @@ export function achievements(league: League, person: string): Achievement[] {
     // game decided by a point or less (2026-11-20)
     { key: "dunzo", tier: "pancake", icon: "💥", title: "Dunzo", detail: `Lost a Game by More Than ${DUNZO_OVER} Points`,
       fine: `As rare as a game won within a point. ${MARGINS}`, ...bySeasons(anyGame((g, won) => !won && marginCents(g) > DUNZO_OVER * 100)) },
+    // Round 10 (2026-11-25)
+    { key: "drop", tier: "pancake", icon: "🗑️", title: "Drop of the Year", detail: "Dropped a Player Who Scored the Most for His Next Team",
+      fine: `Of every player let go that season (drafted, picked up or traded for), the one who then scored the most for the team that picked him up. ${ROSTERS}`,
+      ...listed(drops) },
+    { key: "fleece", tier: "pancake", icon: "🐑", title: "Fleece of the Year", detail: "Lost the Most Points in a Trade",
+      fine: "The other side of the season's most lopsided trade: what the players sent scored for their new team, minus what the players received scored in the starting lineup. ESPN has trade details from 2018 on.",
+      ...listed(fleeces) },
   ];
 }

@@ -85,17 +85,21 @@ export function PancakeWatchView({ watch, name }: { watch: Watch; name: (slug: s
   );
 }
 
+// The W-L sits in the middle of the card (the site owner, Round 10): the name and the chance take
+// equal columns on either side, so every row's record lines up at the center
 function Row({ r, big }: { r: WatchRow; big: boolean }) {
   const tone = r.safe ? "text-emerald-400" : big ? "text-red-500" : "text-zinc-50";
   return (
     <li>
-      <Link href={`/teams/${r.person}`} className={`flex items-baseline gap-2 hover:opacity-90 ${big ? "py-3" : "py-2.5"}`}>
-        <span className={`shrink-0 text-right tabular-nums ${big ? "w-9 text-2xl text-red-500" : `w-9 text-base ${r.safe ? "text-emerald-600" : "text-zinc-500"}`}`}>
-          {r.seed}.
+      <Link href={`/teams/${r.person}`} className={`grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-baseline gap-2 hover:opacity-90 ${big ? "py-3" : "py-2.5"}`}>
+        <span className="flex min-w-0 items-baseline gap-2">
+          <span className={`shrink-0 text-right tabular-nums ${big ? "w-9 text-2xl text-red-500" : `w-9 text-base ${r.safe ? "text-emerald-600" : "text-zinc-500"}`}`}>
+            {r.seed}.
+          </span>
+          <span className={`min-w-0 truncate font-semibold ${tone} ${big ? "text-2xl" : "text-lg"}`}>{r.nickname}</span>
         </span>
-        <span className={`min-w-0 flex-1 truncate font-semibold ${tone} ${big ? "text-2xl" : "text-lg"}`}>{r.nickname}</span>
-        <span className={`shrink-0 tabular-nums ${big ? "text-2xl" : "text-base"} ${r.safe ? "text-emerald-400" : "text-zinc-200"}`}>{record(r)}</span>
-        <span className={`min-w-14 shrink-0 text-right tabular-nums ${big ? "text-2xl font-semibold text-red-500" : r.safe ? "text-emerald-400" : "text-zinc-400"}`}>
+        <span className={`w-[4.5rem] text-center tabular-nums ${big ? "text-2xl" : "text-base"} ${r.safe ? "text-emerald-400" : "text-zinc-200"}`}>{record(r)}</span>
+        <span className={`text-right tabular-nums ${big ? "text-2xl font-semibold text-red-500" : r.safe ? "text-emerald-400" : "text-zinc-400"}`}>
           {chance(r)}
         </span>
       </Link>

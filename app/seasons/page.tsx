@@ -11,7 +11,16 @@ export default function SeasonsPage() {
 
   return (
     <>
-      <PageTitle sub="Standings, the playoff bracket and the pancake ladder for every season">Seasons</PageTitle>
+      {/* The way back to the all-time standings, which link here (Round 10) */}
+      <PageTitle
+        sub={
+          <Link href="/standings" className="text-zinc-300 underline-offset-2 hover:underline">
+            Standings across all seasons →
+          </Link>
+        }
+      >
+        Seasons
+      </PageTitle>
       <ul className="grid gap-3 md:grid-cols-2">
         {[...league.seasons].reverse().map((info) => {
           const teams = league.teamSeasons.filter((t) => t.season === info.season);

@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-// The home page's four cards. Pancake Watch and News open in place on the home page; 2026 Standings
-// and The Mahaan Bakaree open the season's page and the reigning champion's page (Round 9). Each
+// The home page's four cards. Pancake Watch and News open in place on the home page; 2026 Season
+// (Round 10's name; it was 2026 Standings) and The Mahaan Bakaree open the season's page and the
+// reigning champion's page (Round 9). Each
 // view shows the other three as pills along the top, so a visitor can move between them (the site
 // owner, Round 9, 2026-11-23). The two pages show them only when opened from home, which the link
 // marks with ?from=home.
@@ -15,7 +16,7 @@ export type HomeLinks = { season: number; champ: string | null }; // the latest 
 const CARDS: HomeCard[] = ["standings", "champ", "pancake", "news"];
 
 export function homeTitle(card: HomeCard, season: number) {
-  return { standings: `${season} Standings`, champ: "The Mahaan Bakaree", pancake: "Pancake Watch", news: "News" }[card];
+  return { standings: `${season} Season`, champ: "The Mahaan Bakaree", pancake: "Pancake Watch", news: "News" }[card];
 }
 
 export function homeHref(card: HomeCard, links: HomeLinks) {

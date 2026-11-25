@@ -25,7 +25,8 @@ const MODES: { value: Mode; label: string; ranks: string }[] = [
 // chart then says where it ranked, the Roster box opens with that season's players (Round 5), and
 // the Playcall Review below it with that season's decisions (Round 6). Since Round 8 those two open
 // on a tap, shut at first; since Round 9 they're titled "Players to Remember" and "Playcalling
-// Analysis". The season in progress is selected at first.
+// Analysis", and since Round 10 Odds, Luck and Streaks have a box of their own, "Against the Odds".
+// The season in progress is selected at first.
 export function ManagerPerformance({
   seasons,
   selected,
@@ -36,9 +37,11 @@ export function ManagerPerformance({
   onSelect: (season: number) => void;
 }) {
   const [mode, setMode] = useState<Mode>("finish");
-  // The Roster box and the Playcall Review open on a tap (the site owner, Round 8), shut at first
+  // The Roster box and the Playcall Review's two boxes open on a tap (the site owner, Round 8), shut
+  // at first
   const [rosterOpen, setRosterOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [fateOpen, setFateOpen] = useState(false);
   const ranks = MODES.find((m) => m.value === mode)!.ranks;
   const point = seasons.find((s) => s.season === selected) ?? null;
 
@@ -56,7 +59,8 @@ export function ManagerPerformance({
           <p>{ranks}</p>
         </div>
         {point && <RosterBox point={point} open={rosterOpen} onToggle={() => setRosterOpen(!rosterOpen)} />}
-        {point && <PlaycallReview point={point} open={reviewOpen} onToggle={() => setReviewOpen(!reviewOpen)} />}
+        {point && <PlaycallReview point={point} group="decisions" open={reviewOpen} onToggle={() => setReviewOpen(!reviewOpen)} />}
+        {point && <PlaycallReview point={point} group="fate" open={fateOpen} onToggle={() => setFateOpen(!fateOpen)} />}
       </Card>
     </section>
   );

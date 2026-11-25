@@ -1,6 +1,6 @@
 // Season pages and the home page's Pancake Watch (Luke, 2026-11-15; Round 8, 2026-11-20)
 import { luck, managerBySlug, type BracketEntry, type League, type SeasonInfo, type TeamSeason } from "@/lib/league";
-import { signedStreak } from "@/lib/manager";
+import { playcallValues, signedStreak, type ReviewKey } from "@/lib/manager";
 import { pancakeOdds } from "@/lib/pancake";
 import { regularSeeds } from "@/lib/playcalls";
 
@@ -33,6 +33,8 @@ export type SeasonRow = {
   // regular-season seed against the final place. Up is positive. null in week 1.
   rankChange: number | null;
   streak: number; // the Playcall Review's Streaks: W6 = 6, L4 = −4
+  // Every Playcall Review number (Round 10): the Playcall stats show the decisions, the Odds stats the rest
+  review: Record<ReviewKey, number | null>;
 };
 
 // Regular-season seeds as they stood after `week`, replayed as ESPN seeds them
@@ -46,8 +48,9 @@ function seedsAfter(league: League, info: SeasonInfo, week: number) {
 export function seasonTable(league: League, info: SeasonInfo): SeasonRow[] {
   const lastWeek = Math.min(info.throughWeek, info.regularWeeks);
   const before = !info.complete && lastWeek >= 2 ? seedsAfter(league, info, lastWeek - 1) : null;
-  return league.teamSeasons
-    .filter((t) => t.season === info.season)
+  const field = league.teamSeasons.filter((t) => t.season === info.season);
+  const values = playcallValues(field);
+  return field
     .map((t) => ({
       person: t.person,
       nickname: managerBySlug(league, t.person)!.nickname,
@@ -58,6 +61,7 @@ export function seasonTable(league: League, info: SeasonInfo): SeasonRow[] {
       luck: luck(t),
       rankChange: info.complete ? t.seed - t.finalRank! : before ? before.get(t.teamId)! - t.seed : null,
       streak: signedStreak(t),
+      review: values.get(t)!,
     }))
     .sort((a, b) => a.place - b.place);
 }

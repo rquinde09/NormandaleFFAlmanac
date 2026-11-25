@@ -2,6 +2,7 @@
 // The counting rules live in CLAUDE.md; scripts/check-data.ts checks them against the old Sheet.
 import fs from "node:fs";
 import path from "node:path";
+import { acquisitions, pointsByHow } from "@/lib/acquisitions";
 import { benchGames, isStarter, lineupSides, readLineups, type BenchGame } from "@/lib/bench";
 import { optimizedSeeds, projectedWins, tradeNets } from "@/lib/playcalls";
 import type { Career } from "@/lib/standings";
@@ -63,6 +64,12 @@ export type TeamSeason = {
   projectedWins: number | null; // games ESPN's projections favored this team in; null without projections
   tradeNet: number | null; // starting-lineup points the season's trades gained (or lost); null without trade details
   optimizedSeed: number | null; // the seed with the best lineup every week; null without bench lineups
+  // Round 10 (2026-11-25), from lib/acquisitions.ts: starting-lineup points by players the team
+  // drafted, and by players it picked up (waivers or free agency) while it had them. With trades they
+  // add up to the team's points for. null without lineups; pickups also null without whole rosters
+  // (2017).
+  draftPoints: number | null;
+  pickupPoints: number | null;
   // Round 7 (2026-11-18), every decided game: decided by under 7 points, or by more than 50
   close: MarginSplit;
   blowout: MarginSplit;
@@ -280,6 +287,8 @@ export function getLeague(): League {
     const lineups = readLineups(s.seasonId);
     const projected = projectedWins(seasonGames, lineups);
     const nets = tradeNets(s.seasonId, lineups);
+    const how = pointsByHow(s.seasonId);
+    const rosters = acquisitions(s.seasonId).rosters;
     const division = new Map(s.teams.map((t) => [t.id, t.divisionId ?? 0]));
     const optimized = complete && seasonBench.length ? optimizedSeeds(seasonGames, seasonBench, division) : null;
 
@@ -359,6 +368,8 @@ export function getLeague(): League {
         projectedWins: projected ? (projected.get(team.id) ?? 0) : null,
         tradeNet: nets ? (nets.get(team.id) ?? 0) : null,
         optimizedSeed: optimized?.get(team.id) ?? null,
+        draftPoints: how ? (how.get(team.id)?.draft ?? 0) : null,
+        pickupPoints: how && rosters ? (how.get(team.id)?.pickup ?? 0) : null,
         close: inPoints(splits.close),
         blowout: inPoints(splits.blowout),
       });

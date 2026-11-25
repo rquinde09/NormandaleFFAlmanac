@@ -15,6 +15,8 @@
 // - Round 8: The One Hit Wonder, Below Zero, the League records, Ice in the Veins and Dunzo, the
 //   pancake ladder and chances, record-break news, the standings' W/L and the season pages' Rank Δ
 // - Round 9: the Leaderboard's Record sort, the career row and where the home cards go
+// - Round 10: draft, pickup and trade points add up to points for; Draft IQ and Waiver IQ; the
+//   waiver, drop, trade and fleece awards; the Standings' view names
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
@@ -45,9 +47,10 @@ import { isStarter, lineupSides, readLineups } from "../lib/bench";
 import { firstLadder, ladderPlaces, lastOf, nextLadder, pancakeOdds } from "../lib/pancake";
 import { FIRST_NEWS_SEASON, recordPosts, weekDate } from "../lib/recordNews";
 import { gameEntry, leagueEntry, lineupEntry, seasonEntry } from "../lib/records";
-import { VIEWS, rankOrder } from "../lib/standings";
+import { DEFAULT_VIEW, VIEWS, rankOrder } from "../lib/standings";
+import { acquisitions, pointsByHow, seasonAwards, tradeResults } from "../lib/acquisitions";
 import { championDetails, topStarters } from "../lib/champions";
-import { achievements, careerStats, marginCareer, performance } from "../lib/manager";
+import { DECISIONS, FATE, achievements, careerStats, marginCareer, performance } from "../lib/manager";
 import { readTrades, regularSeeds } from "../lib/playcalls";
 import { rosterBox } from "../lib/roster";
 import { rounds, seasonTable } from "../lib/seasons";
@@ -248,7 +251,7 @@ check(benchRows === gamesInBenchSeasons && league.bench.every((b) => close(b.act
 check(league.bench.every((b) => b.best >= b.actual - 0.005), "best lineup is never below the one started",
   `${league.bench.filter((b) => b.best < b.actual - 0.005).length} below`);
 // The Playcall Review's lowest Roster IQ each season (Round 6) is the Benchwarmer award
-check(award("benchwarmer").join() === people.flatMap((p) => performance(league, p).filter((s) => s.review.iq.value !== null && close(s.review.iq.value, s.review.iq.lo, 1e-9)).map((s) => `${s.season} ${p}`)).sort().join(),
+check(award("benchwarmer").join() === people.flatMap((p) => performance(league, p).filter((s) => s.review.roster.value !== null && close(s.review.roster.value, s.review.roster.lo, 1e-9)).map((s) => `${s.season} ${p}`)).sort().join(),
   "lowest Roster IQ matches the Benchwarmer award", award("benchwarmer").join(", "));
 // Each season's final is in its last week, and its winner is the champion
 const finalsOk = league.seasons.filter((s) => s.complete).filter((s) => {
@@ -319,7 +322,7 @@ check(boxes.every(({ t, box }) => (box.picks.inconsistent !== null) === projecte
 // Roster IQ is the league's average points left on the bench minus the team's, so it adds up to
 // zero each season, like Luck, Odds and Trades.
 const reviews = people.flatMap((p) => performance(full, p).map((s) => ({ p, s })));
-const iqSums = benchSeasons.map((y) => reviews.filter(({ s }) => s.season === y).reduce((n, { s }) => n + s.review.iq.value!, 0));
+const iqSums = benchSeasons.map((y) => reviews.filter(({ s }) => s.season === y).reduce((n, { s }) => n + s.review.roster.value!, 0));
 check(iqSums.every((n) => Math.abs(n) < 1e-6), "Roster IQ adds up to zero in every season", iqSums.map((n) => n.toFixed(6)).join(" "));
 // Every bar's ends are the league's worst and best that season with zero between them, the
 // season's number lies between the ends, and its rank is within the league
@@ -333,15 +336,16 @@ check(rowsOff.length === 0, "Playcall Review: every number sits between the leag
 // were read off the old chart; the site's are 54.1 and −100.8.
 const review23 = (p: string) => reviews.find((r) => r.p === p && r.s.season === 2023)!.s.review;
 const drawn = (r: ReturnType<typeof review23>) =>
-  [r.luck.value!.toFixed(1), r.odds.value!, r.iq.value!.toFixed(1), Math.round(r.trades.value!), r.streak.value!].join(" ");
+  [r.luck.value!.toFixed(1), r.odds.value!, r.roster.value!.toFixed(1), Math.round(r.trade.value!), r.streak.value!].join(" ");
 check(drawn(review23("aj")) === "1.3 2 54.1 -76 10" && drawn(review23("luke")) === "-1.3 -1 -100.8 24 -8", "2023 Playcall Reviews match the sketch (AJ, Luke)",
   `AJ ${drawn(review23("aj"))}; Luke ${drawn(review23("luke"))}`);
-// 2017 has no projections, bench lineups or trade details; the season in progress has every number
+// 2017 has no projections, bench lineups, pickups or trade details, but has its draft (Round 10); the
+// season in progress has every number
 const r17 = reviews.filter(({ s }) => s.season === 2017);
 const live = reviews.filter(({ s }) => s.live);
-check(r17.every(({ s }) => s.review.odds.value === null && s.review.iq.value === null && s.review.trades.value === null) &&
-  live.every(({ s }) => Object.values(s.review).every((r) => r.value !== null)),
-  "2017 rows say so; the season in progress has a review so far", `${r17.length} in 2017, ${live.length} live`);
+check(r17.every(({ s }) => s.review.odds.value === null && s.review.roster.value === null && s.review.trade.value === null && s.review.waiver.value === null && s.review.draft.value !== null) &&
+  live.every(({ s }) => Object.values(s.review).every((r) => r.value !== null)) && [...DECISIONS, ...FATE].join() === "draft,roster,waiver,trade,odds,luck,streak",
+  "2017 rows say so; the season in progress has a review so far; the two boxes in the site owner's order", `${r17.length} in 2017, ${live.length} live`);
 // The Pancake Watch's pancake game: in the ladder's last week, ESPN lists the last-place game last,
 // and its loser (or the team with that bye) finished last
 const pancakeGames = league.seasons.filter((s) => s.complete).filter((s) => {
@@ -541,6 +545,72 @@ check(links.champ === champions(full)[0].person && links.season === full.seasons
 // Season pages: Rank Δ moves add up to zero (every seed is someone's place)
 const rankOff = full.seasons.filter((s) => seasonTable(full, s).reduce((n, r) => n + (r.rankChange ?? 0), 0) !== 0);
 check(rankOff.length === 0, "season-page Rank Δ adds up to zero in every season", rankOff.map((s) => s.season).join(", ") || `${full.seasons.length} seasons`);
+
+// 15. Round 10 (2026-11-25): how each team got its points
+// Every point a team scored came from a player it drafted, picked up or traded for (2017: drafted or
+// not, since its lineups list starters only), so the three add up to its points for in every season
+const howOff = full.seasons.flatMap((info) => {
+  const by = pointsByHow(info.season)!;
+  return full.teamSeasons
+    .filter((t) => t.season === info.season)
+    .filter((t) => {
+      const r = by.get(t.teamId)!;
+      return Math.abs(r.draft + r.pickup + r.trade + r.unknown - t.all.pf) > 0.011 || (info.season === 2017) !== r.unknown > 0;
+    })
+    .map((t) => `${t.season} ${t.person}`);
+});
+check(howOff.length === 0 && full.seasons.every((s) => acquisitions(s.season).rosters === (s.season !== 2017)),
+  "draft + pickup + trade points add up to points for in every team-season (2017: drafted or not)", howOff.join(", ") || `${full.teamSeasons.length} team-seasons`);
+// Traded players' stints give each trade's nets, which add up to zero and to each team's Trade IQ
+const tradeOff = tradeSeasons.flatMap((y) => {
+  const results = tradeResults(y);
+  const byTrade = new Map<string, number>();
+  for (const r of results) byTrade.set(r.tradeId, (byTrade.get(r.tradeId) ?? 0) + Math.round(r.net * 100));
+  const zero = [...byTrade].filter(([, n]) => n !== 0).map(([id]) => `${y} trade ${id.slice(0, 8)}`);
+  const teams = full.teamSeasons
+    .filter((t) => t.season === y && Math.abs(results.filter((r) => r.teamId === t.teamId).reduce((n, r) => n + r.net, 0) - t.tradeNet!) > 0.011)
+    .map((t) => `${y} ${t.person}`);
+  return [...zero, ...teams];
+});
+check(tradeOff.length === 0, "each trade's nets add up to zero and each team's to its Trade IQ",
+  tradeOff.join(", ") || `${tradeSeasons.map((y) => tradeResults(y).length).reduce((a, b) => a + b, 0)} team-trades`);
+// Draft IQ and Waiver IQ are against the league's average, so each adds up to zero over a season
+const sumOf = (key: "draft" | "waiver") =>
+  full.seasons.map((info) => reviews.filter(({ s }) => s.season === info.season).reduce((n, { s }) => n + (s.review[key].value ?? 0), 0));
+check([...sumOf("draft"), ...sumOf("waiver")].every((n) => Math.abs(n) < 1e-6) && reviews.every(({ s }) => (s.review.waiver.value === null) === (s.season === 2017)),
+  "Draft IQ and Waiver IQ add up to zero in every season; Waiver IQ from 2018", `draft ${sumOf("draft").map((n) => n.toFixed(6)).join(" ")}`);
+// The awards: every completed season from 2018 has a Waiver Pick and a Drop of the Year, the drop's
+// player let go by another team; Trade and Fleece of the Year in the seasons with trades, each pair
+// the two sides of one trade (every one so far between two teams)
+const personAt = (season: number, teamId: number) => full.teamSeasons.find((t) => t.season === season && t.teamId === teamId)!.person;
+const done = full.seasons.filter((s) => s.complete).map((s) => s.season);
+const awardsOk = done.every((y) => {
+  const a = seasonAwards(y);
+  const traded = y !== 2017 && full.teamSeasons.some((t) => t.season === y && t.trades > 0);
+  if (y === 2017) return !a.waiver.length && !a.drop.length && !a.trade.length && !a.fleece.length;
+  const pairs = a.trade.every((r) => a.fleece.some((f) => f.tradeId === r.tradeId && close(f.net, -r.net, 0.001)));
+  return a.waiver.length > 0 && a.drop.length > 0 && a.drop.every((x) => x.from !== null && x.from !== x.teamId) &&
+    (traded ? a.trade.length > 0 && a.fleece.length > 0 && pairs : !a.trade.length && !a.fleece.length);
+});
+check(awardsOk, "Waiver Pick and Drop of the Year from 2018; Trade and Fleece of the Year are one trade's two sides",
+  done.filter((y) => y >= 2018).map((y) => {
+    const a = seasonAwards(y);
+    const w = a.waiver.map((x) => `${personAt(y, x.teamId)} ${x.name} ${x.points.toFixed(1)}`).join("+");
+    const d = a.drop.map((x) => `${personAt(y, x.from!)} (${x.name} for ${personAt(y, x.teamId)})`).join("+");
+    const t = a.trade.map((r) => `${personAt(y, r.teamId)} +${r.net.toFixed(1)} over ${a.fleece.map((f) => personAt(y, f.teamId)).join("+")}`).join("+");
+    return `${y}: waiver ${w}; drop ${d}${t ? `; trade ${t}` : ""}`;
+  }).join(" | "));
+// The manager pages light each one up once a season (none tied so far)
+const since18 = done.filter((y) => y >= 2018).length;
+const pageAwards = ["waiver", "drop", "trade", "fleece"].map((k) => award(k).length);
+const tradeYears = done.filter((y) => seasonAwards(y).trade.length > 0).length;
+check(pageAwards.join() === [since18, since18, tradeYears, tradeYears].join(), "the four new achievements light up once a season each",
+  `waiver, drop, trade, fleece: ${pageAwards.join(", ")}`);
+
+// Standings (Round 10): Career Records, Season Averages and Power Rankings, left to right; Power
+// Rankings is the default
+check(VIEWS.map((v) => v.label).join() === "Career Records,Season Averages,Power Rankings" && DEFAULT_VIEW === "game",
+  "the Standings' views are Career Records, Season Averages and Power Rankings", VIEWS.map((v) => v.label).join(", "));
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

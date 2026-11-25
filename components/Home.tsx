@@ -36,9 +36,10 @@ export function HomeWithParams({ data }: { data: HomeData }) {
 
 // The site owner's Round 8 home page (2026-11-20): four square cards, two by two on a phone and one
 // row on wider screens. Since Round 9 (2026-11-23) the home page is the site's menu: no nav tabs, and
-// four smaller boxes under the cards for the other pages. 2026 Standings opens the season's page and
-// The Mahaan Bakaree the reigning champion's page; Pancake Watch and News open in place. Each shows
-// the other three cards as pills along the top.
+// four smaller boxes for the other pages. Round 10 (2026-11-25) moved the boxes above the cards: all
+// four on wider screens; on a phone Standings and Teams, with Records and the Hall below the cards.
+// 2026 Season opens the season's page and The Mahaan Bakaree the reigning champion's page; Pancake
+// Watch and News open in place. Each shows the other three cards as pills along the top.
 export function Home({ data, view }: { data: HomeData; view: View | null }) {
   const name = (slug: string) => data.names[slug] ?? slug;
   const links: HomeLinks = { season: data.standings.season, champ: data.champ?.person ?? null };
@@ -61,6 +62,7 @@ export function Home({ data, view }: { data: HomeData; view: View | null }) {
   const latest = data.news[0];
   return (
     <div className="space-y-3">
+      <Menu items={MENU} label="Pages" />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Square title={title("standings")} href={homeHref("standings", links)}>
           <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-600 text-4xl font-extrabold text-white" aria-hidden>
@@ -113,29 +115,42 @@ export function Home({ data, view }: { data: HomeData; view: View | null }) {
         </Square>
       </div>
 
-      {/* The rest of the site, in place of the nav tabs (Round 9) */}
-      {/* Rows of equal height, though "Hall of Mahaan Bakaree" takes three lines on a phone */}
-      <nav aria-label="Pages" className="grid auto-rows-fr grid-cols-2 gap-3 md:grid-cols-4">
-        {MENU.map((m) => (
-          <Link key={m.href} href={m.href} className="flex min-h-16 items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 px-3.5 py-3 transition-colors hover:border-zinc-700">
-            <span className="text-2xl leading-none" aria-hidden>
-              {m.icon}
-            </span>
-            <span className="text-xs leading-tight font-semibold tracking-wider text-zinc-200 uppercase sm:text-sm">{m.label}</span>
-          </Link>
-        ))}
-      </nav>
+      <Menu items={MENU.filter((m) => m.phoneBelow)} label="More pages" phoneOnly />
     </div>
   );
 }
 
-// The site owner's three boxes (Round 9), plus Teams (Luke's pick), since the home page has no nav
-const MENU = [
-  { href: "/leaderboard", label: "Leaderboard", icon: "📊" },
-  { href: "/hall-of-mahaan-bakaree", label: "Hall of Mahaan Bakaree", icon: "🏆" },
-  { href: "/records", label: "Records", icon: "📜" },
+// The rest of the site, in place of the nav tabs (Round 9): the site owner's three boxes plus Teams
+// (Luke's pick), renamed and reordered in Round 10. On a phone the last two sit below the cards.
+type MenuItem = { href: string; label: string; icon: string; phoneBelow?: boolean };
+const MENU: MenuItem[] = [
+  { href: "/standings", label: "Standings", icon: "📊" },
   { href: "/teams", label: "Teams", icon: "👥" },
+  { href: "/records", label: "Records", icon: "📜", phoneBelow: true },
+  { href: "/hall-of-mahaan-bakaree", label: "Hall of Mahaan Bakaree", icon: "🏆", phoneBelow: true },
 ];
+
+// Rows as tall as three lines of text, since "Hall of Mahaan Bakaree" takes three on a phone
+function Menu({ items, label, phoneOnly = false }: { items: MenuItem[]; label: string; phoneOnly?: boolean }) {
+  return (
+    <nav aria-label={label} className={`grid grid-cols-2 gap-3 md:grid-cols-4 ${phoneOnly ? "md:hidden" : ""}`}>
+      {items.map((m) => (
+        <Link
+          key={m.href}
+          href={m.href}
+          className={`min-h-[4.5rem] items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 px-3.5 py-3 transition-colors hover:border-zinc-700 md:min-h-16 ${
+            m.phoneBelow && !phoneOnly ? "hidden md:flex" : "flex"
+          }`}
+        >
+          <span className="text-2xl leading-none" aria-hidden>
+            {m.icon}
+          </span>
+          <span className="text-xs leading-tight font-semibold tracking-wider text-zinc-200 uppercase sm:text-sm">{m.label}</span>
+        </Link>
+      ))}
+    </nav>
+  );
+}
 
 // Who's in danger of last place, or, in the off-season, the season's last place
 function PancakeCardBody({ data, name }: { data: HomeData; name: (slug: string) => string }) {

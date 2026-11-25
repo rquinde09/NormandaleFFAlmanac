@@ -11,9 +11,8 @@ export default function RecordsPage() {
   const active = new Set(league.managers.filter((m) => m.active).map((m) => m.slug));
   return (
     <>
-      <PageTitle sub="Every game since 2017 counts. Season records use completed seasons only; League records are all-time totals. With Active on, game records count only games between two active managers.">
-        Records
-      </PageTitle>
+      {/* No description under the title (the site owner, Round 10) */}
+      <PageTitle>Records</PageTitle>
       <Suspense>
         <RecordsView all={recordSet(league)} active={recordSet(league, (p) => active.has(p))} />
       </Suspense>
