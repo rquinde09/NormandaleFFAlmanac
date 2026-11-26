@@ -13,6 +13,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { isStarter, readLineups, type RawSide } from "@/lib/bench";
+import { readPlayers } from "@/lib/injuries";
 import { readTrades } from "@/lib/playcalls";
 
 // "unknown": a 2017 starter the team didn't draft (a pickup or a trade; ESPN keeps no way to tell)
@@ -136,14 +137,28 @@ export function acquisitions(season: number): Acquisitions {
 // What one trade did for one of its teams (Trade of the Year and Fleece of the Year): what the players
 // it got scored in its starting lineup, minus what the players it sent scored for the team that got
 // them, each from the trade until he left that roster, as Trade IQ counts a season. A trade's nets add
-// up to zero, and a team's nets add up to its Trade IQ.
-export type TradeResult = { season: number; tradeId: string; teamId: number; partners: number[]; net: number; got: Stint[]; sent: Stint[] };
+// up to zero, and a team's nets add up to its Trade IQ. `got` and `sent` are the players who played
+// for their new team; `received` and `gave` name every player in the trade (Round 11: "I am okay to
+// mention all the players involved"), those who scored most first.
+export type TradeResult = {
+  season: number;
+  tradeId: string;
+  teamId: number;
+  partners: number[];
+  net: number;
+  got: Stint[];
+  sent: Stint[];
+  received: string[];
+  gave: string[];
+};
 
 const byPoints = (a: Stint, b: Stint) => b.points - a.points || a.name.localeCompare(b.name);
 
 export function tradeResults(season: number): TradeResult[] {
   const byTrade = new Map<string, Stint[]>();
   for (const s of acquisitions(season).stints) if (s.how === "trade") byTrade.set(s.tradeId!, [...(byTrade.get(s.tradeId!) ?? []), s]);
+  const legs = new Map((readTrades(season)?.trades ?? []).map((t) => [t.id, t.legs]));
+  const names = new Map((readPlayers(season)?.players ?? []).map((p) => [p.playerId, p.fullName ?? `Player ${p.playerId}`]));
   const out: TradeResult[] = [];
   for (const [tradeId, list] of byTrade) {
     for (const teamId of new Set(list.flatMap((s) => [s.teamId, s.from!]))) {
@@ -151,7 +166,15 @@ export function tradeResults(season: number): TradeResult[] {
       const sent = list.filter((s) => s.from === teamId).sort(byPoints);
       const net = got.reduce((n, s) => n + cents(s.points), 0) - sent.reduce((n, s) => n + cents(s.points), 0);
       const partners = [...new Set([...got.map((s) => s.from!), ...sent.map((s) => s.teamId)])];
-      out.push({ season, tradeId, teamId, partners, net: net / 100, got, sent });
+      // Every player in the trade, those who played for their new team first, by points
+      const every = (players: number[], played: Stint[]) => [
+        ...played.map((s) => s.name),
+        ...players.filter((id) => !played.some((s) => s.playerId === id)).map((id) => names.get(id) ?? `Player ${id}`).sort(),
+      ];
+      const trade = legs.get(tradeId) ?? [];
+      const received = every(trade.filter((l) => l.toTeamId === teamId).map((l) => l.playerId), got);
+      const gave = every(trade.filter((l) => l.fromTeamId === teamId).map((l) => l.playerId), sent);
+      out.push({ season, tradeId, teamId, partners, net: net / 100, got, sent, received, gave });
     }
   }
   return out;
@@ -160,9 +183,11 @@ export function tradeResults(season: number): TradeResult[] {
 // The season's awards from these (Round 10), all tied entries included. Waiver Pick of the Year: the
 // pickup who scored the most for the team that picked him up. Drop of the Year: of the players a team
 // let go (drafted, picked up or traded for), the one who then scored the most for the team that picked
-// him up; it goes to the team that let him go. Trade of the Year and Fleece of the Year: the biggest
-// gain and the biggest loss in one trade. Each needs whole rosters (2018 on), the trades their
-// details.
+// him up; it goes to the team that let him go. Since Round 11 (the site owner, 2026-11-25) both count
+// running backs, receivers and tight ends only: "Its too easy for QBs to score a ton of points".
+// Trade of the Year and Fleece of the Year: the biggest gain and the biggest loss in one trade. Each
+// needs whole rosters (2018 on), the trades their details.
+export const AWARD_POSITIONS = new Set([2, 3, 4]); // defaultPositionId: RB, WR, TE
 export type SeasonAwards = { waiver: Stint[]; drop: Stint[]; trade: TradeResult[]; fleece: TradeResult[] };
 
 const tops = <T,>(list: T[], value: (x: T) => number) => {
@@ -173,7 +198,7 @@ const tops = <T,>(list: T[], value: (x: T) => number) => {
 export function seasonAwards(season: number): SeasonAwards {
   const a = acquisitions(season);
   if (!a.rosters) return { waiver: [], drop: [], trade: [], fleece: [] };
-  const pickups = a.stints.filter((s) => s.how === "pickup");
+  const pickups = a.stints.filter((s) => s.how === "pickup" && AWARD_POSITIONS.has(s.position ?? -1));
   const results = tradeResults(season);
   return {
     waiver: tops(pickups, (s) => s.points),

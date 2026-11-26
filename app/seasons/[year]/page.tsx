@@ -49,6 +49,7 @@ export default async function SeasonPage({ params }: Params) {
     pa: r.t.all.pa,
     rankChange: r.rankChange,
     trades: r.t.trades,
+    injuries: r.t.injuries,
     review: r.review,
   }));
 

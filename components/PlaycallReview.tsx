@@ -17,6 +17,9 @@ type Stat = {
   format: (v: number) => string;
   words: Record<Tone, [string, string]>; // the verdict and the line after it
   missing?: (p: SeasonPoint) => string; // the row without a number that season
+  // Injuries (Round 11): the row shows counts (the team's, and the league's most and fewest at the
+  // ends) around the league's average, where other rows show zero
+  counts?: boolean;
 };
 
 const wins = (v: number) => plusMinus(v, Number.isInteger(v) ? 0 : 1);
@@ -120,6 +123,22 @@ const STATS: Record<ReviewKey, Stat> = {
       even: ["Even", ""],
     },
   },
+  // Round 11 (the site owner, 2026-11-25): starters who got hurt, against the league's average
+  injuries: {
+    key: "injuries",
+    label: "Injuries",
+    bad: "Banged up",
+    good: "Healthy",
+    digits: 1,
+    format: (v) => plusMinus(v, 1),
+    counts: true,
+    words: {
+      good: ["Healthy", "Fewer starters got hurt than league mates"],
+      bad: ["Banged up", "More starters got hurt than league mates"],
+      even: ["Even", "As many starters got hurt as the league average"],
+    },
+    missing: (p) => `ESPN has no ${p.season} game logs`,
+  },
 };
 
 // The two boxes (Round 10): the manager's decisions, and what the season was expected to bring.
@@ -145,6 +164,7 @@ const GROUPS: Record<ReviewGroup, { title: string; keys: ReviewKey[]; counted: s
       "Odds: wins minus ESPN’s projected wins. ESPN’s favorite each game is the lineup with the higher projected score. From 2018.",
       "Luck: wins minus expected wins. Each week a team expects the share of the league it outscored.",
       "Streaks: the season’s longest winning (W) or losing (L) streak, whichever is longer.",
+      "Injuries: players who had started for the team that season and got hurt while on it, counted when they missed their NFL team’s next two games (byes skipped). The middle of the bar is the league’s average. ESPN keeps no injury reports for past weeks, only whether each player played, so a suspension or a benching counts too. From 2018.",
     ],
   },
 };
@@ -203,7 +223,9 @@ function Row({ stat, row, point }: { stat: Stat; row: ReviewRow; point: SeasonPo
   const [verdict, line] = tone === null ? [noTrades ? "No trades" : (stat.missing?.(point) ?? ""), ""] : stat.words[tone];
   // Trades: "Trades helped your season" after more than one
   const said = stat.key === "trade" && point.facts.trades > 1 ? line.replace(/^Trade /, "Trades ") : line;
-  const show = (n: number) => (n === 0 ? "0" : stat.format(n));
+  const average = stat.counts ? (row.average ?? null) : null;
+  // A count row shows the counts: the team's is the average minus its value
+  const show = (n: number) => (average !== null ? String(Math.round(average - n)) : n === 0 ? "0" : stat.format(n));
   // The Roster IQ seed line (Round 5), kept where the best lineup would have moved the seed up
   const seed =
     stat.key === "roster" && v !== null && point.facts.optimizedSeed !== null && point.facts.optimizedSeed < point.facts.seed
@@ -232,7 +254,7 @@ function Row({ stat, row, point }: { stat: Stat; row: ReviewRow; point: SeasonPo
             {v !== null && <span className="text-zinc-400">{show(row.lo)} </span>}
             <span className="uppercase tracking-wide">{stat.bad}</span>
           </span>
-          <span className="absolute left-1/2 -translate-x-1/2 text-zinc-600">0</span>
+          <span className="absolute left-1/2 -translate-x-1/2 text-zinc-600">{average !== null ? `avg ${average.toFixed(1)}` : "0"}</span>
           <span className="absolute right-0 text-right">
             <span className="uppercase tracking-wide">{stat.good}</span>
             {v !== null && <span className="text-zinc-400"> {show(row.hi)}</span>}

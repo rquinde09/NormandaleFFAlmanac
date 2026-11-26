@@ -1,9 +1,9 @@
 // What a manager's page shows beyond the standings: the Manager Performance chart with its Playcall
 // Review, head-to-head numbers against each opponent and the achievements (the site owner's notes,
 // Rounds 2–7, 2026-11-07 to 2026-11-18). Counting rules are in CLAUDE.md.
-import { seasonAwards, type Stint, type TradeResult } from "@/lib/acquisitions";
+import { seasonAwards, type TradeResult } from "@/lib/acquisitions";
 import { topStarters } from "@/lib/champions";
-import { pct, pts, record, signed } from "@/lib/format";
+import { ordinal, pct, pts, record, score, signed } from "@/lib/format";
 import { DUNZO_OVER, ICE_WITHIN, type Game, type Kind, type League, type TeamSeason, careerTotals, luck, managerBySlug, marginCents, odds, winPct as careerWinPct } from "@/lib/league";
 import { DECISIONS, FATE, type ReviewKey } from "@/lib/review";
 import { rosterBox, type RosterBox } from "@/lib/roster";
@@ -122,6 +122,9 @@ export type ReviewRow = {
   lo: number; // the league's worst that season, at most 0: the bar's left end
   hi: number; // the league's best that season, at least 0: its right end
   place: number | null; // 1 = the league's best that season; ties share a place
+  // Injuries (Round 11): the league's average count that season. The value is the average minus the
+  // team's count, so the count is average − value.
+  average?: number | null;
 };
 
 export type SeasonPoint = {
@@ -177,11 +180,13 @@ function average(field: TeamSeason[], value: (t: TeamSeason) => number | null) {
 // standings). Draft IQ (Round 10) is the starting-lineup points of the team's draft picks while it had
 // them, minus the league's average; Waiver IQ the same for its pickups; Roster IQ the league's average
 // points left on the bench minus the team's own. So each adds up to zero over a season, like Luck,
-// Odds and Trade IQ. Trade IQ is 0 for a team that made no trade.
+// Odds and Trade IQ. Trade IQ is 0 for a team that made no trade. Injuries (Round 11) is the league's
+// average count of injured starters minus the team's, so fewer is better, like Roster IQ.
 export function playcallValues(field: TeamSeason[]): Map<TeamSeason, Record<ReviewKey, number | null>> {
   const drafted = average(field, (t) => t.draftPoints);
   const picked = average(field, (t) => t.pickupPoints);
   const benched = average(field, (t) => t.bench);
+  const hurt = average(field, (t) => t.injuries);
   const minus = (value: number | null, avg: number | null) => (value === null || avg === null ? null : value - avg);
   return new Map(
     field.map((t) => [
@@ -194,6 +199,7 @@ export function playcallValues(field: TeamSeason[]): Map<TeamSeason, Record<Revi
         odds: odds(t),
         luck: luck(t),
         streak: signedStreak(t),
+        injuries: t.injuries === null || hurt === null ? null : hurt - t.injuries,
       },
     ]),
   );
@@ -203,6 +209,7 @@ const REVIEW_KEYS: ReviewKey[] = [...DECISIONS, ...FATE];
 
 function review(t: TeamSeason, field: TeamSeason[]): Record<ReviewKey, ReviewRow> {
   const all = playcallValues(field);
+  const injuries = average(field, (x) => x.injuries);
   return Object.fromEntries(
     REVIEW_KEYS.map((key) => {
       const value = all.get(t)![key];
@@ -214,6 +221,7 @@ function review(t: TeamSeason, field: TeamSeason[]): Record<ReviewKey, ReviewRow
           lo: Math.min(0, ...others),
           hi: Math.max(0, ...others),
           place: value === null ? null : 1 + others.filter((o) => cents(o) > cents(value)).length,
+          ...(key === "injuries" ? { average: injuries } : {}),
         },
       ];
     }),
@@ -279,14 +287,15 @@ export function careerStats(league: League, person: string): { label: string; va
 
 // ---- Achievements ----
 
-export type Tier = "goat" | "pancake";
+// Three tiers since Round 11 (the site owner, 2026-11-25): GOAT Tier, Season Honors and Pancake Tier
+export type Tier = "goat" | "honors" | "pancake";
 
 export type Achievement = {
   key: string;
   tier: Tier;
   icon: string;
   title: string;
-  detail: string; // shown when tapped: what earns it, in the site owner's words (2026-11-14)
+  detail: string; // shown when tapped: what earns it, in the site owner's words (Round 11's table)
   fine?: string; // how it's counted
   earned: boolean;
   note?: string; // under the icon once earned: the seasons ("’18 ’23")
@@ -294,14 +303,30 @@ export type Achievement = {
 };
 
 const short = (seasons: number[]) => (seasons.length ? seasons.map((s) => `’${String(s).slice(2)}`).join(" ") : undefined);
-const bySeasons = (seasons: number[]) => ({ earned: seasons.length > 0, note: short(seasons), seasons: seasons.map((season) => ({ season })) });
+const listed = (seasons: { season: number; extra?: string }[]) => ({
+  earned: seasons.length > 0,
+  note: short([...new Set(seasons.map((x) => x.season))]),
+  seasons,
+});
+const bySeasons = (seasons: number[]) => listed(seasons.map((season) => ({ season })));
+// "A", "A and B", "A, B and C"
+const and = (names: string[]) => (names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : (names[0] ?? "nobody"));
 
-// Two tiers, switched by tabs (the site owner, 2026-11-14). Earned in any completed season lights
-// the icon; season PF and PA count every game that season, and ties share an award.
+// Earned in any completed season lights the icon; season PF and PA count every game that season, and
+// ties share an award. Each tier is in the order of the site owner's Round 11 table, with his criteria
+// as the descriptions.
 export function achievements(league: League, person: string): Achievement[] {
   const complete = new Set(league.seasons.filter((s) => s.complete).map((s) => s.season));
+  const info = new Map(league.seasons.map((s) => [s.season, s]));
   const done = league.teamSeasons.filter((t) => t.person === person && complete.has(t.season)).sort((a, b) => a.season - b.season);
   const years = (pick: (t: TeamSeason) => boolean) => done.filter(pick).map((t) => t.season);
+  const won = <T,>(pick: (t: TeamSeason) => T[], extra: (x: T, t: TeamSeason) => string) =>
+    done.flatMap((t) => pick(t).map((x) => ({ season: t.season, extra: extra(x, t) })));
+  const nick = (season: number, teamId: number) => {
+    const slug = league.teamSeasons.find((x) => x.season === season && x.teamId === teamId)?.person;
+    return (slug && managerBySlug(league, slug)?.nickname) ?? "another team";
+  };
+  const before = (t: TeamSeason) => league.teamSeasons.find((x) => x.person === t.person && x.season === t.season - 1);
 
   // Best (or worst) in the league that season
   const leads = (value: (t: TeamSeason) => number, most: boolean) =>
@@ -309,78 +334,124 @@ export function achievements(league: League, person: string): Achievement[] {
       const field = league.teamSeasons.filter((x) => x.season === t.season).map((x) => cents(value(x)));
       return cents(value(t)) === (most ? Math.max(...field) : Math.min(...field));
     });
-  // Round 8 (the site owner, 2026-11-20): a season with any game won by a point or less (Ice in the
-  // Veins), or lost by more than DUNZO_OVER (Dunzo), against anyone, retired managers included
-  const anyGame = (pick: (g: Game, won: boolean) => boolean) =>
-    years((t) =>
-      league.games.some((g) => {
-        if (g.season !== t.season || g.winner === "TIE") return false;
-        const side = g.home.teamId === t.teamId ? "HOME" : g.away.teamId === t.teamId ? "AWAY" : null;
-        return side !== null && pick(g, g.winner === side);
-      }),
-    );
+  // The games a team won (or lost) that season, against anyone, retired managers included (Round 8)
+  const gamesOf = (t: TeamSeason, pick: (g: Game, won: boolean) => boolean) =>
+    league.games.filter((g) => {
+      if (g.season !== t.season || g.winner === "TIE") return false;
+      const side = g.home.teamId === t.teamId ? "HOME" : g.away.teamId === t.teamId ? "AWAY" : null;
+      return side !== null && pick(g, g.winner === side);
+    });
   const MARGINS = "Every game counts: regular season and playoffs, against anyone.";
-
-  const mvfp = [...topStarters(league).values()].flat().filter((p) => p.person === person).sort((a, b) => a.season - b.season);
   const EVERY_GAME = "In one season, every game counted: regular season and playoffs.";
-
-  // Round 10 (the site owner, 2026-11-25): the season's best pickup and the costliest drop, and both
-  // sides of its most lopsided trade (lib/acquisitions.ts). Each needs whole rosters, from 2018 on.
-  const nick = (season: number, teamId: number) => {
-    const slug = league.teamSeasons.find((x) => x.season === season && x.teamId === teamId)?.person;
-    return (slug && managerBySlug(league, slug)?.nickname) ?? "another team";
-  };
-  const listed = (seasons: { season: number; extra?: string }[]) => ({
-    earned: seasons.length > 0,
-    note: short([...new Set(seasons.map((x) => x.season))]),
-    seasons,
-  });
-  const players = (list: Stint[]) => (list.length > 1 ? `${list[0].name} and ${list.length - 1} more` : (list[0]?.name ?? "nobody"));
-  const partners = (r: TradeResult) => r.partners.map((team) => nick(r.season, team)).join(" and ");
-  const won = <T,>(pick: (t: TeamSeason) => T[], extra: (x: T, t: TeamSeason) => string) =>
-    done.flatMap((t) => pick(t).map((x) => ({ season: t.season, extra: extra(x, t) })));
-  const waiverPicks = won((t) => seasonAwards(t.season).waiver.filter((x) => x.teamId === t.teamId), (x) => `${x.name}, ${pts(x.points)} pts`);
-  const drops = won((t) => seasonAwards(t.season).drop.filter((x) => x.from === t.teamId), (x, t) => `${x.name}, ${pts(x.points)} pts for ${nick(t.season, x.teamId)}`);
-  const bestTrades = won((t) => seasonAwards(t.season).trade.filter((r) => r.teamId === t.teamId), (r) => `got ${players(r.got)} from ${partners(r)}: ${signed(r.net)} pts`);
-  const fleeces = won((t) => seasonAwards(t.season).fleece.filter((r) => r.teamId === t.teamId), (r) => `sent ${players(r.sent)} to ${partners(r)}: ${signed(r.net)} pts`);
   const ROSTERS = "ESPN has whole rosters from 2018 on.";
 
+  // Round 11: the third championship and every one after it make a Dynasty Manager
+  const titles = done.filter((t) => t.finalRank === 1);
+  const dynasty = titles.slice(2).map((t, i) => ({ season: t.season, extra: `${ordinal(i + 3)} title` }));
+
+  // Comeback Manager (Round 11): of the managers who missed the playoffs the season before, the
+  // biggest climb in the final standings
+  const climb = (t: TeamSeason) => {
+    const prev = before(t);
+    const cut = info.get(t.season - 1)?.playoffTeams;
+    return prev?.finalRank && t.finalRank && cut !== undefined && prev.seed > cut ? prev.finalRank - t.finalRank : null;
+  };
+  const comebacks = won(
+    (t) => {
+      const mine = climb(t);
+      if (mine === null || mine <= 0) return [];
+      const best = Math.max(...league.teamSeasons.filter((x) => x.season === t.season).map((x) => climb(x) ?? 0));
+      return mine === best ? [before(t)!] : [];
+    },
+    (prev, t) => `${ordinal(prev.finalRank!)} in ${prev.season} → ${ordinal(t.finalRank!)}`,
+  );
+
+  const mvfp = [...topStarters(league).values()].flat().filter((p) => p.person === person).sort((a, b) => a.season - b.season);
+
+  // Round 10's awards (lib/acquisitions.ts). Round 11: Waiver Pick and Drop count RBs, WRs and TEs
+  // only, and a trade names every player in it.
+  const waiverPicks = won((t) => seasonAwards(t.season).waiver.filter((x) => x.teamId === t.teamId), (x) => `${x.name}, ${pts(x.points)} pts`);
+  const drops = won((t) => seasonAwards(t.season).drop.filter((x) => x.from === t.teamId), (x, t) => `${x.name}, ${pts(x.points)} pts for ${nick(t.season, x.teamId)}`);
+  const partners = (r: TradeResult) => r.partners.map((team) => nick(r.season, team)).join(" and ");
+  const bestTrades = won((t) => seasonAwards(t.season).trade.filter((r) => r.teamId === t.teamId), (r) => `got ${and(r.received)} from ${partners(r)} for ${and(r.gave)}: ${signed(r.net)} pts`);
+  const fleeces = won((t) => seasonAwards(t.season).fleece.filter((r) => r.teamId === t.teamId), (r) => `sent ${and(r.gave)} to ${partners(r)} for ${and(r.received)}: ${signed(r.net)} pts`);
+
+  // Dunzo (Round 11: "include who they lost to and what the score was")
+  const dunzos = won(
+    (t) => gamesOf(t, (g, w) => !w && marginCents(g) > DUNZO_OVER * 100),
+    (g, t) => {
+      const [me, them] = g.home.teamId === t.teamId ? [g.home, g.away] : [g.away, g.home];
+      return `lost ${score(me.points)}–${score(them.points)} to ${managerBySlug(league, them.person)!.nickname}, week ${g.week}`;
+    },
+  );
+
+  // Injury Bug (Round 11): the most injured starters that season (lib/injuries.ts)
+  const injuryBug = won(
+    (t) => {
+      const field = league.teamSeasons.filter((x) => x.season === t.season && x.injuries !== null).map((x) => x.injuries!);
+      return t.injuries !== null && t.injuries > 0 && t.injuries === Math.max(...field) ? [t] : [];
+    },
+    (t) => `${t.injuries} injured starters`,
+  );
+
   return [
-    { key: "goat", tier: "goat", icon: "🐐", title: "The Mahaan Bakaree", detail: "Won a Championship", ...bySeasons(years((t) => t.finalRank === 1)) },
-    { key: "moty", tier: "goat", icon: "🔥", title: "Manager of the Year", detail: "Scored the Most Points For", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, true)) },
-    { key: "seed", tier: "goat", icon: "🥇", title: "The #1 Seed", detail: "1st Place in the Regular Season", ...bySeasons(years((t) => t.seed === 1)) },
+    // GOAT Tier
+    { key: "goat", tier: "goat", icon: "🐐", title: "The Mahaan Bakaree", detail: "Wins the championship", ...bySeasons(titles.map((t) => t.season)) },
+    { key: "dynasty", tier: "goat", icon: "🏰", title: "Dynasty Manager", detail: "Wins 3+ championships", fine: "Earned with the third title, and again with each one after it.", ...listed(dynasty) },
+    {
+      key: "cinderella",
+      tier: "goat",
+      icon: "👠",
+      title: "Playoff Cinderella",
+      detail: "Wins as the lowest playoff seed",
+      fine: "The champion was the last of that season’s playoff seeds: 6th of 6 in 2017–2019, 8th of 8 in 2020–2024, 7th of 7 in 2025.",
+      ...listed(won((t) => (t.finalRank === 1 && t.seed === info.get(t.season)!.playoffTeams ? [t] : []), (t) => `${ordinal(t.seed)} seed of ${t.seed}`)),
+    },
+    {
+      key: "revenge",
+      tier: "goat",
+      icon: "⚔️",
+      title: "Revenge Tour",
+      detail: "Wins after finishing last the previous season",
+      ...listed(won((t) => (t.finalRank === 1 && before(t)?.lastPlace ? [before(t)!] : []), (prev) => `last in ${prev.season}`)),
+    },
+    { key: "moty", tier: "goat", icon: "🔥", title: "Manager of the Year", detail: "Scores the most points in a season", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, true)) },
+    { key: "seed", tier: "goat", icon: "🥇", title: "The #1 Seed", detail: "Finishes regular season with the best record", fine: "ESPN’s #1 seed: a tie goes to the most points.", ...bySeasons(years((t) => t.seed === 1)) },
+
+    // Season Honors
     {
       key: "mvfp",
-      tier: "goat",
+      tier: "honors",
       icon: "💪",
       title: "MVFP",
-      detail: "Had the highest scoring player in the league",
-      fine: "Most points by one player in a team's starting lineup that season, playoffs included.",
-      earned: mvfp.length > 0,
-      note: short([...new Set(mvfp.map((p) => p.season))]),
-      seasons: mvfp.map((p) => ({ season: p.season, extra: `${p.name}, ${pts(p.points)} pts` })),
+      detail: "Owns the league’s Most Valuable Fantasy Player",
+      fine: "Most points by one player in a team’s starting lineup that season, playoffs included.",
+      ...listed(mvfp.map((p) => ({ season: p.season, extra: `${p.name}, ${pts(p.points)} pts` }))),
     },
     // Round 7 (2026-11-18); Round 8 made it any win within a point (2026-11-20)
-    { key: "ice", tier: "goat", icon: "🧊", title: "Ice in the Veins", detail: "Won a Game Within a Point",
-      fine: `Won by ${ICE_WITHIN} point or less. ${MARGINS}`, ...bySeasons(anyGame((g, won) => won && marginCents(g) <= ICE_WITHIN * 100)) },
-    // Round 10 (2026-11-25)
-    { key: "waiver", tier: "goat", icon: "💎", title: "Waiver Pick of the Year", detail: "Had the Season's Best Waiver Pick",
-      fine: `The pickup (off waivers or free agency) who scored the most for his new team that season: in its starting lineup, every game, while it had him. ${ROSTERS}`,
+    { key: "ice", tier: "honors", icon: "🧊", title: "Ice in the Veins", detail: "Wins a matchup by a point or less",
+      fine: `Won by ${ICE_WITHIN} point or less. ${MARGINS}`, ...bySeasons(years((t) => gamesOf(t, (g, w) => w && marginCents(g) <= ICE_WITHIN * 100).length > 0)) },
+    { key: "waiver", tier: "honors", icon: "💎", title: "Waiver Pick of the Year", detail: "Makes the most impactful waiver acquisition",
+      fine: `The running back, receiver or tight end picked up (off waivers or free agency) who scored the most for his new team that season: in its starting lineup, every game, while it had him. ${ROSTERS}`,
       ...listed(waiverPicks) },
-    { key: "trade", tier: "goat", icon: "🤝", title: "Trade of the Year", detail: "Got the Most Points out of a Trade",
-      fine: "The season's biggest gain in one trade: what the players received scored in the starting lineup, minus what the players sent scored for their new team, each until he left that roster. ESPN has trade details from 2018 on.",
+    { key: "trade", tier: "honors", icon: "🤝", title: "Trade of the Year", detail: "Makes the most impactful trade",
+      fine: "The season’s biggest gain in one trade: what the players received scored in the starting lineup, minus what the players sent scored for their new team, each until he left that roster. ESPN has trade details from 2018 on.",
       ...listed(bestTrades) },
-    { key: "pancake", tier: "pancake", icon: "🥞", title: "The Pancake House", detail: "Last Place", ...bySeasons(years((t) => t.lastPlace)) },
-    { key: "choke", tier: "pancake", icon: "🧑‍🎨", title: "The Choke Artist", detail: "Runner Up", ...bySeasons(years((t) => t.finalRank === 2)) },
-    { key: "below-zero", tier: "pancake", icon: "🥶", title: "Below Zero", detail: "Scored the Least Points For", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, false)) },
-    { key: "dream", tier: "pancake", icon: "😢", title: "It Was Only A Dream", detail: "Most Points Against in a Season", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pa, true)) },
+    { key: "choke", tier: "honors", icon: "🧑‍🎨", title: "Choke Artist", detail: "Finishes second in the championship", ...bySeasons(years((t) => t.finalRank === 2)) },
+    { key: "comeback", tier: "honors", icon: "📈", title: "Comeback Manager", detail: "Biggest improvement after a poor season",
+      fine: "Of the managers who missed the playoffs the season before, the biggest climb in the final standings. From 2018.", ...listed(comebacks) },
+
+    // Pancake Tier
+    { key: "pancake", tier: "pancake", icon: "🥞", title: "The Pancake House", detail: "Finishes last in final standings", ...bySeasons(years((t) => t.lastPlace)) },
+    { key: "lowest-scoring", tier: "pancake", icon: "🥶", title: "Lowest Scoring Season", detail: "Scores the fewest points in a season", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pf, false)) },
+    { key: "dream", tier: "pancake", icon: "😢", title: "It Was Only a Dream", detail: "Allows the most points in a season", fine: EVERY_GAME, ...bySeasons(leads((t) => t.all.pa, true)) },
     // Luke, 2026-11-15
     {
       key: "benchwarmer",
       tier: "pancake",
       icon: "🪑",
       title: "The Benchwarmer",
-      detail: "Left the Most Points on the Bench",
+      detail: "Leaves the most potential points on the bench",
       fine: "In one season, every game counted: the best possible lineup each week minus the one started. ESPN has bench lineups from 2018 on.",
       ...bySeasons(
         years((t) => {
@@ -391,14 +462,16 @@ export function achievements(league: League, person: string): Achievement[] {
     },
     // Round 7's Got Blown Out, renamed Dunzo in Round 8: any loss by more than DUNZO_OVER, as rare as a
     // game decided by a point or less (2026-11-20)
-    { key: "dunzo", tier: "pancake", icon: "💥", title: "Dunzo", detail: `Lost a Game by More Than ${DUNZO_OVER} Points`,
-      fine: `As rare as a game won within a point. ${MARGINS}`, ...bySeasons(anyGame((g, won) => !won && marginCents(g) > DUNZO_OVER * 100)) },
-    // Round 10 (2026-11-25)
-    { key: "drop", tier: "pancake", icon: "🗑️", title: "Drop of the Year", detail: "Dropped a Player Who Scored the Most for His Next Team",
-      fine: `Of every player let go that season (drafted, picked up or traded for), the one who then scored the most for the team that picked him up. ${ROSTERS}`,
+    { key: "dunzo", tier: "pancake", icon: "💥", title: "Dunzo", detail: `Loses a matchup by more than ${DUNZO_OVER} points`,
+      fine: `As rare as a game won within a point. ${MARGINS}`, ...listed(dunzos) },
+    { key: "drop", tier: "pancake", icon: "🗑️", title: "Drop of the Year", detail: "Drops a player who scores the most points for their new team",
+      fine: `Of every running back, receiver and tight end let go that season (drafted, picked up or traded for), the one who then scored the most for the team that picked him up. ${ROSTERS}`,
       ...listed(drops) },
-    { key: "fleece", tier: "pancake", icon: "🐑", title: "Fleece of the Year", detail: "Lost the Most Points in a Trade",
-      fine: "The other side of the season's most lopsided trade: what the players sent scored for their new team, minus what the players received scored in the starting lineup. ESPN has trade details from 2018 on.",
+    { key: "injury", tier: "pancake", icon: "🐛", title: "Injury Bug", detail: "Has the most players suffer significant injuries",
+      fine: "The most starters hurt that season: players who had started for the team and then, while on it, missed their NFL team’s next two games. ESPN keeps no injury reports for past weeks, so a suspension or a benching counts too. From 2018.",
+      ...listed(injuryBug) },
+    { key: "fleece", tier: "pancake", icon: "🐑", title: "Fleece of the Year", detail: "Gets fleeced in a trade",
+      fine: "The other side of the season’s most lopsided trade: what the players sent scored for their new team, minus what the players received scored in the starting lineup. ESPN has trade details from 2018 on.",
       ...listed(fleeces) },
   ];
 }

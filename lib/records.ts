@@ -28,6 +28,7 @@ export type RecordCard = {
   title: string;
   subtitle: string;
   brief: string; // the description on a phone's small card: none on the match-up records
+  starred: boolean; // explained in "How the starred records are counted" at the bottom (Round 11)
   holder: RecordEntry | null;
   rest: RecordEntry[];
 };
@@ -47,11 +48,16 @@ export const SECTIONS: Record<RecordTab, { title: string; keys: string[] }[]> = 
     { title: "Point Records", keys: ["most-pf", "most-pa", "least-pa", "bench-season"] },
     { title: "Playcall Records", keys: ["trades", "luckiest", "unluckiest"] },
   ],
-  league: [{ title: "League Records", keys: ["blowout-wins", "blowout-losses", "close-wins", "close-losses"] }],
+  league: [{ title: "League Records", keys: ["blowout-wins", "blowout-losses", "close-wins", "close-losses", "injuries"] }],
 };
 export const MATCH_UP = new Set(SECTIONS.game[0].keys);
 
-const SINGULAR: Record<string, string> = { wins: "win", losses: "loss", trades: "trade" };
+// The records the notes at the bottom of the page explain, marked with a * (the site owner, Round 11,
+// 2026-11-25): The One Hit Wonder, the season projection, the bench, close games and blowouts, and
+// injured starters
+export const STARRED = new Set(["one-hit", "luckiest", "unluckiest", "bench-game", "bench-season", "blowout-wins", "blowout-losses", "close-wins", "close-losses", "injuries"]);
+
+const SINGULAR: Record<string, string> = { wins: "win", losses: "loss", trades: "trade", injuries: "injury" };
 const KIND_LABEL = { regular: "", playoff: " · playoffs", placement: " · placement", consolation: " · consolation" };
 export const when = (g: Game) => `${g.season} week ${g.week}${KIND_LABEL[g.kind]}`;
 const plusMinus = (n: number, digits = 1) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n).toFixed(digits)}`;
@@ -115,9 +121,16 @@ export function seasonEntry(league: League, def: RecordDef<SeasonRecordEntry>, {
 }
 
 // All-time close games and blowouts: the career W-L in them, with the margins added up (which break
-// ties) before the seasons, so a phone's truncated rows still show them
-export function leagueEntry(league: League, def: RecordDef<LeagueRecordEntry>, { person, split, value }: LeagueRecordEntry): RecordEntry {
+// ties) before the seasons, so a phone's truncated rows still show them. The Infirmary: the count
+// and the seasons with ESPN's game logs.
+export function leagueEntry(league: League, def: RecordDef<LeagueRecordEntry>, { person, split, injuries, value }: LeagueRecordEntry): RecordEntry {
   const who = managerBySlug(league, person)!.nickname;
+  const seasons = (n: number) => `${n} season${n === 1 ? "" : "s"}`;
+  if (injuries) {
+    const latest = injuries.latest ? ` · latest ${injuries.latest.name}, ${injuries.latest.season}` : "";
+    return { holder: who, who, value: count(value, def.unit), detail: `${seasons(injuries.seasons)} since 2018${latest}`, short: `${seasons(injuries.seasons)} since 2018` };
+  }
+  split = split!;
   const label = def.key.startsWith("close") ? "close games" : "blowouts";
   const by = def.key.endsWith("wins") ? split.wonBy : split.lostBy;
   return {
@@ -131,7 +144,7 @@ export function leagueEntry(league: League, def: RecordDef<LeagueRecordEntry>, {
 
 function toCard<E>(def: RecordDef<E>, entry: (e: E) => RecordEntry): RecordCard {
   const [first, ...rest] = def.entries.map(entry);
-  return { key: def.key, title: def.title, subtitle: def.subtitle, brief: MATCH_UP.has(def.key) ? "" : def.subtitle, holder: first ?? null, rest };
+  return { key: def.key, title: def.title, subtitle: def.subtitle, brief: MATCH_UP.has(def.key) ? "" : def.subtitle, starred: STARRED.has(def.key), holder: first ?? null, rest };
 }
 
 // Every record as cards, in the site owner's sections. `counts` limits them to the Active managers.

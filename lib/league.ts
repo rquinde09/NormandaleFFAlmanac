@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { acquisitions, pointsByHow } from "@/lib/acquisitions";
 import { benchGames, isStarter, lineupSides, readLineups, type BenchGame } from "@/lib/bench";
+import { injuries as seasonInjuries, type Injury } from "@/lib/injuries";
 import { optimizedSeeds, projectedWins, tradeNets } from "@/lib/playcalls";
 import type { Career } from "@/lib/standings";
 
@@ -73,6 +74,9 @@ export type TeamSeason = {
   // Round 7 (2026-11-18), every decided game: decided by under 7 points, or by more than 50
   close: MarginSplit;
   blowout: MarginSplit;
+  // Round 11 (2026-11-25), from lib/injuries.ts: starters hurt while on the team (missed their NFL
+  // team's next two games); null without ESPN's game logs (2017)
+  injuries: number | null;
 };
 
 // A playoff-week schedule entry: the winners bracket, placement games or the consolation ladder.
@@ -102,6 +106,9 @@ export type SeasonInfo = {
 // A game on the schedule that isn't decided yet (the season in progress), by ESPN team ID
 export type Upcoming = { season: number; week: number; kind: Kind; homeTeamId: number; awayTeamId: number };
 
+// An injured starter (lib/injuries.ts) and the manager whose team he was on
+export type InjuryEntry = Injury & { person: string };
+
 export type League = {
   managers: Manager[];
   seasons: SeasonInfo[];
@@ -109,6 +116,7 @@ export type League = {
   games: Game[];
   bracket: BracketEntry[];
   bench: BenchGame[];
+  injuries: InjuryEntry[]; // every season's, by the week each counted
   upcoming: Upcoming[];
   updatedAt: string | null;
 };
@@ -230,6 +238,7 @@ export function getLeague(): League {
   const games: Game[] = [];
   const bracket: BracketEntry[] = [];
   const bench: BenchGame[] = [];
+  const injured: InjuryEntry[] = [];
   const upcoming: Upcoming[] = [];
 
   for (const s of raw) {
@@ -291,6 +300,8 @@ export function getLeague(): League {
     const rosters = acquisitions(s.seasonId).rosters;
     const division = new Map(s.teams.map((t) => [t.id, t.divisionId ?? 0]));
     const optimized = complete && seasonBench.length ? optimizedSeeds(seasonGames, seasonBench, division) : null;
+    const hurt = seasonInjuries(s.seasonId);
+    injured.push(...(hurt ?? []).map((i) => ({ ...i, person: credit.get(i.teamId)! })));
 
     // Playoff weeks as scheduled, byes and undecided games included, in ESPN's (bracket) order
     const seed = new Map(s.teams.map((t) => [t.id, t.playoffSeed]));
@@ -372,6 +383,7 @@ export function getLeague(): League {
         pickupPoints: how && rosters ? (how.get(team.id)?.pickup ?? 0) : null,
         close: inPoints(splits.close),
         blowout: inPoints(splits.blowout),
+        injuries: hurt ? hurt.filter((i) => i.teamId === team.id).length : null,
       });
     }
   }
@@ -379,7 +391,7 @@ export function getLeague(): League {
   const metaFile = path.join(DATA_DIR, "meta.json");
   const updatedAt = fs.existsSync(metaFile) ? readJson<{ updatedAt: string }>(metaFile).updatedAt : null;
 
-  cached = { managers, seasons, teamSeasons, games, bracket, bench, upcoming, updatedAt };
+  cached = { managers, seasons, teamSeasons, games, bracket, bench, injuries: injured, upcoming, updatedAt };
   return cached;
 }
 
@@ -539,7 +551,8 @@ export function seasonRecords(league: League, top = 5, counts: (person: string) 
 // like the career line on the manager pages. Ties go to the margins added up (Luke's Round 7 pick):
 // the closer games first on the close-game records, the bigger margins first on the blowout records.
 export type CareerSplit = MarginSplit & { seasons: number };
-export type LeagueRecordEntry = { person: string; split: CareerSplit; value: number };
+// A close-game or blowout record has `split`; The Infirmary (Round 11) has `injuries`
+export type LeagueRecordEntry = { person: string; split?: CareerSplit; injuries?: CareerInjuries; value: number };
 
 // Counted from the games, so a league cut at any week (the record-break news) counts to that week.
 // `seasons` are the seasons the person has played a game in.
@@ -565,6 +578,26 @@ export function careerSplits(league: League, kind: "close" | "blowout"): Map<str
   return new Map([...out].map(([p, { years, ...r }]) => [p, { ...r, wonBy: r.wonBy / 100, lostBy: r.lostBy / 100, seasons: years.size }]));
 }
 
+// Injured starters over a career (Round 11, the site owner, 2026-11-25: "add whoever had the most
+// injuries as a league record"). Counted from league.injuries, so a league cut at a week counts to it;
+// `seasons` are the person's seasons with ESPN's game logs (2018 on).
+export type CareerInjuries = { count: number; seasons: number; latest: InjuryEntry | null };
+export function careerInjuries(league: League): Map<string, CareerInjuries> {
+  const out = new Map<string, CareerInjuries>();
+  for (const t of league.teamSeasons.filter((x) => x.injuries !== null)) {
+    const row = out.get(t.person) ?? { count: 0, seasons: 0, latest: null };
+    row.seasons += 1;
+    out.set(t.person, row);
+  }
+  for (const i of league.injuries) {
+    const row = out.get(i.person);
+    if (!row) continue;
+    row.count += 1;
+    row.latest = i;
+  }
+  return out;
+}
+
 // `counts` keeps the managers the Active switch shows, as on the season records
 export function leagueRecords(league: League, top = 5, counts: (person: string) => boolean = () => true): RecordDef<LeagueRecordEntry>[] {
   const list = (kind: "close" | "blowout", value: (s: CareerSplit) => number, tie: (a: CareerSplit, b: CareerSplit) => number) =>
@@ -573,6 +606,12 @@ export function leagueRecords(league: League, top = 5, counts: (person: string) 
       .sort(([pa, a], [pb, b]) => value(b) - value(a) || tie(a, b) || pa.localeCompare(pb))
       .slice(0, top)
       .map(([person, split]) => ({ person, split, value: value(split) }));
+  // Ties go to fewer seasons: more injured starters a season
+  const hurt = [...careerInjuries(league)]
+    .filter(([person, c]) => counts(person) && c.count > 0)
+    .sort(([pa, a], [pb, b]) => b.count - a.count || a.seasons - b.seasons || pa.localeCompare(pb))
+    .slice(0, top)
+    .map(([person, injuries]) => ({ person, injuries, value: injuries.count }));
   return [
     { key: "blowout-wins", title: "The Steamroller", subtitle: `Most wins by more than ${BLOWOUT_OVER} points`, unit: "wins",
       entries: list("blowout", (s) => s.w, (a, b) => cents(b.wonBy) - cents(a.wonBy)) },
@@ -582,6 +621,8 @@ export function leagueRecords(league: League, top = 5, counts: (person: string) 
       entries: list("close", (s) => s.w, (a, b) => cents(a.wonBy) - cents(b.wonBy)) },
     { key: "close-losses", title: "Heartbreak Hotel", subtitle: `Most losses by under ${CLOSE_UNDER} points`, unit: "losses",
       entries: list("close", (s) => s.l, (a, b) => cents(a.lostBy) - cents(b.lostBy)) },
+    // The name is a placeholder until the site owner picks one
+    { key: "injuries", title: "The Infirmary", subtitle: "Most injured starters", unit: "injuries", entries: hurt },
   ];
 }
 

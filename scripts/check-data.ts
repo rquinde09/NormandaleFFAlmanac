@@ -17,6 +17,9 @@
 // - Round 9: the Leaderboard's Record sort, the career row and where the home cards go
 // - Round 10: draft, pickup and trade points add up to points for; Draft IQ and Waiver IQ; the
 //   waiver, drop, trade and fleece awards; the Standings' view names
+// - Round 11: injured starters (known cases, counts, Injuries adds up to zero, The Infirmary and
+//   Injury Bug), the three achievement tiers and the new awards, waiver and drop positions, every
+//   player in a trade, the starred records and the Standings' order
 // Usage: npm run check
 import fs from "node:fs";
 import path from "node:path";
@@ -25,8 +28,10 @@ import {
   CLOSE_UNDER,
   DUNZO_OVER,
   ICE_WITHIN,
+  careerInjuries,
   careerSplits,
   careerTotals,
+  latestSeason,
   champions,
   gameRecords,
   getLeague,
@@ -46,9 +51,9 @@ import {
 import { isStarter, lineupSides, readLineups } from "../lib/bench";
 import { firstLadder, ladderPlaces, lastOf, nextLadder, pancakeOdds } from "../lib/pancake";
 import { FIRST_NEWS_SEASON, recordPosts, weekDate } from "../lib/recordNews";
-import { gameEntry, leagueEntry, lineupEntry, seasonEntry } from "../lib/records";
+import { STARRED, gameEntry, leagueEntry, lineupEntry, recordSet, seasonEntry } from "../lib/records";
 import { DEFAULT_VIEW, VIEWS, rankOrder } from "../lib/standings";
-import { acquisitions, pointsByHow, seasonAwards, tradeResults } from "../lib/acquisitions";
+import { AWARD_POSITIONS, acquisitions, pointsByHow, seasonAwards, tradeResults } from "../lib/acquisitions";
 import { championDetails, topStarters } from "../lib/champions";
 import { DECISIONS, FATE, achievements, careerStats, marginCareer, performance } from "../lib/manager";
 import { readTrades, regularSeeds } from "../lib/playcalls";
@@ -67,6 +72,7 @@ const league: League = {
   games: full.games.filter((g) => g.season <= THROUGH),
   bracket: full.bracket.filter((b) => b.season <= THROUGH),
   bench: full.bench.filter((b) => b.season <= THROUGH),
+  injuries: full.injuries.filter((i) => i.season <= THROUGH),
   upcoming: [],
 };
 
@@ -227,7 +233,7 @@ const people = league.managers.map((m) => m.slug);
 const award = (key: string) => people.flatMap((p) => achievements(league, p).find((a) => a.key === key)!.seasons.map((s) => `${s.season} ${p}`)).sort();
 const tab = (pick: (m: { place: number | null; last: boolean }) => boolean, mode: "pf" | "pa") =>
   people.flatMap((p) => performance(league, p).filter((s) => pick(s.marks[mode])).map((s) => `${s.season} ${p}`)).sort();
-check(award("moty").join() === tab((m) => m.place === 1, "pf").join() && award("below-zero").join() === tab((m) => m.last, "pf").join() &&
+check(award("moty").join() === tab((m) => m.place === 1, "pf").join() && award("lowest-scoring").join() === tab((m) => m.last, "pf").join() &&
   award("dream").join() === tab((m) => m.last, "pa").join(), "PF and PA medals match the season awards", award("moty").join(", "));
 // MVFP: one per season (2021's since its lineups were fetched, 2026-11-15)
 const mvfp = topStarters(league);
@@ -344,7 +350,8 @@ check(drawn(review23("aj")) === "1.3 2 54.1 -76 10" && drawn(review23("luke")) =
 const r17 = reviews.filter(({ s }) => s.season === 2017);
 const live = reviews.filter(({ s }) => s.live);
 check(r17.every(({ s }) => s.review.odds.value === null && s.review.roster.value === null && s.review.trade.value === null && s.review.waiver.value === null && s.review.draft.value !== null) &&
-  live.every(({ s }) => Object.values(s.review).every((r) => r.value !== null)) && [...DECISIONS, ...FATE].join() === "draft,roster,waiver,trade,odds,luck,streak",
+  live.every(({ s }) => Object.values(s.review).every((r) => r.value !== null)) && [...DECISIONS, ...FATE].join() === "draft,roster,waiver,trade,odds,luck,streak,injuries" &&
+  r17.every(({ s }) => s.review.injuries.value === null),
   "2017 rows say so; the season in progress has a review so far; the two boxes in the site owner's order", `${r17.length} in 2017, ${live.length} live`);
 // The Pancake Watch's pancake game: in the ladder's last week, ESPN lists the last-place game last,
 // and its loser (or the team with that bye) finished last
@@ -392,7 +399,7 @@ for (const [key, person, value] of careerExpect) {
 }
 check(careerAll["close-wins"].slice(0, 2).map((e) => e.person).join() === "kyle,abdi" && careerActive["blowout-losses"][0].person === "kaden",
   "close-win ties go to the closer games; with Active on Kaden holds The Punching Bag",
-  `${careerAll["close-wins"].map((e) => `${e.person} ${e.value} by ${e.split.wonBy.toFixed(1)}`).join(", ")}; active ${careerActive["blowout-losses"][0].person}`);
+  `${careerAll["close-wins"].map((e) => `${e.person} ${e.value} by ${e.split!.wonBy.toFixed(1)}`).join(", ")}; active ${careerActive["blowout-losses"][0].person}`);
 // The League records count the same games as each manager's career line, live season included
 const splitsOff = full.managers.filter((m) => {
   const line = marginCareer(full, m.slug);
@@ -453,7 +460,10 @@ const earned = (pick: (g: Game) => boolean, won: boolean) =>
 const exactlyOne = league.games.find((g) => marginCents(g) === 100)!;
 check(award("ice").join(", ") === earned((g) => marginCents(g) <= ICE_WITHIN * 100, true) && award("ice").includes(`2021 ${sideOf(exactlyOne, true).person}`),
   "Ice in the Veins: every season with a win by a point or less, 1.00 included", `${award("ice").length} awards; 1.00: ${exactlyOne.season} week ${exactlyOne.week}`);
-check(award("dunzo").join(", ") === earned((g) => marginCents(g) > DUNZO_OVER * 100, false), "Dunzo: every season with a loss by more than 84", `${award("dunzo").length} awards`);
+// Round 11: Dunzo lists each such loss, with the opponent and the score
+const dunzoGames = league.games.filter((g) => g.winner !== "TIE" && marginCents(g) > DUNZO_OVER * 100).length;
+check([...new Set(award("dunzo"))].join(", ") === earned((g) => marginCents(g) > DUNZO_OVER * 100, false) && award("dunzo").length === dunzoGames,
+  "Dunzo: every season with a loss by more than 84, each loss listed", `${new Set(award("dunzo")).size} seasons, ${award("dunzo").length} losses`);
 
 // The pancake ladder: ESPN's pairings and final places in every completed season, from the rule
 const ladderOff = league.seasons.filter((s) => s.complete).filter((s) => {
@@ -497,6 +507,7 @@ const cutAt = (season: number, week: number | null): League => ({
   teamSeasons: full.teamSeasons.filter((t) => t.season <= season),
   games: full.games.filter((g) => g.season < season || (g.season === season && (week === null || g.week <= week))),
   bench: full.bench.filter((b) => b.season < season || (b.season === season && (week === null || b.week <= week))),
+  injuries: full.injuries.filter((i) => i.season < season || (i.season === season && (week === null || i.week <= week))),
 });
 const holderAt = (post: (typeof history)[number]) => {
   const at = cutAt(post.season, post.week);
@@ -607,10 +618,80 @@ const tradeYears = done.filter((y) => seasonAwards(y).trade.length > 0).length;
 check(pageAwards.join() === [since18, since18, tradeYears, tradeYears].join(), "the four new achievements light up once a season each",
   `waiver, drop, trade, fleece: ${pageAwards.join(", ")}`);
 
-// Standings (Round 10): Career Records, Season Averages and Power Rankings, left to right; Power
-// Rankings is the default
-check(VIEWS.map((v) => v.label).join() === "Career Records,Season Averages,Power Rankings" && DEFAULT_VIEW === "game",
-  "the Standings' views are Career Records, Season Averages and Power Rankings", VIEWS.map((v) => v.label).join(", "));
+// Standings (Round 10 named them; Round 11 ordered them): Power Rankings, Season Averages and Career
+// Records, left to right; Power Rankings is the default
+check(VIEWS.map((v) => v.label).join() === "Power Rankings,Season Averages,Career Records" && DEFAULT_VIEW === "game",
+  "the Standings' views are Power Rankings, Season Averages and Career Records", VIEWS.map((v) => v.label).join(", "));
+
+// ---- Round 11 (the site owner, 2026-11-25) ----
+
+// Injured starters (lib/injuries.ts): known cases from ESPN's game logs. 2023: Jefferson hurt in
+// week 5 (out through Minnesota's week 13 bye), Chubb in week 2, Burrow in week 11, Walker missing
+// weeks 12–13 with no bye between; 2018: Alex Smith hurt in week 11 while on Nigel's bench, after
+// starting for him; 2025: Kamara, benched by Ammari the week he got hurt. Kaden's 2023 starters
+// missed no two straight games (Stafford missed one, then had his bye).
+const hurtWeek = (season: number, person: string, name: string) => full.injuries.find((i) => i.season === season && i.person === person && i.name === name)?.hurt;
+const knownHurt: [number, string, string, number][] = [
+  [2023, "randy", "Justin Jefferson", 5],
+  [2023, "luke", "Nick Chubb", 2],
+  [2023, "jordan", "Joe Burrow", 11],
+  [2023, "ammari", "Kenneth Walker III", 11],
+  [2018, "nigel", "Alex Smith", 11],
+  [2025, "ammari", "Alvin Kamara", 12],
+];
+const kaden23 = full.teamSeasons.find((t) => t.season === 2023 && t.person === "kaden")!;
+check(knownHurt.every(([y, p, n, w]) => hurtWeek(y, p, n) === w) && kaden23.injuries === 0 && !full.injuries.some((i) => i.season === 2023 && i.name === "Matthew Stafford"),
+  "injured starters: Jefferson, Chubb, Burrow and Walker in 2023, Alex Smith in 2018, Kamara in 2025; none for Kaden in 2023",
+  knownHurt.map(([y, p, n]) => `${y} ${n} ${hurtWeek(y, p, n) ?? "missing"}`).join(", "));
+// Every team-season from 2018 has a count (2017 none), and each season's counts are its injuries
+const countsOff = full.teamSeasons.filter((t) =>
+  t.season === 2017 ? t.injuries !== null : t.injuries !== full.injuries.filter((i) => i.season === t.season && i.teamId === t.teamId).length);
+check(countsOff.length === 0 && full.injuries.every((i) => i.week > i.hurt),
+  "injured starters counted for every team-season from 2018 (none for 2017)", `${full.injuries.length} through ${latestSeason(full).season} week ${latestSeason(full).throughWeek}`);
+// Injuries in Against the Odds is the league's average minus the team's count, so it adds up to zero
+const injurySums = full.seasons.filter((s) => s.season >= 2018).map((info) => reviews.filter(({ s }) => s.season === info.season).reduce((n, { s }) => n + (s.review.injuries.value ?? 0), 0));
+check(injurySums.every((n) => Math.abs(n) < 1e-6) && reviews.every(({ s }) => (s.review.injuries.value === null) === (s.season === 2017)),
+  "Injuries adds up to zero in every season from 2018", injurySums.map((n) => n.toFixed(6)).join(" "));
+// The Infirmary: the most injured starters over a career, matching the team-season counts
+const careers = careerInjuries(full);
+const infirmary = leagueRecords(full, 5).find((r) => r.key === "injuries")!.entries;
+const careerOff = [...careers].filter(([p, c]) => c.count !== full.teamSeasons.filter((t) => t.person === p).reduce((n, t) => n + (t.injuries ?? 0), 0));
+check(careerOff.length === 0 && infirmary[0].value === Math.max(...[...careers.values()].map((c) => c.count)),
+  "The Infirmary: career injured starters match the seasons, and the holder has the most", infirmary.map((e) => `${e.person} ${e.value}`).join(", "));
+
+// The achievements: three tiers in the site owner's order, six, six and eight
+const tierTitles = (tier: string) => achievements(league, "aj").filter((a) => a.tier === tier).map((a) => a.title).join(", ");
+check(tierTitles("goat") === "The Mahaan Bakaree, Dynasty Manager, Playoff Cinderella, Revenge Tour, Manager of the Year, The #1 Seed" &&
+  tierTitles("honors") === "MVFP, Ice in the Veins, Waiver Pick of the Year, Trade of the Year, Choke Artist, Comeback Manager" &&
+  tierTitles("pancake") === "The Pancake House, Lowest Scoring Season, It Was Only a Dream, The Benchwarmer, Dunzo, Drop of the Year, Injury Bug, Fleece of the Year",
+  "achievements: GOAT Tier, Season Honors and Pancake Tier in the site owner's order");
+// Through 2025: AJ's third title (2025) is the only Dynasty; no champion was the last playoff seed
+// or last the season before; Comeback Manager each season from 2018 (AJ and Abdi tied in 2023)
+const comebacks = award("comeback").join(", ");
+check(award("dynasty").join() === "2025 aj" && award("cinderella").length === 0 && award("revenge").length === 0 &&
+  comebacks === "2018 kaden, 2019 nigel, 2020 madison, 2021 luke, 2022 suny, 2023 abdi, 2023 aj, 2024 jeremy, 2025 kaden",
+  "Dynasty Manager, Playoff Cinderella, Revenge Tour and Comeback Manager through 2025", `comeback: ${comebacks}`);
+// Injury Bug: the season's most injured starters, ties shared
+const bugs = done.filter((y) => y >= 2018).flatMap((y) => {
+  const field = league.teamSeasons.filter((t) => t.season === y);
+  const most = Math.max(...field.map((t) => t.injuries!));
+  return field.filter((t) => t.injuries === most).map((t) => `${y} ${t.person}`);
+}).sort();
+check(award("injury").join() === bugs.join(), "Injury Bug: the most injured starters each season from 2018", award("injury").join(", "));
+// Waiver Pick and Drop of the Year: running backs, receivers and tight ends only
+const positionsOk = done.filter((y) => y >= 2018).every((y) => [...seasonAwards(y).waiver, ...seasonAwards(y).drop].every((x) => AWARD_POSITIONS.has(x.position ?? -1)));
+check(positionsOk && seasonAwards(2025).waiver.map((x) => x.name).join() === "Rico Dowdle", "Waiver Pick and Drop of the Year: RBs, WRs and TEs only (2025's pick: Rico Dowdle)");
+// Trade of the Year names every player in the trade, both ways
+const tradeNamesOk = done.flatMap((y) => seasonAwards(y).trade).every((r) => {
+  const legs = readTrades(r.season)!.trades.find((t) => t.id === r.tradeId)!.legs;
+  return r.received.length === legs.filter((l) => l.toTeamId === r.teamId).length && r.gave.length === legs.filter((l) => l.fromTeamId === r.teamId).length;
+});
+check(tradeNamesOk, "Trade of the Year names every player in the trade");
+
+// Records: the starred ones are on the page, The Infirmary among the League records
+const recordKeys = new Set(Object.values(recordSet(full)).flat().flatMap((s) => s.cards.map((c) => c.key)));
+check([...STARRED].every((k) => recordKeys.has(k)) && recordSet(full).league[0].cards.some((c) => c.key === "injuries" && c.starred),
+  "the starred records are on the page, The Infirmary with them", [...STARRED].join(", "));
 
 console.log(failures ? `\n${failures} check(s) failed` : "\nAll checks passed");
 process.exit(failures ? 1 : 0);

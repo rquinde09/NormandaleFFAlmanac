@@ -147,6 +147,14 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   nobody played under are re-trades inside a week (2022: 18 → 2 → 17 in two days). The IR slot
   (`lineupSlotId` 21) exists only from 2025, one per team (`lineupSlotCounts["21"]` is 0 before);
   the saved lineups keep no injury status.
+- Checked 2026-11-25 (Round 11): a box score's `injuryStatus` is the player's status now, the same
+  in every week of a past season, and a past season's `proTeamId` on a player is a later snapshot
+  (2023 had Barkley on PHI). But `kona_player_info`'s weekly actual rows (statSourceId 0,
+  statSplitTypeId 1) tell each NFL game apart, 2018–2026 (2021 with a 2021 member's cookies): no
+  row in his team's bye week, a row with his stats when he played, and a row without them when his
+  team played without him (2018's rows then hold only the team's result, stats 155–157). Each row's
+  `proTeamId` is that game's team. Checked on 2023's Jefferson, Burrow, Chubb, Walker, Allen and
+  Cooper and 2018's Alex Smith. 2017 (leagueHistory) gives season totals only.
 - `fetch_seasons.py` drops personal settings, team-private lists and live/projection fields
   (`DROP_KEYS`) before saving, so the repo holds no private data and unchanged days don't commit.
   The projections the Pancake Watch needs go in their own file (below), which does change daily.
@@ -188,8 +196,15 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   traded-for points add up to PF in every team-season (2017: drafted or not); each trade's nets add
   up to zero and each team's to its Trade IQ; Draft IQ and Waiver IQ add up to zero each season
   (Waiver IQ from 2018); every completed season from 2018 has a Waiver Pick and a Drop of the Year,
-  and Trade and Fleece of the Year are one trade's two sides; the Standings' view names. Run it
-  after any change to `lib/league.ts`, `lib/standings.ts`, `lib/acquisitions.ts`,
+  and Trade and Fleece of the Year are one trade's two sides; the Standings' view names. Round 11
+  adds: injured starters' known cases (2023's Jefferson, Chubb, Burrow and Walker, 2018's Alex
+  Smith, 2025's Kamara; none for Kaden in 2023, whose Stafford missed one game and then had his
+  bye), a count for every team-season from 2018, Injuries adding up to zero each season, The
+  Infirmary against the seasons' counts, Injury Bug; the three tiers in his order; Dynasty Manager
+  (AJ 2025), no Playoff Cinderella or Revenge Tour through 2025, Comeback Manager each season;
+  waiver and drop RBs, WRs and TEs only (2025: Rico Dowdle); every player named in a Trade of the
+  Year; the starred records; the Standings' order. Run it
+  after any change to `lib/league.ts`, `lib/standings.ts`, `lib/acquisitions.ts`, `lib/injuries.ts`,
   `lib/champions.ts`, `lib/manager.ts`, `lib/bench.ts`, `lib/seasons.ts`, `lib/playcalls.ts`,
   `lib/roster.ts`, `lib/pancake.ts`, `lib/records.ts` or `lib/recordNews.ts`.
 - Python lives in `.venv` (`python -m venv .venv`, then `.venv/Scripts/python -m pip install -r
@@ -208,7 +223,10 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   - `data/raw/drafts/{season}.json`: the picks, once.
   - `data/raw/players/{season}.json`: every drafted or rostered player's name, position, points
     over the fantasy season's weeks (ESPN's season total where only that exists: 2017) and
-    preseason projection. Once a season is over; weekly while on.
+    preseason projection. Once a season is over; weekly while on. Since Round 11 (2026-11-25), with
+    weekly stats (2018 on), `games`: one letter per scoring period so far, P played, M his NFL team
+    played without him, - a bye (or no team). A file without it is fetched once more; 2018–2026
+    were (2021 with the 2021 member's cookies, below).
   - `data/raw/trades/{season}.json`: executed trades with every player (`available: false` for
     2017). Once a season is over; while it's on, whenever ESPN's trade count changes. A
     completed season's per-team counts must match `transactionCounter.trades`.
@@ -226,7 +244,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - 2021's lineups, players and trades came from a one-off run (2026-11-15) with a 2021 league
   member's cookies in a separate gitignored env file: `fetch_seasons.py 2021 --force-extras --env
   FILE`, after `python scripts/check_env.py FILE`. The 2021 season file stayed as it was. Those
-  cookies never go in the Actions secrets.
+  cookies never go in the Actions secrets. Round 11's `games` for 2021 came the same way
+  (`fetch_seasons.py 2021 --env FILE`, 2026-11-25), which only refetched the players file.
 - `.github/workflows/fetch-espn.yml` runs the fetch daily at 10:00 UTC, September–January (plus
   manual runs). It commits `data/` only when something changed. Secrets: `ESPN_LEAGUE_ID`,
   `ESPN_S2`, `ESPN_SWID`. Collaborators on a personal repo can add them.
@@ -308,10 +327,11 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   (checked 2026-11-25). The Teams tab stays "Teams" (site owner, 2026-11-05).
 - Standings (`app/standings/page.tsx`, `components/StandingsView.tsx`): the all-time standings,
   "Standings" again since Round 10 (the Leaderboard in Round 9), in the nav, the title and links.
-  Its three views, defined in `lib/standings.ts`, are named by Round 10, left to right: Career
-  Records (`all`: W, L, PF, PA, Seasons, Titles, Trades), Season Averages (`season`: W, L, PF, PA
-  per season, Seasons; through 2025 its numbers match the old Leaderboard page) and Power
-  Rankings (`game`: Win %, PF and PA per game; Round 8 removed PDIFF everywhere). The tabs use the
+  Its three views, defined in `lib/standings.ts`, are named by Round 10 and in Round 11's order,
+  left to right: Power Rankings (`game`: Win %, PF and PA per game; Round 8 removed PDIFF
+  everywhere), Season Averages (`season`: W, L, PF, PA per season, Seasons; through 2025 its numbers
+  match the old Leaderboard page) and Career Records (`all`: W, L, PF, PA, Seasons, Titles,
+  Trades). The tabs use the
   small segmented control so the three names fit a phone. No description under the tabs (Round
   10). Power Rankings is the default (`DEFAULT_VIEW`, site owner 2026-11-07); Career Records is
   `?view=all`. All three count live. Each ends with Rank Δ: the change in that view's ranking since the
@@ -394,8 +414,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     - "Playcalling Analysis · 2023" (Round 9's title): the decisions the manager made, in his
       order: Draft IQ, Roster IQ, Waiver IQ, Trade IQ.
     - "Against the Odds · 2023": "not based on how the manager decided … but the destiny or
-      expectation of how their season should have resulted", in his order: Odds, Luck, Streaks.
-      He didn't have a name ("something to do with going up against the odds or the expectations
+      expectation of how their season should have resulted", in his order: Odds, Luck, Streaks,
+      and Round 11's Injuries. He didn't have a name ("something to do with going up against the odds or the expectations
       or projections of ESPN"); "Against the Odds" is a placeholder until he picks one.
     "· 2026 so far" for the season in progress, which counts its decided weeks. Each row is
     a thin bar with zero in the middle: the bad word and that season's league worst at the left
@@ -450,6 +470,13 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
       perform". The longer of the season's longest winning and losing streaks (the winning one on
       a tie), shown as W10 or L8. He wrote 14 at both ends; the ends are the league's, like the
       other rows.
+    - Injuries, Banged up ↔ Healthy (Round 11, 2026-11-25: "count the number of players that got
+      injured on the starting lineup throughout the season and compare it with the league
+      average"; the words are ours). The value is the league's average injured starters that
+      season minus the team's (like Roster IQ, so it adds up to zero and fewest ranks 1st), but the
+      row shows counts: the team's, the league's most and fewest at the ends and "avg 4.1" in the
+      middle (`counts` in `PlaycallReview.tsx`, `ReviewRow.average`). 2017: "ESPN has no 2017 game
+      logs". The rule is under Injured starters, below.
     `npm run check` tests his sketch, 2023: AJ +1.3, +2, +54.1, −76, W10; Luke −1.3, −1, −100.8,
     +24, L8 (his 54.6 and −99.4 were read off the old chart).
   - Opponents (`lib/manager.ts`, `components/Opponents.tsx`): head-to-head over every decided
@@ -462,43 +489,62 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     win share (Faced, Easiest), loss share (Toughest) or points share. Every tab is the same
     height. Retired opponents are always left out: Round 4 removed this box's Active switch and
     kept it on (`opponents` filters them). The Active switches on the Standings and Records stay.
-  - Achievements (`achievements` in `lib/manager.ts`, `components/Achievements.tsx`): two tabs,
-    GOAT Tier and Pancake Tier, of emoji icons greyed out until earned in a completed season.
-    Tapping one shows the site owner's description and the seasons earned. GOAT Tier: 🐐 The
-    Mahaan Bakaree (Won a Championship), 🔥 Manager of the Year (Scored the Most Points For),
-    🥇 The #1 Seed (`playoffSeed` 1), 💪 MVFP (had the league's highest scoring player: the most
-    points one player scored for one team while in its starting lineup that season, playoffs
-    included; `topStarters` in `lib/champions.ts`).
-    Pancake Tier: 🥞 The Pancake House (Last Place), 🧑‍🎨 The Choke Artist (Runner Up), 🥶 Below
-    Zero (fewest PF in the league that season), 😢 It Was Only A Dream (most PA) and 🪑 The
-    Benchwarmer (most points left on the bench that season; Luke, 2026-11-15, its name a
-    placeholder for the site owner). Season PF
-    and PA count every game that season, so a playoff bye's missing game is part of the game
-    (site owner); ties share the award. The Trade and Commish awards were removed in Round 3.
-    The Below Zero award isn't the "Below Zero" season record (most losses since Round 8).
-    Round 7 added one to each tier; Round 8 (2026-11-20) redefined both. GOAT Tier 🧊 Ice in the
-    Veins ("Won a Game Within a Point"): won a game by 1.00 or less, against anyone, retired
-    managers included (one game was decided by exactly 1.00: 2021 week 8). Pancake Tier 💥 Dunzo,
-    Round 7's Got Blown Out renamed ("Lost a Game by More Than 84 Points"). 84 (`DUNZO_OVER`) makes
-    a loss that big as rare as a win within a point (`ICE_WITHIN`), as he asked: 26 of the 1,088
-    decided games from 2017 to 2026 week 10 each (2.39%), and 25 of 1,018 each through 2025
-    (2.46%). He guessed "something over 60", but more than 60 is 10.8% of games. Both count
-    completed seasons only, and a tap shows only the years.
-    Round 10 (2026-11-25) added two to each tier (`seasonAwards` in `lib/acquisitions.ts`), none
-    of them on the Records page, as he asked. Completed seasons, 2018 on (whole rosters); points
-    count in the starting lineup, every game, while the team had the player; a tap shows the
-    player and points. GOAT Tier: 💎 Waiver Pick of the Year ("Had the Season's Best Waiver
-    Pick"): the pickup who scored the most for the team that picked him up. 🤝 Trade of the Year
-    ("Got the Most Points out of a Trade"): the biggest net gain in one trade, counted as Trade IQ
-    counts a season. Pancake Tier: 🗑️ Drop of the Year ("Dropped a Player Who Scored the Most for
-    His Next Team"): of every player a team let go (drafted, picked up or traded for), the one who
-    then scored the most for the team that picked him up; it goes to the team that let him go,
-    not to one that dropped and re-added its own player. 🐑 Fleece of the Year ("Lost the Most
-    Points in a Trade"): the other side of the Trade of the Year (every trade so far was between
-    two teams). Through 2025: Waiver Pick 2018 AJ (James Conner) to 2025 Kaden (Matthew
-    Stafford); 2020's and 2022's Waiver Picks (Justin Herbert, Trevor Lawrence) were the same
-    year's Drops (Abdi's, Luke's). Trade and Fleece only in 2018–2023 (no trades in 2024–2025).
-    The rules are a reading of his wording, with questions open (see Stages).
+  - Achievements (`achievements` in `lib/manager.ts`, `components/Achievements.tsx`): emoji icons
+    greyed out until earned in a completed season, behind tier tabs. Tapping one shows the site
+    owner's description, how it's counted and the seasons earned (one to a line when each has a
+    detail: a player, a trade, a game). Round 11 (2026-11-25) made three tiers, GOAT Tier, Season
+    Honors and Pancake Tier, from his table: its titles, order and criteria (the descriptions). Six
+    icons sit in two rows of three, eight in two rows of four as before (he wrote "keep the 2 rows
+    and 3 columns" for eight; read as keeping the old four). Season PF and PA count every game
+    that season, so a playoff bye's missing game is part of the game (site owner, Round 3); ties
+    share an award. The Trade and Commish awards were removed in Round 3.
+    - GOAT Tier: 🐐 The Mahaan Bakaree ("Wins the championship"); 🏰 Dynasty Manager ("Wins 3+
+      championships": earned with the third title and each after it; AJ 2025); 👠 Playoff
+      Cinderella ("Wins as the lowest playoff seed": the champion was the season's last playoff
+      seed; nobody yet, Robel's 6 of 8 in 2021 is the lowest); ⚔️ Revenge Tour ("Wins after
+      finishing last the previous season"; nobody yet); 🔥 Manager of the Year (most PF that
+      season, every game; his table says "regular-season points", which would change 5 of 9
+      winners, so it's an open question); 🥇 The #1 Seed ("Finishes regular season with the best
+      record": `playoffSeed` 1, ties to the most points).
+    - Season Honors: 💪 MVFP (he wrote "MVPF"; "Owns the league's Most Valuable Fantasy Player":
+      the most points one player scored for one team while in its starting lineup that season,
+      playoffs included; `topStarters` in `lib/champions.ts`); 🧊 Ice in the Veins (won a game by
+      1.00 or less, against anyone, retired managers included; one game was decided by exactly
+      1.00, Ryan over Suny in 2021 week 8, so the description says "a point or less" where his
+      says "less than one point"); 💎 Waiver Pick of the Year; 🤝 Trade of the Year; 🧑‍🎨 Choke
+      Artist (runner-up; Pancake Tier until Round 11); 📈 Comeback Manager ("Biggest improvement
+      after a poor season": of the managers who missed the playoffs the season before, the
+      biggest climb in final place, from 2018; "13th in 2017 → 4th"; AJ and Abdi tied in 2023).
+    - Pancake Tier: 🥞 The Pancake House (last place); 🥶 Lowest Scoring Season (fewest PF; Below
+      Zero until Round 11, which also ends its clash with the Below Zero season record); 😢 It Was
+      Only a Dream (most PA); 🪑 The Benchwarmer (most points left on the bench; Luke,
+      2026-11-15); 💥 Dunzo; 🗑️ Drop of the Year; 🐛 Injury Bug ("Has the most players suffer
+      significant injuries": the most injured starters that season, from 2018; ties shared); 🐑
+      Fleece of the Year. He also offered a GOAT award for the fewest injuries, but his table
+      leaves it out (and the fewest is often shared: four teams in 2018), so there is none.
+    Round 7 added Ice in the Veins and Dunzo; Round 8 (2026-11-20) redefined both. Dunzo, Round
+    7's Got Blown Out renamed ("Lost a Game by More Than 84 Points"): 84 (`DUNZO_OVER`) makes a loss
+    that big as rare as a win within a point (`ICE_WITHIN`), as he asked: 26 of the 1,088 decided
+    games from 2017 to 2026 week 10 each (2.39%), and 25 of 1,018 each through 2025 (2.46%). He
+    guessed "something over 60", but more than 60 is 10.8% of games. Both count completed seasons
+    only. Ice in the Veins shows the years; since Round 11 Dunzo lists each loss with the opponent
+    and score ("lost 60.04–147.78 to Khalid, week 16").
+    Round 10 (2026-11-25) added the waiver, trade, drop and fleece awards (`seasonAwards` in
+    `lib/acquisitions.ts`), none of them on the Records page, as he asked. Completed seasons, 2018
+    on (whole rosters); points count in the starting lineup, every game, while the team had the
+    player. Waiver Pick of the Year: the pickup who scored the most for the team that picked him
+    up. Trade of the Year: the biggest net gain in one trade, counted as Trade IQ counts a season.
+    Drop of the Year: of every player a team let go (drafted, picked up or traded for), the one
+    who then scored the most for the team that picked him up; it goes to the team that let him
+    go, not to one that dropped and re-added its own player. Fleece of the Year: the other side of
+    the Trade of the Year (every trade so far was between two teams). Round 11: Waiver Pick and
+    Drop count running backs, receivers and tight ends only (`AWARD_POSITIONS`: "Its too easy for
+    QBs to score a ton of points"), and Trade and Fleece of the Year name every player in the
+    trade, both ways, those who scored most first ("got Tony Pollard, Diontae Johnson and Cam
+    Akers from Robel for Deebo Samuel: +361.5 pts"). Through 2025: Waiver Pick 2018 AJ (James
+    Conner) to 2025 Randy (Rico Dowdle); in 2020 and 2022–2024 the Waiver Pick was the same year's
+    Drop. Trade and Fleece only in 2018–2023 (no trades in 2024–2025). The rules are a reading of
+    his wording, with questions open (see Stages).
 - Champions page (`/hall-of-mahaan-bakaree`): each title expands (`<details>`) to the
   championship game's lineup with the bench, the season's best game (the champion's highest
   score), and the best player (most points while in the starting lineup, playoffs included).
@@ -512,13 +558,21 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
 - Records (`lib/league.ts` counts them; `lib/records.ts` words them and holds the sections;
   `components/RecordsView.tsx`). The old site's names, plus Luke's and the rounds' additions. No
   description under the title since Round 10 (the site owner; the fine print at the bottom stays).
+  Round 11 (2026-11-25) folded that fine print into "* How the starred records are counted"
+  (`<details>`, shut by default), one bullet each in his order (The One Hit Wonder, season
+  projection, bench, close games and blowouts, then injured starters), and marked the records it
+  explains with a * (`STARRED` in `lib/records.ts`).
   Three tabs since Round 8 (the site owner, 2026-11-20), in his sections:
   - Game: Match Up Records (The @$$-Whooping, The Clincher, Clash of Titans, The Snooze Fest) and
     Individual Records (Mr. Clean, The Vega, Riding the Pine, The One Hit Wonder).
   - Season: Result Records (The Special One, The Relentless, Below Zero, The Cursed), Point
     Records (The Warrior, The Baby Zebra, The Lucky One, Asleep at the Wheel) and Playcall Records
     (The Peaky Blinders, The Horseshoe, The Black Cat).
-  - League: League Records, the four Round 7 close-game and blowout records as all-time totals.
+  - League: League Records, the four Round 7 close-game and blowout records as all-time totals,
+    and Round 11's The Infirmary ("add whoever had the most injuries as a league record"; the name
+    is a placeholder): the most injured starters over a career, from 2018, the season in progress
+    included; a tie goes to fewer seasons (`careerInjuries`, counted from `league.injuries`, so the
+    record-break news cuts it at each week). Through 2026 week 11: AJ 58, Jeremy 51, Jordan 46.
 
   On a phone, small cards two to a row, as in his mockup: the name in red capitals, the
   description (none on the Match Up records, as mocked), the number, the holder ("Luke def.
@@ -578,6 +632,18 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   progress, whose decided weeks are fetched weekly since Round 5 (so the season page's Roster IQ
   column and the game records count it live). `lib/bench.ts` also reads the lineup files for
   `lib/champions.ts`, `lib/playcalls.ts` and `lib/roster.ts`.
+- Injured starters (`lib/injuries.ts`, the site owner's Round 11, 2026-11-25): ESPN keeps no
+  injury reports for past weeks, so an injury is read from its game logs (`games` in the players
+  files). A player counts for a team-season if he had started for it that season, then played a
+  game while on its roster and missed his NFL team's next two games (`MISSED_IN_A_ROW`; byes
+  skipped, so one missed game next to a bye doesn't count). Once per team-season, for the team he
+  was on when hurt, whether or not it kept him; benched that week counts too (Kamara, Ammari's 2025).
+  D/STs are left out. It counts when the second game is missed (`Injury.week`), which is how the
+  live season and the record-break news cut it. A suspension, or an NFL starter benched for a
+  backup (2018 Winston, 2025 Mariota after filling in), looks the same and counts; the notes say
+  so. Two straight games, not one, is "significant" (Injury Bug's word). Seasons 2018–2025
+  average 4.1 to 6.1 a team-season; 2017 has none (`TeamSeason.injuries` null). The IR slot (2025 on, one per team) was the Round 10 idea;
+  it counts managers' IR moves, not injuries, so it isn't used.
 - Season pages (`lib/seasons.ts`, `components/Bracket.tsx`, Luke 2026-11-15). `/seasons` lists
   every season with champion, runner-up and last place. `/seasons/[year]` has:
   - the podium
@@ -586,8 +652,10 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     gave it a switch between stat sets, kept in the URL (`?stats=playcall`, `?stats=odds`); Round 10
     (2026-11-25) made them the manager page's two boxes: Standard (W-L, PF, PA and Rank Δ),
     Playcall (Draft IQ, Roster IQ, Waiver IQ, Trade IQ, in whole points, "–" without the data or,
-    for Trade IQ, without a trade) and Odds (Odds, Luck, Streaks W10 or L8; "Odds" is his name for
-    the tab). Round 8's Playcall set was Luck, Bench, Trades and Streaks. W-L, PF and PA count every
+    for Trade IQ, without a trade) and Odds (Odds, Luck, Streaks W10 or L8, and since Round 11
+    Injuries: the count, green below the season's average and red above it, with the average in
+    the note under the table; "Odds" is his name for the tab). Round 8's Playcall set was Luck,
+    Bench, Trades and Streaks. W-L, PF and PA count every
     game; on a phone PF and PA show whole points, and the Playcall headers wrap to two lines, so the
     four columns fit 375 px. Rank Δ (`rankChange` in `lib/seasons.ts`, Luke's pick): while the season is on, the seed's
     change since the week before (seeds replayed as ESPN seeds them; over the regular season's last
@@ -766,11 +834,25 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    Waiver IQ count points in the starting lineup only, not the bench; (3) Drop of the Year charges
    the team that let a player go with what he then scored for the team that picked him up; (4)
    Trade and Fleece of the Year use a trade's net, so they're its two sides (his Fleece wording
-   was the single player sent away who scored most). He also asked: injured starters can only be
-   counted from 2025 (the first IR slot, `lineupSlotId` 21: 24 starters later on IR in 2025, 15 in
-   2026 so far), since the lineups keep no injury status; and Luke may suggest a schedule stat for
-   Against the Odds (points against compared with the league's average, Tough ↔ Easy), which the
-   data already supports. Next: the domain.
+   was the single player sent away who scored most). He also asked about injured starters (Round
+   11 counts them from ESPN's game logs instead of the IR slot); and Luke may suggest a schedule
+   stat for Against the Odds (points against compared with the league's average, Tough ↔ Easy),
+   which the data already supports. Round 11 (2026-11-25, "very very close to completing") is
+   built: injured starters from 2018 (`lib/injuries.ts`, the players files' `games`) in the season
+   pages' Odds stats, Against the Odds, Injury Bug and The Infirmary; the Standings' order Power
+   Rankings, Season Averages, Career Records; Waiver Pick and Drop for RBs, WRs and TEs; every
+   player in a Trade (and Fleece) of the Year; Dunzo's opponent and score; Dynasty Manager, Playoff
+   Cinderella, Revenge Tour and Comeback Manager; the Season Honors tier and his recategorized
+   table; the Records notes folded under a * . Open questions, each built as proposed: (1) Manager
+   of the Year counts every game, as he decided in Round 3, though his table says "regular-season
+   points" (that would change 2017, 2019, 2021, 2023 and 2025); (2) Ice in the Veins keeps 1.00 or
+   less (his table: "less than one point"; only Ryan's 2021 win by exactly 1.00 differs); (3) no
+   GOAT award for the fewest injuries (offered in his notes, missing from his table); (4) the
+   injury rule (two straight missed NFL games after starting) and its caveats; (5) Comeback
+   Manager's reading (missed the playoffs, then the biggest climb in final place); (6) Playoff
+   Cinderella read as the season's last playoff seed, which nobody has done (a looser reading,
+   say a champion seeded in the bottom half, gives Robel 2021 and Jeremy 2019); (7) The
+   Infirmary's name. Next: the domain.
 
 Later, not v1: head-to-head records, photos for the Hall.
 

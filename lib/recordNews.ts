@@ -45,6 +45,7 @@ function through(league: League, season: number, week: number): League {
     teamSeasons: league.teamSeasons.filter((t) => t.season <= season),
     games: league.games.filter((g) => upTo(g.season, g.week)),
     bench: league.bench.filter((b) => upTo(b.season, b.week)),
+    injuries: league.injuries.filter((i) => upTo(i.season, i.week)),
   };
 }
 
@@ -98,9 +99,12 @@ function post(league: League, t: Tracked, after: unknown, previous: RecordEntry,
     `New record for <strong>${escape(def.title)}</strong>${escape(about)}: ${escape(entry.who)}, ${escape(entry.value)}. ${escape(entry.detail)}.`,
     `The old record: ${escape(previous.who)}, ${escape(previous.value)} (${escape(previous.detail)}).`,
   ];
-  // A League record: the game that took the lead
+  // A League record: the game that took the lead, or for The Infirmary (Round 11) the injury
   const person = (after as { person?: string }).person;
-  if (person && week !== null) {
+  const hurt = person && week !== null ? league.injuries.filter((i) => i.person === person && i.season === season && i.week === week) : [];
+  if (def.key === "injuries") {
+    if (hurt.length) paragraphs.push(`It came in week ${week} of ${season}: ${escape(hurt.map((i) => i.name).join(" and "))} missed a second straight game.`);
+  } else if (person && week !== null) {
     const g = league.games.find((x) => x.season === season && x.week === week && (x.home.person === person || x.away.person === person));
     if (g) {
       const [me, them] = g.home.person === person ? [g.home, g.away] : [g.away, g.home];

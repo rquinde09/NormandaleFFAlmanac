@@ -80,7 +80,10 @@ function SmallCard({ c, open, onToggle }: { c: RecordCard; open: boolean; onTogg
   return (
     <li className={`min-w-0 rounded-2xl border bg-zinc-900 ${open ? "border-zinc-500" : "border-zinc-800"}`}>
       <button onClick={onToggle} aria-expanded={open} className="flex h-full w-full flex-col items-center px-2.5 py-3.5 text-center">
-        <span className="text-[11px] leading-tight font-semibold tracking-wider text-red-400 uppercase">{c.title}</span>
+        <span className="text-[11px] leading-tight font-semibold tracking-wider text-red-400 uppercase">
+          {c.title}
+          <Star c={c} />
+        </span>
         {c.brief && <span className="mt-0.5 text-[11px] leading-tight text-zinc-400">{c.brief}</span>}
         {h ? (
           <>
@@ -100,7 +103,10 @@ function SmallCard({ c, open, onToggle }: { c: RecordCard; open: boolean; onTogg
 function Panel({ c }: { c: RecordCard }) {
   return (
     <li className="col-span-2 min-w-0 rounded-2xl border border-zinc-800 bg-zinc-950/60 px-3.5 py-3">
-      <div className="text-[11px] font-semibold tracking-wider text-red-400 uppercase">{c.title}</div>
+      <div className="text-[11px] font-semibold tracking-wider text-red-400 uppercase">
+        {c.title}
+        <Star c={c} />
+      </div>
       {c.holder && (
         <div className="mt-1 flex items-baseline gap-3 text-sm">
           <span className="w-4 shrink-0 text-right text-xs tabular-nums text-zinc-600">1</span>
@@ -119,7 +125,10 @@ function Panel({ c }: { c: RecordCard }) {
 function FullCard({ c }: { c: RecordCard }) {
   return (
     <li className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 sm:p-5">
-      <div className="text-xs font-medium tracking-wider text-red-400 uppercase">{c.title}</div>
+      <div className="text-xs font-medium tracking-wider text-red-400 uppercase">
+        {c.title}
+        <Star c={c} />
+      </div>
       {c.subtitle && <div className="text-sm text-zinc-400">{c.subtitle}</div>}
       {c.holder ? (
         <>
@@ -134,6 +143,16 @@ function FullCard({ c }: { c: RecordCard }) {
       )}
       {c.rest.length > 0 && <Rest rest={c.rest} />}
     </li>
+  );
+}
+
+// A record the notes at the bottom of the page explain (the site owner, Round 11)
+function Star({ c }: { c: RecordCard }) {
+  if (!c.starred) return null;
+  return (
+    <span className="ml-0.5 text-zinc-400" title="How it’s counted: see the notes at the bottom">
+      *<span className="sr-only"> (explained at the bottom of the page)</span>
+    </span>
   );
 }
 

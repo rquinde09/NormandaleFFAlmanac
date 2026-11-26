@@ -5,8 +5,9 @@
   week is added once it's decided (and fetched again if ESPN later corrects a score).
 - data/raw/drafts/{season}.json: the draft picks, fetched once.
 - data/raw/players/{season}.json: every drafted or rostered player's name, position, points over
-  the fantasy season's weeks and ESPN's preseason projection. Once a season is over; while it's
-  on, again whenever another week is decided.
+  the fantasy season's weeks, ESPN's preseason projection and (with weekly stats, 2018 on) his NFL
+  games week by week: played, missed or a bye. Once a season is over; while it's on, again
+  whenever another week is decided.
 - data/raw/trades/{season}.json: executed trades with every player in them, read from player
   cards. Once a season is over; while it's on, whenever ESPN's trade count changes.
 - data/raw/projections/{season}.json: while a season is on, every team's roster for each week not
@@ -314,12 +315,32 @@ def season_player_ids(season):
     return sorted(i for i in ids if i and i != -1)
 
 
+def has_games(players):
+    """Round 11 (2026-11-25) added each player's NFL games to files with weekly stats; an older file
+    is fetched once more to get them"""
+    return not players.get("weekly") or all("games" in p for p in players["players"])
+
+
+TEAM_RESULT = {"155", "156", "157"}  # his NFL team's win, loss or tie: in a 2018 row even when he didn't play
+
+
+def played(row):
+    return any(v and k not in TEAM_RESULT for k, v in (row.get("stats") or {}).items())
+
+
+def nfl_games(rows, through):
+    """One letter per scoring period through `through`: P he played (the week's row has his stats),
+    M his NFL team played without him (a row with none: injured, suspended or inactive), - no row
+    (his team's bye, or no team)."""
+    return "".join("-" if w not in rows else ("P" if played(rows[w]) else "M") for w in range(1, through + 1))
+
+
 def update_players(req, season, data, force):
     path = PLAYER_DIR / f"{season}.json"
     complete = season_complete(data)
     through = last_scoring_period(data, decided_weeks(data))
     existing = None if force else read_json(path)
-    if not through or (existing and (complete or existing.get("throughScoringPeriod") == through)):
+    if not through or (existing and (complete or existing.get("throughScoringPeriod") == through) and has_games(existing)):
         return False
     ids = season_player_ids(season)
     found = []
@@ -331,8 +352,9 @@ def update_players(req, season, data, force):
     for wrap in found:
         player = wrap.get("player") or {}
         stats = player.get("stats") or []
-        weekly = {s["scoringPeriodId"]: s.get("appliedTotal") or 0 for s in stats
-                  if s.get("statSourceId") == 0 and s.get("statSplitTypeId") == 1 and s.get("scoringPeriodId")}
+        rows = {s["scoringPeriodId"]: s for s in stats
+                if s.get("statSourceId") == 0 and s.get("statSplitTypeId") == 1 and s.get("scoringPeriodId")}
+        weekly = {p: s.get("appliedTotal") or 0 for p, s in rows.items()}
         season_total = next((s.get("appliedTotal") for s in stats if s.get("statSourceId") == 0 and s.get("statSplitTypeId") == 0), None)
         projected = next((s.get("appliedTotal") for s in stats if s.get("statSourceId") == 1 and s.get("statSplitTypeId") == 0), None)
         weekly_any = weekly_any or len(weekly) > 1
@@ -344,6 +366,7 @@ def update_players(req, season, data, force):
             "points": round(sum(v for p, v in weekly.items() if p <= through), 2),
             "seasonTotal": season_total,
             "projected": projected,
+            "games": nfl_games(rows, through),
         })
     missing = set(ids) - {p["playerId"] for p in players}
     if missing:
@@ -351,6 +374,7 @@ def update_players(req, season, data, force):
     for p in players:
         if not weekly_any:  # leagueHistory seasons give one weekly row at most: use ESPN's season total
             p["points"] = round(p["seasonTotal"] or 0, 2)
+            del p["games"]
         del p["weeks"], p["seasonTotal"]
     out = {"seasonId": season, "throughScoringPeriod": through, "weekly": weekly_any,
            "players": sorted(players, key=lambda p: p["playerId"])}

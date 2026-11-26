@@ -3191,7 +3191,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 28.5
         },
         "teamId": 9,
         "tiebreak": 0.0,
@@ -3208,7 +3208,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 16.5
         },
         "teamId": 12,
         "tiebreak": 0.0,
@@ -3271,7 +3271,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 19.52
         },
         "teamId": 11,
         "tiebreak": 0.0,
@@ -3288,7 +3288,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 3.4
         },
         "teamId": 17,
         "tiebreak": 0.0,
@@ -3311,7 +3311,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 12.0
         },
         "teamId": 13,
         "tiebreak": 0.0,
@@ -3368,7 +3368,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 16.5
         },
         "teamId": 20,
         "tiebreak": 0.0,
@@ -3391,7 +3391,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 4.9
         },
         "teamId": 8,
         "tiebreak": 0.0,
@@ -4647,13 +4647,13 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 46,
-        "drops": 49,
+        "acquisitions": 47,
+        "drops": 50,
         "matchupAcquisitionTotals": {
           "1": 1,
           "10": 4,
           "11": 4,
-          "12": 1,
+          "12": 2,
           "2": 3,
           "3": 4,
           "4": 6,
@@ -4664,7 +4664,7 @@
           "9": 4
         },
         "misc": 0,
-        "moveToActive": 78,
+        "moveToActive": 80,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -4792,12 +4792,12 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 19,
+        "acquisitions": 20,
         "drops": 22,
         "matchupAcquisitionTotals": {
           "10": 3,
           "11": 2,
-          "12": 1,
+          "12": 2,
           "2": 2,
           "3": 1,
           "4": 1,
@@ -4947,7 +4947,7 @@
           "9": 4
         },
         "misc": 0,
-        "moveToActive": 32,
+        "moveToActive": 33,
         "moveToIR": 1,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5090,7 +5090,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 95,
+        "moveToActive": 98,
         "moveToIR": 6,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5218,12 +5218,12 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 39,
-        "drops": 41,
+        "acquisitions": 41,
+        "drops": 43,
         "matchupAcquisitionTotals": {
           "10": 3,
           "11": 3,
-          "12": 1,
+          "12": 3,
           "2": 3,
           "3": 4,
           "4": 7,
@@ -5233,7 +5233,7 @@
           "9": 6
         },
         "misc": 0,
-        "moveToActive": 80,
+        "moveToActive": 85,
         "moveToIR": 7,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5374,7 +5374,7 @@
           "8": 3
         },
         "misc": 0,
-        "moveToActive": 46,
+        "moveToActive": 48,
         "moveToIR": 0,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5502,11 +5502,12 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 9,
-        "drops": 8,
+        "acquisitions": 10,
+        "drops": 9,
         "matchupAcquisitionTotals": {
           "10": 2,
           "11": 1,
+          "12": 1,
           "2": 1,
           "4": 1,
           "6": 1,
@@ -5514,7 +5515,7 @@
           "8": 2
         },
         "misc": 0,
-        "moveToActive": 25,
+        "moveToActive": 26,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5643,7 +5644,7 @@
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
         "acquisitions": 29,
-        "drops": 28,
+        "drops": 29,
         "matchupAcquisitionTotals": {
           "3": 1,
           "4": 3,
@@ -5654,7 +5655,7 @@
           "9": 4
         },
         "misc": 0,
-        "moveToActive": 40,
+        "moveToActive": 41,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -6071,12 +6072,13 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 38,
+        "acquisitions": 42,
         "drops": 44,
         "matchupAcquisitionTotals": {
           "1": 2,
           "10": 4,
           "11": 7,
+          "12": 4,
           "2": 2,
           "3": 5,
           "4": 3,
@@ -6087,7 +6089,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 110,
+        "moveToActive": 111,
         "moveToIR": 8,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -6226,7 +6228,7 @@
           "8": 2
         },
         "misc": 0,
-        "moveToActive": 41,
+        "moveToActive": 42,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,

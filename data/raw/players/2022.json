@@ -3,6 +3,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Ravens D/ST",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": -16033,
       "points": 123.0,
       "projected": 119.59009387
@@ -10,6 +11,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Jaguars D/ST",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": -16030,
       "points": 96.0,
       "projected": 61.53843019
@@ -17,6 +19,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Panthers D/ST",
+      "games": "PPPPPPPPPPPP-PPPP",
       "playerId": -16029,
       "points": 86.0,
       "projected": 89.4943456
@@ -24,6 +27,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Commanders D/ST",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": -16028,
       "points": 102.0,
       "projected": 109.17063082
@@ -31,6 +35,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Buccaneers D/ST",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": -16027,
       "points": 96.0,
       "projected": 124.63408274
@@ -38,6 +43,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Seahawks D/ST",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": -16026,
       "points": 88.0,
       "projected": 65.10463157
@@ -45,6 +51,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "49ers D/ST",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": -16025,
       "points": 140.0,
       "projected": 112.32508626
@@ -52,6 +59,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Chargers D/ST",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": -16024,
       "points": 87.0,
       "projected": 105.44771771
@@ -59,6 +67,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Steelers D/ST",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": -16023,
       "points": 85.0,
       "projected": 108.81745811
@@ -66,6 +75,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Cardinals D/ST",
+      "games": "PPPPPPPPPPPP-PPPP",
       "playerId": -16022,
       "points": 90.0,
       "projected": 66.68186595
@@ -73,6 +83,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Eagles D/ST",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": -16021,
       "points": 153.0,
       "projected": 121.77632957
@@ -80,6 +91,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Jets D/ST",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": -16020,
       "points": 118.0,
       "projected": 70.84319712
@@ -87,6 +99,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Giants D/ST",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": -16019,
       "points": 79.0,
       "projected": 78.92025716
@@ -94,6 +107,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Saints D/ST",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": -16018,
       "points": 94.0,
       "projected": 127.89887502
@@ -101,6 +115,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Patriots D/ST",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": -16017,
       "points": 168.0,
       "projected": 90.38737245
@@ -108,6 +123,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Vikings D/ST",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": -16016,
       "points": 61.0,
       "projected": 82.2966261
@@ -115,6 +131,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Dolphins D/ST",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": -16015,
       "points": 82.0,
       "projected": 105.37757367
@@ -122,6 +139,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Rams D/ST",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": -16014,
       "points": 85.0,
       "projected": 82.21128336
@@ -129,6 +147,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Raiders D/ST",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": -16013,
       "points": 54.0,
       "projected": 72.94421859
@@ -136,6 +155,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Chiefs D/ST",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": -16012,
       "points": 100.0,
       "projected": 59.1010948
@@ -143,6 +163,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Colts D/ST",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": -16011,
       "points": 94.0,
       "projected": 108.7049014
@@ -150,6 +171,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Titans D/ST",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": -16010,
       "points": 74.0,
       "projected": 85.03781581
@@ -157,6 +179,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Packers D/ST",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": -16009,
       "points": 104.0,
       "projected": 135.55387894
@@ -164,6 +187,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Lions D/ST",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": -16008,
       "points": 55.0,
       "projected": 42.99285643
@@ -171,6 +195,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Broncos D/ST",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": -16007,
       "points": 99.0,
       "projected": 86.79512904
@@ -178,6 +203,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Cowboys D/ST",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": -16006,
       "points": 148.0,
       "projected": 106.49077867
@@ -185,6 +211,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Browns D/ST",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": -16005,
       "points": 100.0,
       "projected": 107.29223019
@@ -192,6 +219,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Bengals D/ST",
+      "games": "PPPPPPPPP-PPPPPPM",
       "playerId": -16004,
       "points": 82.0,
       "projected": 101.47956268
@@ -199,6 +227,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Bears D/ST",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": -16003,
       "points": 34.0,
       "projected": 66.90061912
@@ -206,6 +235,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Bills D/ST",
+      "games": "PPPPPP-PPPPPPPPPM",
       "playerId": -16002,
       "points": 119.0,
       "projected": 143.84687433
@@ -213,6 +243,7 @@
     {
       "defaultPositionId": 16,
       "fullName": "Falcons D/ST",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": -16001,
       "points": 64.0,
       "projected": 63.38316352
@@ -220,6 +251,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Tom Brady",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 2330,
       "points": 264.3,
       "projected": 306.83483171
@@ -227,6 +259,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Aaron Rodgers",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 8439,
       "points": 228.0,
       "projected": 309.66359522
@@ -234,6 +267,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Robbie Gould",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 9354,
       "points": 129.0,
       "projected": 130.4779768
@@ -241,6 +275,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Nick Folk",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": 10621,
       "points": 136.0,
       "projected": 141.24933834
@@ -248,6 +283,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Matt Prater",
+      "games": "PPPPMMMPPMPP-PPPP",
       "playerId": 11122,
       "points": 95.0,
       "projected": 133.92876973
@@ -255,6 +291,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Matt Ryan",
+      "games": "PPPPPPPMMPPPP-PMM",
       "playerId": 11237,
       "points": 155.28,
       "projected": 245.40951549
@@ -262,6 +299,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Graham Gano",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 12460,
       "points": 138.0,
       "projected": 131.94647155
@@ -269,6 +307,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Matthew Stafford",
+      "games": "PPPPPP-PPMPMMMMMM",
       "playerId": 12483,
       "points": 108.38,
       "projected": 285.70494016
@@ -276,6 +315,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Ryan Succop",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 12731,
       "points": 120.0,
       "projected": 130.20963059
@@ -283,6 +323,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Colt McCoy",
+      "games": "MMMMMMMMMPPM-PPMM",
       "playerId": 13199,
       "points": 32.8,
       "projected": 0.0
@@ -290,6 +331,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Antonio Brown",
+      "games": "-----------------",
       "playerId": 13934,
       "points": 0,
       "projected": 0.0
@@ -297,6 +339,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Mark Ingram II",
+      "games": "PPPPPPPPMPMPP-MMM",
       "playerId": 13981,
       "points": 50.1,
       "projected": 92.47338968
@@ -304,6 +347,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Julio Jones",
+      "games": "PMMPMMMPPP-PPPMPP",
       "playerId": 13982,
       "points": 70.4,
       "projected": 130.50254288
@@ -311,6 +355,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "A.J. Green",
+      "games": "PPPMPPMPPPPP-PPPP",
       "playerId": 13983,
       "points": 43.5,
       "projected": 117.80850468
@@ -318,6 +363,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Andy Dalton",
+      "games": "MMMPPPPPPPPPP-PPP",
       "playerId": 14012,
       "points": 163.2,
       "projected": 30.19066226
@@ -325,6 +371,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Randall Cobb",
+      "games": "PPPPPPMMMMPPP-PPP",
       "playerId": 14053,
       "points": 78.6,
       "projected": 115.52841308
@@ -332,6 +379,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Kirk Cousins",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 14880,
       "points": 278.58,
       "projected": 269.17495533
@@ -339,6 +387,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Russell Wilson",
+      "games": "PPPPPPMP-PPPPPMPP",
       "playerId": 14881,
       "points": 202.64,
       "projected": 302.42237725
@@ -346,6 +395,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Greg Zuerlein",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": 14993,
       "points": 127.0,
       "projected": 122.32142587
@@ -353,6 +403,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Marvin Jones Jr.",
+      "games": "PPPPPMPPPP-PPPPPP",
       "playerId": 15072,
       "points": 112.0,
       "projected": 163.07835937
@@ -360,6 +411,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Case Keenum",
+      "games": "MPMMPM-MMMMMMMMMM",
       "playerId": 15168,
       "points": 0.32,
       "projected": 19.1914795
@@ -367,6 +419,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Justin Tucker",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": 15683,
       "points": 146.0,
       "projected": 144.40463681
@@ -374,6 +427,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "DeAndre Hopkins",
+      "games": "MMMMMMPPPPPP-PPPM",
       "playerId": 15795,
       "points": 151.7,
       "projected": 150.41099188
@@ -381,6 +435,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Cordarrelle Patterson",
+      "games": "PPPPMMMMPPPPP-PPP",
       "playerId": 15807,
       "points": 144.8,
       "projected": 167.88475803
@@ -388,6 +443,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Keenan Allen",
+      "games": "PMMMMMP-MMPPPPPPP",
       "playerId": 15818,
       "points": 133.8,
       "projected": 237.61534666
@@ -395,6 +451,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Zach Ertz",
+      "games": "PPPPPPPPPPMM-MMMM",
       "playerId": 15835,
       "points": 115.6,
       "projected": 148.18275202
@@ -402,6 +459,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Marquise Goodwin",
+      "games": "PPPPMPPPMP-PPPPPM",
       "playerId": 15839,
       "points": 90.2,
       "projected": 35.23183438
@@ -409,6 +467,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Travis Kelce",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": 15847,
       "points": 306.5,
       "projected": 227.30099968
@@ -416,6 +475,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Geno Smith",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 15864,
       "points": 290.26,
       "projected": 148.82193845
@@ -423,6 +483,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Robert Woods",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 15880,
       "points": 107.7,
       "projected": 180.43805823
@@ -430,6 +491,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Latavius Murray",
+      "games": "---PMPPP-PPPPPPPP",
       "playerId": 15920,
       "points": 135.4,
       "projected": 0.0
@@ -437,6 +499,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Rex Burkhead",
+      "games": "PPPPP-PPPPPPMPPPP",
       "playerId": 15971,
       "points": 76.3,
       "projected": 125.8939605
@@ -444,6 +507,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Brandon McManus",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 16339,
       "points": 120.0,
       "projected": 139.43075597
@@ -451,6 +515,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Adam Thielen",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 16460,
       "points": 170.8,
       "projected": 192.16630682
@@ -458,6 +523,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Brett Maher",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 16486,
       "points": 158.0,
       "projected": 129.42407824
@@ -465,6 +531,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Sammy Watkins",
+      "games": "PPMMMMPPPPPPP--PP",
       "playerId": 16725,
       "points": 38.6,
       "projected": 84.42236502
@@ -472,6 +539,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Teddy Bridgewater",
+      "games": "PMPPPPMMMM-MMMPMP",
       "playerId": 16728,
       "points": 38.02,
       "projected": 18.0853267
@@ -479,6 +547,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Brandin Cooks",
+      "games": "PPPPP-PPMPPPMMMPP",
       "playerId": 16731,
       "points": 124.0,
       "projected": 215.09829154
@@ -486,6 +555,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Odell Beckham Jr.",
+      "games": "-----------------",
       "playerId": 16733,
       "points": 0,
       "projected": 0.0
@@ -493,6 +563,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Mike Evans",
+      "games": "PPMPPPPPPP-PPPPPP",
       "playerId": 16737,
       "points": 225.4,
       "projected": 223.3163815
@@ -500,6 +571,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Derek Carr",
+      "games": "PPPPP-PPPPPPPPPPM",
       "playerId": 16757,
       "points": 219.08,
       "projected": 260.60691056
@@ -507,6 +579,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Jimmy Garoppolo",
+      "games": "MPPPPPPP-PPPPMMMM",
       "playerId": 16760,
       "points": 164.78,
       "projected": 14.841752
@@ -514,6 +587,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Jerick McKinnon",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": 16782,
       "points": 187.7,
       "projected": 87.02669253
@@ -521,6 +595,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Jarvis Landry",
+      "games": "PPPPMMMMMPPPP-PMM",
       "playerId": 16790,
       "points": 60.2,
       "projected": 144.95155064
@@ -528,6 +603,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Allen Robinson II",
+      "games": "PPPPPP-PPPPMMMMMM",
       "playerId": 16799,
       "points": 84.9,
       "projected": 201.06905233
@@ -535,6 +611,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Davante Adams",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 16800,
       "points": 323.2,
       "projected": 253.59251561
@@ -542,6 +619,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Logan Thomas",
+      "games": "PPPPMMMPPPPPP-PPP",
       "playerId": 16813,
       "points": 73.7,
       "projected": 115.60597491
@@ -549,6 +627,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Chris Boswell",
+      "games": "PPPPPPPM-MMMMPPPP",
       "playerId": 17372,
       "points": 80.0,
       "projected": 126.64478279
@@ -556,6 +635,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Cairo Santos",
+      "games": "PPPMPPPPPPPPP-PPP",
       "playerId": 17427,
       "points": 101.0,
       "projected": 121.85303686
@@ -563,6 +643,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Cameron Brate",
+      "games": "PPPPMPMMMP-PMPPPM",
       "playerId": 17453,
       "points": 37.4,
       "projected": 63.83688168
@@ -570,6 +651,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Taysom Hill",
+      "games": "PPMPPPPPPPPPP-PPP",
       "playerId": 2468609,
       "points": 142.3,
       "projected": 79.53802042
@@ -577,6 +659,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Jason Myers",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 2473037,
       "points": 144.0,
       "projected": 124.21462735
@@ -584,6 +667,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Taylor Heinicke",
+      "games": "PMMMMMPPPPPPP-PPM",
       "playerId": 2565969,
       "points": 115.96,
       "projected": 7.93482432
@@ -591,6 +675,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "J.D. McKissic",
+      "games": "PPPPPPPPMMMMM-MMM",
       "playerId": 2572861,
       "points": 55.8,
       "projected": 144.62088981
@@ -598,6 +683,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Carson Wentz",
+      "games": "PPPPPPMMMMMMM-MPP",
       "playerId": 2573079,
       "points": 112.8,
       "projected": 253.67782542
@@ -605,6 +691,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Tyler Higbee",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 2573401,
       "points": 144.7,
       "projected": 130.3364753
@@ -612,6 +699,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Robbie Anderson",
+      "games": "PPPPPPPPPPPP-PPPP",
       "playerId": 2574808,
       "points": 52.2,
       "projected": 157.02685774
@@ -619,6 +707,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Ameer Abdullah",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 2576336,
       "points": 52.1,
       "projected": 72.54322315
@@ -626,6 +715,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Raheem Mostert",
+      "games": "PPPPPPPPPP-MPPPPP",
       "playerId": 2576414,
       "points": 160.2,
       "projected": 130.428372
@@ -633,6 +723,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Melvin Gordon III",
+      "games": "PPPPPPPP-PP------",
       "playerId": 2576434,
       "points": 87.1,
       "projected": 144.71615286
@@ -640,6 +731,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Chris Moore",
+      "games": "PPPPM-PPPPPPPPPPP",
       "playerId": 2576581,
       "points": 111.1,
       "projected": 75.30724276
@@ -647,6 +739,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "DeVante Parker",
+      "games": "PPPPPPPPM-PPPPMMM",
       "playerId": 2576623,
       "points": 77.0,
       "projected": 146.43691606
@@ -654,6 +747,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Darren Waller",
+      "games": "PPPPP-MMMMMMMMPPP",
       "playerId": 2576925,
       "points": 79.3,
       "projected": 187.71186985
@@ -661,6 +755,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Marcus Mariota",
+      "games": "PPPPPPPPPPPPP-MMM",
       "playerId": 2576980,
       "points": 196.56,
       "projected": 141.18667763
@@ -668,6 +763,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Tyler Lockett",
+      "games": "PPPPPPPPPP-PPPPMP",
       "playerId": 2577327,
       "points": 221.9,
       "projected": 197.01179507
@@ -675,6 +771,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Dak Prescott",
+      "games": "PMMMMMPP-PPPPPPPP",
       "playerId": 2577417,
       "points": 189.88,
       "projected": 306.52253882
@@ -682,6 +779,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Jacoby Brissett",
+      "games": "PPPPPPPP-PPPPPPMP",
       "playerId": 2578570,
       "points": 168.62,
       "projected": 138.36674615
@@ -689,6 +787,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "DeAndre Carter",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": 2580216,
       "points": 107.0,
       "projected": 21.35400788
@@ -696,6 +795,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Jameis Winston",
+      "games": "PPPPMMMMMMMMM-MMM",
       "playerId": 2969939,
       "points": 43.92,
       "projected": 245.78972647
@@ -703,6 +803,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Nelson Agholor",
+      "games": "PPPPPMPPP-PPPPPPP",
       "playerId": 2971618,
       "points": 75.2,
       "projected": 87.20732879
@@ -710,6 +811,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Kalif Raymond",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 2973405,
       "points": 105.6,
       "projected": 30.74962802
@@ -717,6 +819,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Kenny Golladay",
+      "games": "PPPPMMMM-PPPMPPPP",
       "playerId": 2974858,
       "points": 9.1,
       "projected": 146.79553984
@@ -724,6 +827,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Robert Tonyan",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 2975674,
       "points": 106.1,
       "projected": 122.08180532
@@ -731,6 +835,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Stefon Diggs",
+      "games": "PPPPPP-PPPPPPPPP-",
       "playerId": 2976212,
       "points": 293.2,
       "projected": 258.25251895
@@ -738,6 +843,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Michael Thomas",
+      "games": "PPPMMMMMMMMMM-MMM",
       "playerId": 2976316,
       "points": 51.1,
       "projected": 206.58024419
@@ -745,6 +851,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Amari Cooper",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 2976499,
       "points": 238.9,
       "projected": 198.96630706
@@ -752,6 +859,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Sterling Shepard",
+      "games": "PPPMMMMM-MMMMMMMM",
       "playerId": 2976592,
       "points": 34.4,
       "projected": 133.32090565
@@ -759,6 +867,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Cooper Kupp",
+      "games": "PPPPPP-PPPMMMMMMM",
       "playerId": 2977187,
       "points": 201.4,
       "projected": 312.90656982
@@ -766,6 +875,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Kenyan Drake",
+      "games": "PPMMPPPPP-PPPPMMM",
       "playerId": 2979843,
       "points": 88.2,
       "projected": 13.48296072
@@ -773,6 +883,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Jamaal Williams",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 2980453,
       "points": 206.7,
       "projected": 123.08620247
@@ -780,6 +891,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Dare Ogunbowale",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 2983509,
       "points": 39.9,
       "projected": 65.46502819
@@ -787,6 +899,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Wil Lutz",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 2985659,
       "points": 107.0,
       "projected": 126.42260864
@@ -794,6 +907,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Mack Hollins",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 2991662,
       "points": 150.66,
       "projected": 80.71367085
@@ -801,6 +915,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Mo Alie-Cox",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 2998565,
       "points": 46.5,
       "projected": 106.05064484
@@ -808,6 +923,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Mike Davis",
+      "games": "PPPPPPMMP-PMM----",
       "playerId": 3025433,
       "points": 4.2,
       "projected": 50.2797087
@@ -815,6 +931,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "George Kittle",
+      "games": "MMPPPPPP-PPPPPPPP",
       "playerId": 3040151,
       "points": 181.6,
       "projected": 169.59238744
@@ -822,6 +939,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Aaron Jones",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 3042519,
       "points": 240.8,
       "projected": 242.56016012
@@ -829,6 +947,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Corey Davis",
+      "games": "PPPPPPPMM-MPPPMPP",
       "playerId": 3042778,
       "points": 94.9,
       "projected": 121.51384093
@@ -836,6 +955,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Derrick Henry",
+      "games": "PPPPP-PPPPPPPPPPM",
       "playerId": 3043078,
       "points": 288.96,
       "projected": 264.4696677
@@ -843,6 +963,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Demarcus Robinson",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": 3043116,
       "points": 99.4,
       "projected": 25.03362479
@@ -850,6 +971,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Austin Hooper",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 3043275,
       "points": 89.6,
       "projected": 125.84565876
@@ -857,6 +979,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Mike Williams",
+      "games": "PPPPPPP-MMPMMPPPP",
       "playerId": 3045138,
       "points": 169.3,
       "projected": 211.4403582
@@ -864,6 +987,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Tyler Boyd",
+      "games": "PPPPPPPPP-PPPPPP-",
       "playerId": 3045144,
       "points": 157.02,
       "projected": 168.31008012
@@ -871,6 +995,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "James Conner",
+      "games": "PPPPPMMMPPPP-PPPP",
       "playerId": 3045147,
       "points": 200.2,
       "projected": 240.04156745
@@ -878,6 +1003,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Kendrick Bourne",
+      "games": "PPPPPPMPP-PPPPPPP",
       "playerId": 3045523,
       "points": 79.8,
       "projected": 117.66162423
@@ -885,6 +1011,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Hunter Henry",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": 3046439,
       "points": 93.7,
       "projected": 146.38202963
@@ -892,6 +1019,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Jared Goff",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 3046779,
       "points": 274.86,
       "projected": 236.34506348
@@ -899,6 +1027,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Younghoe Koo",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 3049899,
       "points": 132.0,
       "projected": 125.77569288
@@ -906,6 +1035,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Matt Breida",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 3049916,
       "points": 48.8,
       "projected": 72.72737512
@@ -913,6 +1043,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Jake Elliott",
+      "games": "PPPPMP-PPPPPPPPPP",
       "playerId": 3050478,
       "points": 99.0,
       "projected": 132.51198399
@@ -920,6 +1051,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Mike White",
+      "games": "MMMMMMMMM-MPPPMMP",
       "playerId": 3051381,
       "points": 56.58,
       "projected": 0.0
@@ -927,6 +1059,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Ezekiel Elliott",
+      "games": "PPPPPPPM-MPPPPPPP",
       "playerId": 3051392,
       "points": 184.8,
       "projected": 214.20131947
@@ -934,6 +1067,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Marquez Valdes-Scantling",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": 3051738,
       "points": 116.7,
       "projected": 172.05909836
@@ -941,6 +1075,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Evan Engram",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 3051876,
       "points": 170.2,
       "projected": 124.3681996
@@ -948,6 +1083,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Daniel Carlson",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 3051909,
       "points": 150.0,
       "projected": 139.12251693
@@ -955,6 +1091,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Gus Edwards",
+      "games": "MMMMMMPPM-MPPPPPP",
       "playerId": 3051926,
       "points": 57.7,
       "projected": 84.0055164
@@ -962,6 +1099,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Phillip Lindsay",
+      "games": "----PPMMP--------",
       "playerId": 3052117,
       "points": 14.8,
       "projected": 0.0
@@ -969,6 +1107,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Baker Mayfield",
+      "games": "PPPPPMMMPMPM-PPPP",
       "playerId": 3052587,
       "points": 115.94,
       "projected": 228.10288978
@@ -976,6 +1115,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Jonnu Smith",
+      "games": "PPPPMPPPP-PPPPPPM",
       "playerId": 3054212,
       "points": 52.0,
       "projected": 79.57936287
@@ -983,6 +1123,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Alvin Kamara",
+      "games": "PMPMPPPPPPPPP-PPP",
       "playerId": 3054850,
       "points": 199.7,
       "projected": 254.82483434
@@ -990,6 +1131,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Harrison Butker",
+      "games": "PMMMMPP-PPPPPPPPP",
       "playerId": 3055899,
       "points": 88.0,
       "projected": 145.14630056
@@ -997,6 +1139,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Zay Jones",
+      "games": "PPPMPPPPPP-PPPPPP",
       "playerId": 3059722,
       "points": 192.0,
       "projected": 109.19796356
@@ -1004,6 +1147,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Kareem Hunt",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 3059915,
       "points": 121.0,
       "projected": 182.53120814
@@ -1011,6 +1155,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Austin Ekeler",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": 3068267,
       "points": 363.7,
       "projected": 284.73323729
@@ -1018,6 +1163,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Josh Reynolds",
+      "games": "PPPPP-PPMMMPPPPPP",
       "playerId": 3115306,
       "points": 101.3,
       "projected": 58.02374244
@@ -1025,6 +1171,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Leonard Fournette",
+      "games": "PPPPPPPPPP-MPPPPP",
       "playerId": 3115364,
       "points": 224.7,
       "projected": 258.74337921
@@ -1032,6 +1179,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Darrel Williams",
+      "games": "PPPPPMMPMMMM-MMMM",
       "playerId": 3115375,
       "points": 21.1,
       "projected": 69.60475553
@@ -1039,6 +1187,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Russell Gage",
+      "games": "PPPPPPPMMM-MPPPPP",
       "playerId": 3115378,
       "points": 113.1,
       "projected": 168.68930397
@@ -1046,6 +1195,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "DJ Chark",
+      "games": "PPPMM-MMMMPPPPPPP",
       "playerId": 3115394,
       "points": 93.8,
       "projected": 146.03508531
@@ -1053,6 +1203,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Mike Gesicki",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 3116164,
       "points": 89.6,
       "projected": 135.90189817
@@ -1060,6 +1211,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Chris Godwin",
+      "games": "PMMPPPPPPP-PPPPPP",
       "playerId": 3116165,
       "points": 213.3,
       "projected": 198.20101144
@@ -1067,6 +1219,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Mark Andrews",
+      "games": "PPPPPPPPM-PPPPPPP",
       "playerId": 3116365,
       "points": 190.5,
       "projected": 235.05356755
@@ -1074,6 +1227,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Joe Mixon",
+      "games": "PPPPPPPPP-PMMPPP-",
       "playerId": 3116385,
       "points": 221.7,
       "projected": 258.90574252
@@ -1081,6 +1235,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Samaje Perine",
+      "games": "PPPPPPPPP-PPPPPPM",
       "playerId": 3116389,
       "points": 138.9,
       "projected": 91.56253116
@@ -1088,6 +1243,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Tyreek Hill",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 3116406,
       "points": 342.9,
       "projected": 246.45219372
@@ -1095,6 +1251,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Dalvin Cook",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 3116593,
       "points": 235.1,
       "projected": 258.49040411
@@ -1102,6 +1259,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Christian McCaffrey",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 3117251,
       "points": 339.46,
       "projected": 309.94266366
@@ -1109,6 +1267,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Dalton Schultz",
+      "games": "PPMPPMPP-PPPPPPPP",
       "playerId": 3117256,
       "points": 135.4,
       "projected": 176.66243174
@@ -1116,6 +1275,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Chase Edmonds",
+      "games": "PPPPPPPP-PPMMMMPP",
       "playerId": 3119195,
       "points": 69.7,
       "projected": 174.06536348
@@ -1123,6 +1283,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "JuJu Smith-Schuster",
+      "games": "PPPPPPP-PPMPPPPPP",
       "playerId": 3120348,
       "points": 179.8,
       "projected": 197.09921377
@@ -1130,6 +1291,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Dallas Goedert",
+      "games": "PPPPPP-PPPMMMMMPP",
       "playerId": 3121023,
       "points": 130.6,
       "projected": 150.3318835
@@ -1137,6 +1299,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Noah Brown",
+      "games": "PPPPPPPM-PPPPPPPP",
       "playerId": 3121409,
       "points": 112.5,
       "projected": 121.75396645
@@ -1144,6 +1307,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Parris Campbell",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 3121410,
       "points": 136.3,
       "projected": 99.20442702
@@ -1151,6 +1315,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Terry McLaurin",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 3121422,
       "points": 212.6,
       "projected": 221.9403049
@@ -1158,6 +1323,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Curtis Samuel",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 3121427,
       "points": 175.9,
       "projected": 133.01818821
@@ -1165,6 +1331,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Royce Freeman",
+      "games": "MMMMM-MMMMMMMMPPP",
       "playerId": 3122672,
       "points": 18.3,
       "projected": 0.0
@@ -1172,6 +1339,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Deshaun Watson",
+      "games": "MMMMMMMM-MMMPPPPP",
       "playerId": 3122840,
       "points": 67.98,
       "projected": 112.35097001
@@ -1179,6 +1347,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Richie James",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 3122899,
       "points": 132.5,
       "projected": 6.32086774
@@ -1186,6 +1355,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Jeff Wilson Jr.",
+      "games": "PPPPPPPPPP-PPPMPP",
       "playerId": 3122976,
       "points": 149.1,
       "projected": 50.20805847
@@ -1193,6 +1363,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Michael Badgley",
+      "games": "---PM-PPPPPPPPPPP",
       "playerId": 3123052,
       "points": 107.0,
       "projected": 0.0
@@ -1200,6 +1371,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "David Njoku",
+      "games": "PPPPPPPM-MPPMPPPP",
       "playerId": 3123076,
       "points": 127.8,
       "projected": 131.42887456
@@ -1207,6 +1379,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Jason Sanders",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 3124679,
       "points": 118.0,
       "projected": 111.39267061
@@ -1214,6 +1387,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "D'Onta Foreman",
+      "games": "PPPPPPPPPPPP-PPPP",
       "playerId": 3125116,
       "points": 124.2,
       "projected": 68.16969577
@@ -1221,6 +1395,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Dontrell Hilliard",
+      "games": "PMPPP-PPPPPPPPMMM",
       "playerId": 3126246,
       "points": 77.2,
       "projected": 83.08920083
@@ -1228,6 +1403,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Deebo Samuel",
+      "games": "PPPPPPPM-PPPPPMMM",
       "playerId": 3126486,
       "points": 164.0,
       "projected": 261.46202682
@@ -1235,6 +1411,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Will Dissly",
+      "games": "PPPPPPPPPP-PPPPPM",
       "playerId": 3127292,
       "points": 86.9,
       "projected": 48.07922347
@@ -1242,6 +1419,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Allen Lazard",
+      "games": "MPPPPPPMPPPPP-PPP",
       "playerId": 3128390,
       "points": 160.7,
       "projected": 172.55945574
@@ -1249,6 +1427,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Courtland Sutton",
+      "games": "PPPPPPPP-PPPPMMPP",
       "playerId": 3128429,
       "points": 147.1,
       "projected": 210.41938472
@@ -1256,6 +1435,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Nick Chubb",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 3128720,
       "points": 258.2,
       "projected": 216.03737059
@@ -1263,6 +1443,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Sony Michel",
+      "games": "PPPPPPP-PPPMMMMM-",
       "playerId": 3128721,
       "points": 24.9,
       "projected": 60.65212992
@@ -1270,6 +1451,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Isaiah McKenzie",
+      "games": "PPPPMP-PPPPPPPPP-",
       "playerId": 3128724,
       "points": 115.9,
       "projected": 128.48738776
@@ -1277,6 +1459,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Hunter Renfrow",
+      "games": "PPMMP-PPPMMMMMPPP",
       "playerId": 3135321,
       "points": 59.7,
       "projected": 199.03470345
@@ -1284,6 +1467,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Mike Boone",
+      "games": "PPPPPPPM-MMMPPMMM",
       "playerId": 3139033,
       "points": 28.8,
       "projected": 15.89387136
@@ -1291,6 +1475,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Patrick Mahomes",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": 3139477,
       "points": 402.42,
       "projected": 352.0206643
@@ -1298,6 +1483,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Marlon Mack",
+      "games": "--PPM--M-MMPPPPPP",
       "playerId": 3139605,
       "points": 38.3,
       "projected": 0.0
@@ -1305,6 +1491,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Rashaad Penny",
+      "games": "PPPPPMMMMM-MMMMMM",
       "playerId": 3139925,
       "points": 52.2,
       "projected": 162.933239
@@ -1312,6 +1499,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Chase McLaughlin",
+      "games": "-PPPPPPPPPPPP-PPP",
       "playerId": 3150744,
       "points": 123.0,
       "projected": 0.0
@@ -1319,6 +1507,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Kendall Hinton",
+      "games": "-PPPMPPP-PPPPPMMP",
       "playerId": 3700815,
       "points": 56.4,
       "projected": 0.0
@@ -1326,6 +1515,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Foster Moreau",
+      "games": "PPPMM-PPPPPPPPPPP",
       "playerId": 3843945,
       "points": 83.2,
       "projected": 52.51313138
@@ -1333,6 +1523,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Christian Kirk",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 3895856,
       "points": 220.0,
       "projected": 200.01438234
@@ -1340,6 +1531,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Joshua Kelley",
+      "games": "PPPPPPM-MMMPPPPPP",
       "playerId": 3910544,
       "points": 61.4,
       "projected": 46.58163575
@@ -1347,6 +1539,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Ronald Jones",
+      "games": "MMMMMMP-MMMPPMPPP",
       "playerId": 3912550,
       "points": 5.7,
       "projected": 38.99877284
@@ -1354,6 +1547,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Rodrigo Blankenship",
+      "games": "P-----PP---------",
       "playerId": 3915165,
       "points": 18.0,
       "projected": 124.06056757
@@ -1361,6 +1555,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "DJ Moore",
+      "games": "PPPPPPPPPPPP-PPPP",
       "playerId": 3915416,
       "points": 197.1,
       "projected": 234.56855269
@@ -1368,6 +1563,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Tyler Conklin",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": 3915486,
       "points": 128.2,
       "projected": 86.0030832
@@ -1375,6 +1571,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Joe Burrow",
+      "games": "PPPPPPPPP-PPPPPP-",
       "playerId": 3915511,
       "points": 339.1,
       "projected": 294.44678973
@@ -1382,6 +1579,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Tony Pollard",
+      "games": "PPPPPPPP-PPPPPPPM",
       "playerId": 3916148,
       "points": 246.9,
       "projected": 177.22974776
@@ -1389,6 +1587,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Lamar Jackson",
+      "games": "PPPPPPPPP-PPPMPMM",
       "playerId": 3916387,
       "points": 236.08,
       "projected": 316.40611459
@@ -1396,6 +1595,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Nyheim Hines",
+      "games": "PPPPPMPPPPPPPPPPM",
       "playerId": 3916430,
       "points": 69.4,
       "projected": 144.63761959
@@ -1403,6 +1603,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Jakobi Meyers",
+      "games": "PPMMPPPPP-PPPMPPP",
       "playerId": 3916433,
       "points": 168.1,
       "projected": 173.91789406
@@ -1410,6 +1611,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "K.J. Osborn",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 3916566,
       "points": 138.9,
       "projected": 136.74341044
@@ -1417,6 +1619,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Darius Slayton",
+      "games": "MPPPPPPP-PPPPPPPP",
       "playerId": 3916945,
       "points": 128.4,
       "projected": 15.93293981
@@ -1424,6 +1627,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Tyler Bass",
+      "games": "PPPPPP-PPPPPPPPP-",
       "playerId": 3917232,
       "points": 134.0,
       "projected": 131.58173884
@@ -1431,6 +1635,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Kyler Murray",
+      "games": "PPPPPPPPPMMP-PMMM",
       "playerId": 3917315,
       "points": 200.52,
       "projected": 313.99622862
@@ -1438,6 +1643,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Ke'Shawn Vaughn",
+      "games": "MMPPPPPPPP-PPPPPP",
       "playerId": 3917612,
       "points": 4.8,
       "projected": 53.42973198
@@ -1445,6 +1651,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Daniel Jones",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 3917792,
       "points": 289.0,
       "projected": 252.40463689
@@ -1452,6 +1659,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Josh Allen",
+      "games": "PPPPPP-PPPPPPPPP-",
       "playerId": 3918298,
       "points": 373.76,
       "projected": 374.62552049
@@ -1459,6 +1667,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Gerald Everett",
+      "games": "PPPPPPP-PPMPPPPPP",
       "playerId": 3918639,
       "points": 129.7,
       "projected": 127.63299249
@@ -1466,6 +1675,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Matt Ammendola",
+      "games": "-PP-PP-----------",
       "playerId": 3919602,
       "points": 18.0,
       "projected": 0.0
@@ -1473,6 +1683,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Josh Oliver",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": 3921690,
       "points": 40.9,
       "projected": 4.10477038
@@ -1480,6 +1691,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Hayden Hurst",
+      "games": "PPPPPPPPP-PPPMMM-",
       "playerId": 3924365,
       "points": 100.0,
       "projected": 130.08934539
@@ -1487,6 +1699,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Damien Harris",
+      "games": "PPPPPMPPM-PPMMMMP",
       "playerId": 3925347,
       "points": 84.7,
       "projected": 174.55470004
@@ -1494,6 +1707,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "JaMycal Hasty",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 3928925,
       "points": 69.5,
       "projected": 12.51203157
@@ -1501,6 +1715,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Saquon Barkley",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 3929630,
       "points": 284.0,
       "projected": 227.76599125
@@ -1508,6 +1723,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Juwan Johnson",
+      "games": "PPPPPPPPPPPPM-PPP",
       "playerId": 3929645,
       "points": 131.7,
       "projected": 4.28066509
@@ -1515,6 +1731,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Van Jefferson",
+      "games": "MMMMMM-PPPPPPPPPP",
       "playerId": 3930066,
       "points": 69.8,
       "projected": 136.47702573
@@ -1522,6 +1739,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Dawson Knox",
+      "games": "PPPPMP-PPPPPPPPPM",
       "playerId": 3930086,
       "points": 126.4,
       "projected": 146.55852985
@@ -1529,6 +1747,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Diontae Johnson",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 3932905,
       "points": 172.9,
       "projected": 218.19359632
@@ -1536,6 +1755,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Greg Joseph",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 3975763,
       "points": 112.0,
       "projected": 134.77315021
@@ -1543,6 +1763,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Rashid Shaheed",
+      "games": "-----PPPPPPPP-PPP",
       "playerId": 4032473,
       "points": 93.4,
       "projected": null
@@ -1550,6 +1771,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Eddy Pineiro",
+      "games": "PPPPPPPPPPPP-PPPP",
       "playerId": 4034949,
       "points": 139.0,
       "projected": 125.53631412
@@ -1557,6 +1779,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Mecole Hardman",
+      "games": "PPPPPPP-PMMMMMMMM",
       "playerId": 4035004,
       "points": 93.8,
       "projected": 139.68262452
@@ -1564,6 +1787,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Albert Okwuegbunam",
+      "games": "PPPPPMMM-MMMMPMMP",
       "playerId": 4035115,
       "points": 25.5,
       "projected": 122.53809049
@@ -1571,6 +1795,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "David Montgomery",
+      "games": "PPPMPPPPPPPPP-PPP",
       "playerId": 4035538,
       "points": 175.6,
       "projected": 219.91783095
@@ -1578,6 +1803,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Ben Skowronek",
+      "games": "PPPPPP-PPPPPPPPMM",
       "playerId": 4035656,
       "points": 84.3,
       "projected": 57.14194938
@@ -1585,6 +1811,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Tyler Huntley",
+      "games": "MMMMMMMMM-MPPPPPP",
       "playerId": 4035671,
       "points": 50.02,
       "projected": 29.64223311
@@ -1592,6 +1819,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Zack Moss",
+      "games": "PPPPPM-MMPPPP-PPP",
       "playerId": 4035676,
       "points": 43.4,
       "projected": 32.71403915
@@ -1599,6 +1827,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Michael Pittman Jr.",
+      "games": "PMPPPPPPPPPPP-PPP",
       "playerId": 4035687,
       "points": 204.5,
       "projected": 236.16409478
@@ -1606,6 +1835,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Khalil Herbert",
+      "games": "PPPPPPPPPPMMM-MPP",
       "playerId": 4035886,
       "points": 111.9,
       "projected": 108.92544252
@@ -1613,6 +1843,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Noah Fant",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 4036131,
       "points": 116.6,
       "projected": 139.8340448
@@ -1620,6 +1851,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "T.J. Hockenson",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 4036133,
       "points": 212.8,
       "projected": 168.03020703
@@ -1627,6 +1859,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Cedrick Wilson Jr.",
+      "games": "PPPMPPPPPP-PPPPPP",
       "playerId": 4036335,
       "points": 26.4,
       "projected": 143.54228224
@@ -1634,6 +1867,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Michael Gallup",
+      "games": "MMMPPPPP-PPPPPPPP",
       "playerId": 4036348,
       "points": 103.4,
       "projected": 156.71922891
@@ -1641,6 +1875,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Greg Dortch",
+      "games": "PPPPPPPPPPPM-PPPP",
       "playerId": 4037235,
       "points": 104.6,
       "projected": 6.15065685
@@ -1648,6 +1883,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Travis Homer",
+      "games": "PPPMMMMPPP-PMPPPM",
       "playerId": 4037457,
       "points": 43.1,
       "projected": 23.42367024
@@ -1655,6 +1891,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Justice Hill",
+      "games": "PPPPMMPPP-PPPPPPP",
       "playerId": 4038441,
       "points": 38.6,
       "projected": 3.90784784
@@ -1662,6 +1899,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Gardner Minshew",
+      "games": "MMMMMM-PMMMMPPMPP",
       "playerId": 4038524,
       "points": 36.82,
       "projected": 33.10109969
@@ -1669,6 +1907,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Justin Herbert",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": 4038941,
       "points": 262.44,
       "projected": 328.0368398
@@ -1676,6 +1915,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Devin Duvernay",
+      "games": "PPPPPPPPP-PPPPPMM",
       "playerId": 4039050,
       "points": 116.1,
       "projected": 105.47305628
@@ -1683,6 +1923,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Darrell Henderson Jr.",
+      "games": "PPPPPP-PPPPMM----",
       "playerId": 4039359,
       "points": 73.5,
       "projected": 195.14332591
@@ -1690,6 +1931,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Darnell Mooney",
+      "games": "PPPPPPPPPPPPM-MMM",
       "playerId": 4040655,
       "points": 101.5,
       "projected": 212.1799832
@@ -1697,6 +1939,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Jalen Hurts",
+      "games": "PPPPPP-PPPPPPPPMM",
       "playerId": 4040715,
       "points": 369.58,
       "projected": 318.51352079
@@ -1704,6 +1947,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Devin Singletary",
+      "games": "PPPPPP-PPPPPPPPP-",
       "playerId": 4040761,
       "points": 175.7,
       "projected": 188.71772707
@@ -1711,6 +1955,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Harrison Bryant",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 4040774,
       "points": 57.7,
       "projected": 70.88176205
@@ -1718,6 +1963,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Irv Smith Jr.",
+      "games": "PPPPPP-PMMMMMMMMM",
       "playerId": 4040980,
       "points": 50.8,
       "projected": 145.81356598
@@ -1725,6 +1971,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Miles Sanders",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 4045163,
       "points": 213.4,
       "projected": 184.65403826
@@ -1732,6 +1979,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Tony Jones Jr.",
+      "games": "PPMM-PPMMM-MPPM--",
       "playerId": 4046676,
       "points": 10.4,
       "projected": 15.49820378
@@ -1739,6 +1987,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Chase Claypool",
+      "games": "PPPPPPPPPPPPP-MMP",
       "playerId": 4046692,
       "points": 100.14,
       "projected": 180.35942604
@@ -1746,6 +1995,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Josh Jacobs",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 4047365,
       "points": 321.3,
       "projected": 210.50842223
@@ -1753,6 +2003,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "A.J. Brown",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 4047646,
       "points": 286.1,
       "projected": 220.84503086
@@ -1760,6 +2011,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "DK Metcalf",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 4047650,
       "points": 219.8,
       "projected": 212.42842441
@@ -1767,6 +2019,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "John Bates",
+      "games": "PPPPPMPPPPPPP-PPP",
       "playerId": 4048228,
       "points": 30.8,
       "projected": 46.49169642
@@ -1774,6 +2027,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Alexander Mattison",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 4048244,
       "points": 69.4,
       "projected": 109.64300251
@@ -1781,6 +2035,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "James Robinson",
+      "games": "PPPPPPPPP-PMPMMMM",
       "playerId": 4052042,
       "points": 88.6,
       "projected": 151.13117839
@@ -1788,6 +2043,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Ashton Dulin",
+      "games": "PPPPPMMMMPPPP-PPM",
       "playerId": 4061956,
       "points": 42.5,
       "projected": 40.13955925
@@ -1795,6 +2051,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Desmond Ridder",
+      "games": "MMMMMMMMMMMMM-PPP",
       "playerId": 4239086,
       "points": 22.86,
       "projected": 117.95176292
@@ -1802,6 +2059,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "AJ Dillon",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 4239934,
       "points": 164.3,
       "projected": 168.75303823
@@ -1809,6 +2067,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Tee Higgins",
+      "games": "PPPPPPPPP-PPPPPP-",
       "playerId": 4239993,
       "points": 219.2,
       "projected": 237.31140122
@@ -1816,6 +2075,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Travis Etienne Jr.",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 4239996,
       "points": 199.7,
       "projected": 205.01171139
@@ -1823,6 +2083,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Cam Akers",
+      "games": "PPPPPM-MPPPPPPPPP",
       "playerId": 4240021,
       "points": 125.5,
       "projected": 146.71106
@@ -1830,6 +2091,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "KJ Hamler",
+      "games": "PMPPPPPP-MMMMMMMM",
       "playerId": 4240380,
       "points": 25.8,
       "projected": 132.10347177
@@ -1837,6 +2099,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Deon Jackson",
+      "games": "PPPPPPPPPMPPP-PPP",
       "playerId": 4240455,
       "points": 67.5,
       "projected": 38.32374302
@@ -1844,6 +2107,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Kadarius Toney",
+      "games": "PPMMMMM-PPPMMMPPP",
       "playerId": 4240600,
       "points": 44.9,
       "projected": 186.1823204
@@ -1851,6 +2115,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "DeeJay Dallas",
+      "games": "PPPPPPPPPP-PPMMPP",
       "playerId": 4240631,
       "points": 42.6,
       "projected": 43.71363471
@@ -1858,6 +2123,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Michael Carter",
+      "games": "PPPPPPPPP-PPMPPPP",
       "playerId": 4240657,
       "points": 123.5,
       "projected": 150.52555403
@@ -1865,6 +2131,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Kenny Pickett",
+      "games": "MMMPPPPP-PPPPPMPP",
       "playerId": 4240703,
       "points": 135.96,
       "projected": 124.69639124
@@ -1872,6 +2139,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Marquise Brown",
+      "games": "PPPPPPMMMMMP-PPPP",
       "playerId": 4241372,
       "points": 154.3,
       "projected": 211.77683618
@@ -1879,6 +2147,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "CeeDee Lamb",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 4241389,
       "points": 285.4,
       "projected": 252.45294796
@@ -1886,6 +2155,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Jelani Woods",
+      "games": "PPPPPPPPPMMPP-PPP",
       "playerId": 4241410,
       "points": 72.3,
       "projected": 38.41380043
@@ -1893,6 +2163,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Chuba Hubbard",
+      "games": "PPPPPPPMMPPP-PPPP",
       "playerId": 4241416,
       "points": 80.8,
       "projected": 68.75131721
@@ -1900,6 +2171,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Najee Harris",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 4241457,
       "points": 209.46,
       "projected": 265.47677801
@@ -1907,6 +2179,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Jerry Jeudy",
+      "games": "PPPPPPPP-PMMPPPPP",
       "playerId": 4241463,
       "points": 179.9,
       "projected": 212.20434891
@@ -1914,6 +2187,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Brian Robinson Jr.",
+      "games": "MMMMPPPPPPPPP-PPP",
       "playerId": 4241474,
       "points": 112.7,
       "projected": 102.86882573
@@ -1921,6 +2195,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "DeVonta Smith",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 4241478,
       "points": 240.9,
       "projected": 192.23145529
@@ -1928,6 +2203,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Tua Tagovailoa",
+      "games": "PPPPMMPPPP-PPPPPM",
       "playerId": 4241479,
       "points": 230.92,
       "projected": 271.0333298
@@ -1935,6 +2211,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Elijah Mitchell",
+      "games": "PMMMMMMM-PPPMMMMM",
       "playerId": 4241555,
       "points": 26.1,
       "projected": 197.42333274
@@ -1942,6 +2219,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "J.K. Dobbins",
+      "games": "MMPPPPMMM-MMMPPPP",
       "playerId": 4241985,
       "points": 81.2,
       "projected": 214.30256599
@@ -1949,6 +2227,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Clyde Edwards-Helaire",
+      "games": "PPPPPPP-PPPMMMMMM",
       "playerId": 4242214,
       "points": 98.3,
       "projected": 190.59991108
@@ -1956,6 +2235,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Jonathan Taylor",
+      "games": "PPPPMMPPMPPPP-PMM",
       "playerId": 4242335,
       "points": 146.4,
       "projected": 316.99153624
@@ -1963,6 +2243,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Joshua Palmer",
+      "games": "PPPPPPM-PPPPPPPPP",
       "playerId": 4242433,
       "points": 159.4,
       "projected": 150.92998887
@@ -1970,6 +2251,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Isaiah Hodgins",
+      "games": "----PP-M-PPPPPPPP",
       "playerId": 4242540,
       "points": 100.2,
       "projected": 0.0
@@ -1977,6 +2259,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Eno Benjamin",
+      "games": "PPPPPPPPPPMMPPMPP",
       "playerId": 4242873,
       "points": 89.3,
       "projected": 64.37295957
@@ -1984,6 +2267,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Cade Otton",
+      "games": "PPMPPPPPPP-PPPPPP",
       "playerId": 4243331,
       "points": 91.6,
       "projected": 34.39796717
@@ -1991,6 +2275,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Riley Patterson",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 4243371,
       "points": 127.0,
       "projected": 126.77375654
@@ -1998,6 +2283,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Gabe Davis",
+      "games": "PMPPPP-PPPPPPPPPM",
       "playerId": 4243537,
       "points": 164.7,
       "projected": 207.23136016
@@ -2005,6 +2291,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Caleb Huntley",
+      "games": "-PMPPPPPPPPPP-PMM",
       "playerId": 4244732,
       "points": 44.9,
       "projected": null
@@ -2012,6 +2299,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Christian Watson",
+      "games": "PPMPPMMPPPPPP-PPP",
       "playerId": 4248528,
       "points": 147.5,
       "projected": 108.7619008
@@ -2019,6 +2307,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Matt Gay",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 4249087,
       "points": 120.0,
       "projected": 147.80568179
@@ -2026,6 +2315,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Jalen Tolbert",
+      "games": "MMPMMPPP-PPPPMMMM",
       "playerId": 4249417,
       "points": 3.2,
       "projected": 21.28177886
@@ -2033,6 +2323,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Pierre Strong Jr.",
+      "games": "MPPPMPPPP-PPPPPPP",
       "playerId": 4249836,
       "points": 27.2,
       "projected": 15.89450206
@@ -2040,6 +2331,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Nico Collins",
+      "games": "PPPPP-PMMPPPPMMMM",
       "playerId": 4258173,
       "points": 97.1,
       "projected": 154.12356563
@@ -2047,6 +2339,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Donovan Peoples-Jones",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 4258195,
       "points": 160.9,
       "projected": 107.66772262
@@ -2054,6 +2347,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Cole Kmet",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 4258595,
       "points": 131.6,
       "projected": 145.77893213
@@ -2061,6 +2355,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Raheem Blackshear",
+      "games": "----PPPPPPPP-PPPP",
       "playerId": 4259308,
       "points": 42.9,
       "projected": null
@@ -2068,6 +2363,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "D'Andre Swift",
+      "games": "PPPMM-MPPPPPPPPPP",
       "playerId": 4259545,
       "points": 175.5,
       "projected": 253.65636049
@@ -2075,6 +2371,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Justin Jefferson",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 4262921,
       "points": 360.86,
       "projected": 287.79862991
@@ -2082,6 +2379,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Alec Pierce",
+      "games": "PMPPPPPPPPPPP-PPP",
       "playerId": 4360078,
       "points": 105.1,
       "projected": 145.60317363
@@ -2089,6 +2387,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Evan McPherson",
+      "games": "PPPPPPPPP-PPPPPP-",
       "playerId": 4360234,
       "points": 117.0,
       "projected": 148.46581703
@@ -2096,6 +2395,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Dameon Pierce",
+      "games": "PPPPP-PPPPPPPPMMM",
       "playerId": 4360238,
       "points": 166.4,
       "projected": 183.65427038
@@ -2103,6 +2403,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Kyle Pitts",
+      "games": "PPPPMPPPPPPMM-MMM",
       "playerId": 4360248,
       "points": 75.6,
       "projected": 197.6367288
@@ -2110,6 +2411,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Antonio Gibson",
+      "games": "PPPPPPPPPPPPP-PPM",
       "playerId": 4360294,
       "points": 165.9,
       "projected": 181.26222631
@@ -2117,6 +2419,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Trevor Lawrence",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 4360310,
       "points": 285.44,
       "projected": 260.71327654
@@ -2124,6 +2427,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Brandon Aiyuk",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 4360438,
       "points": 217.9,
       "projected": 184.91824931
@@ -2131,6 +2435,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Jordan Mason",
+      "games": "PPPPPPMP-PPPPPPPP",
       "playerId": 4360569,
       "points": 29.0,
       "projected": 11.80317683
@@ -2138,6 +2443,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Chigoziem Okonkwo",
+      "games": "PPPPP-PPPPPPPPPPP",
       "playerId": 4360635,
       "points": 84.0,
       "projected": 17.90656713
@@ -2145,6 +2451,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Tutu Atwell",
+      "games": "PPPMPP-MMMPPPPPPP",
       "playerId": 4360797,
       "points": 51.4,
       "projected": 46.77027512
@@ -2152,6 +2459,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Rashod Bateman",
+      "games": "PPPPMMPPP-MMMMMMM",
       "playerId": 4360939,
       "points": 53.5,
       "projected": 197.96046363
@@ -2159,6 +2467,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Isaiah Likely",
+      "games": "PPPPPPPPP-PMPPPPP",
       "playerId": 4361050,
       "points": 73.0,
       "projected": 82.15894254
@@ -2166,6 +2475,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Zach Wilson",
+      "games": "MMMPPPPPP-PMMMPPM",
       "playerId": 4361259,
       "points": 98.92,
       "projected": 206.70948966
@@ -2173,6 +2483,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Trey McBride",
+      "games": "MPPPPPPPPPPP-PPPP",
       "playerId": 4361307,
       "points": 54.4,
       "projected": 33.66927459
@@ -2180,6 +2491,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Chris Olave",
+      "games": "PPPPPMPPPPPPP-PMP",
       "playerId": 4361370,
       "points": 183.2,
       "projected": 174.44665526
@@ -2187,6 +2499,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Jahan Dotson",
+      "games": "PPPPPMMMMPPPP-PPP",
       "playerId": 4361409,
       "points": 120.4,
       "projected": 159.02926013
@@ -2194,6 +2507,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Pat Freiermuth",
+      "games": "PPPPPMPP-PPPPPPPP",
       "playerId": 4361411,
       "points": 148.2,
       "projected": 144.17045316
@@ -2201,6 +2515,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Romeo Doubs",
+      "games": "PPPPPPPPPMMMM-PPP",
       "playerId": 4361432,
       "points": 101.6,
       "projected": 120.18707537
@@ -2208,6 +2523,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Daniel Bellinger",
+      "games": "PPPPPPPM-MMMPPPPP",
       "playerId": 4361516,
       "points": 75.0,
       "projected": 58.28077591
@@ -2215,6 +2531,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Isiah Pacheco",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": 4361529,
       "points": 122.6,
       "projected": 66.30061552
@@ -2222,6 +2539,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Javonte Williams",
+      "games": "PPPPMMMM-MMMMMMMM",
       "playerId": 4361579,
       "points": 42.0,
       "projected": 238.99456943
@@ -2229,6 +2547,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Brock Purdy",
+      "games": "MMMMPMPM-MPMPPPPP",
       "playerId": 4361741,
       "points": 86.44,
       "projected": 0.0
@@ -2236,6 +2555,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Zamir White",
+      "games": "PPPPP-PPPPMPPPPMM",
       "playerId": 4361777,
       "points": 6.6,
       "projected": 93.74846162
@@ -2243,6 +2563,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Cameron Dicker",
+      "games": "----PM--PPPPPPPPP",
       "playerId": 4362081,
       "points": 84.0,
       "projected": null
@@ -2250,6 +2571,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Keaontay Ingram",
+      "games": "MMMMMPPPPPPP-PPPP",
       "playerId": 4362087,
       "points": 15.8,
       "projected": 11.60281162
@@ -2257,6 +2579,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Brevin Jordan",
+      "games": "PPMMM-PPPMMMPPPPP",
       "playerId": 4362504,
       "points": 26.8,
       "projected": 109.06212544
@@ -2264,6 +2587,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Ja'Marr Chase",
+      "games": "PPPPPPPMM-MMPPPPM",
       "playerId": 4362628,
       "points": 219.8,
       "projected": 276.16799896
@@ -2271,6 +2595,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Terrace Marshall Jr.",
+      "games": "MPMMPPPPPPPP-PPPP",
       "playerId": 4362630,
       "points": 78.7,
       "projected": 35.0681481
@@ -2278,6 +2603,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Justin Fields",
+      "games": "PPPPPPPPPPPMP-PPP",
       "playerId": 4362887,
       "points": 295.98,
       "projected": 253.09260966
@@ -2285,6 +2611,7 @@
     {
       "defaultPositionId": 4,
       "fullName": "Greg Dulcich",
+      "games": "MMMMMPPP-PPPPPPPM",
       "playerId": 4367209,
       "points": 86.1,
       "projected": 39.19253222
@@ -2292,6 +2619,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Julius Chestnut",
+      "games": "MMM---------PPPPP",
       "playerId": 4367567,
       "points": 8.3,
       "projected": 10.1294502
@@ -2299,6 +2627,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Kenneth Gainwell",
+      "games": "PPPPPP-PPPPPPPPPP",
       "playerId": 4371733,
       "points": 82.7,
       "projected": 117.67010092
@@ -2306,6 +2635,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Jaylen Waddle",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 4372016,
       "points": 248.9,
       "projected": 218.22607767
@@ -2313,6 +2643,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Hassan Haskins",
+      "games": "PPPPP-PPPPPPMMPPP",
       "playerId": 4372071,
       "points": 22.4,
       "projected": 48.02304408
@@ -2320,6 +2651,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Elijah Moore",
+      "games": "PPPPPPMPP-PPPPPPP",
       "playerId": 4372414,
       "points": 86.0,
       "projected": 198.33928689
@@ -2327,6 +2659,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Rondale Moore",
+      "games": "MMMPPPPPPPPM-MMMM",
       "playerId": 4372485,
       "points": 87.9,
       "projected": 130.6942497
@@ -2334,6 +2667,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Tyler Allgeier",
+      "games": "MPPPPPPPPPPPP-PPP",
       "playerId": 4373626,
       "points": 145.9,
       "projected": 83.38581184
@@ -2341,6 +2675,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Amon-Ra St. Brown",
+      "games": "PPPMP-PPPPPPPPPPP",
       "playerId": 4374302,
       "points": 256.7,
       "projected": 208.85674116
@@ -2348,6 +2683,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "James Cook",
+      "games": "PPPPPP-PPPPPPPPP-",
       "playerId": 4379399,
       "points": 98.6,
       "projected": 126.71005844
@@ -2355,6 +2691,7 @@
     {
       "defaultPositionId": 1,
       "fullName": "Trey Lance",
+      "games": "PPMMMMMM-MMMMMMMM",
       "playerId": 4383351,
       "points": 12.46,
       "projected": 284.03270079
@@ -2362,6 +2699,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "George Pickens",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 4426354,
       "points": 150.3,
       "projected": 147.02590445
@@ -2369,6 +2707,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Jameson Williams",
+      "games": "MMMMM-MMMMMMPPPPP",
       "playerId": 4426388,
       "points": 15.1,
       "projected": 92.60633205
@@ -2376,6 +2715,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Tyrion Davis-Price",
+      "games": "MPMMMPPM-MMMMMMPP",
       "playerId": 4426475,
       "points": 7.2,
       "projected": 31.93997507
@@ -2383,6 +2723,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Drake London",
+      "games": "PPPPPPPPPPPPP-PPP",
       "playerId": 4426502,
       "points": 160.6,
       "projected": 192.77212938
@@ -2390,6 +2731,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Isaiah Spiller",
+      "games": "MMMMMMP-PPPPMPMMM",
       "playerId": 4426891,
       "points": 8.4,
       "projected": 51.51791488
@@ -2397,6 +2739,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Breece Hall",
+      "games": "PPPPPPPMM-MMMMMMM",
       "playerId": 4427366,
       "points": 115.1,
       "projected": 210.66198765
@@ -2404,6 +2747,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Zonovan Knight",
+      "games": "-------MM-PPPPPPP",
       "playerId": 4427728,
       "points": 56.8,
       "projected": 0.0
@@ -2411,6 +2755,7 @@
     {
       "defaultPositionId": 5,
       "fullName": "Cade York",
+      "games": "PPPPPPPP-PPPPPPPP",
       "playerId": 4428963,
       "points": 111.0,
       "projected": 123.11871996
@@ -2418,6 +2763,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Skyy Moore",
+      "games": "PPPPPPP-PPPPPPPPP",
       "playerId": 4430191,
       "points": 43.4,
       "projected": 134.97119905
@@ -2425,6 +2771,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Kyren Williams",
+      "games": "PMMMMM-MMPPPPPPPP",
       "playerId": 4430737,
       "points": 30.5,
       "projected": 15.2273153
@@ -2432,6 +2779,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Kenneth Walker III",
+      "games": "MPPPPPPPPP-PPMPPP",
       "playerId": 4567048,
       "points": 189.1,
       "projected": 126.56919277
@@ -2439,6 +2787,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Treylon Burks",
+      "games": "PPPPM-MMMPPPPMMPP",
       "playerId": 4567156,
       "points": 88.2,
       "projected": 163.84374759
@@ -2446,6 +2795,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Rhamondre Stevenson",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": 4569173,
       "points": 235.9,
       "projected": 182.24479774
@@ -2453,6 +2803,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Wan'Dale Robinson",
+      "games": "PMMMMPPP-PPMMMMMM",
       "playerId": 4569587,
       "points": 51.6,
       "projected": 148.00552384
@@ -2460,6 +2811,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Garrett Wilson",
+      "games": "PPPPPPPPP-PPPPPPP",
       "playerId": 4569618,
       "points": 197.8,
       "projected": 175.30971003
@@ -2467,6 +2819,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Jaylen Warren",
+      "games": "PPPPPPPP-PPMPPPPP",
       "playerId": 4569987,
       "points": 86.0,
       "projected": 33.81770615
@@ -2474,6 +2827,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Kevin Harris",
+      "games": "-----PMMM-MMPPPPM",
       "playerId": 4570674,
       "points": 11.2,
       "projected": 0.0
@@ -2481,6 +2835,7 @@
     {
       "defaultPositionId": 3,
       "fullName": "Danny Gray",
+      "games": "MPPMPMPP-MPPPPPPP",
       "playerId": 4689546,
       "points": 2.9,
       "projected": 23.80714515
@@ -2488,6 +2843,7 @@
     {
       "defaultPositionId": 2,
       "fullName": "Rachaad White",
+      "games": "PPPPPPPPPP-PPPPPP",
       "playerId": 4697815,
       "points": 137.6,
       "projected": 95.96696121

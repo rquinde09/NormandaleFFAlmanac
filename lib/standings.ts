@@ -1,6 +1,7 @@
 // The Standings' three views (all-time totals, per-season and per-game averages) and how each ranks.
-// Round 10 (the site owner, 2026-11-25) named them Career Records, Season Averages and Power Rankings,
-// left to right. No Node imports, so the client-side Standings page uses it directly.
+// Round 10 (the site owner, 2026-11-25) named them Career Records, Season Averages and Power Rankings;
+// Round 11 (the same day) ordered them Power Rankings, Season Averages, Career Records, left to right.
+// No Node imports, so the client-side Standings page uses it directly.
 import { pct, pts } from "@/lib/format";
 
 // The per-season and per-game views rank only managers with this many seasons, so a short career
@@ -90,17 +91,17 @@ const GAME: Stat[] = [
 
 const sorts = (...pairs: string[]): PhoneSort[] => pairs.map((p) => ({ value: p.split(":")[0], label: p.split(":")[1] }));
 
+// Round 11 (the site owner, 2026-11-25): Power Rankings, Season Averages, Career Records, left to right
 export const VIEWS: View[] = [
   {
-    key: "all",
-    label: "Career Records",
-    rate: false,
-    stats: ALL,
-    rankStat: "wins",
-    // Like the old Sheet: by wins, then points for
-    rank: (a, b) => b.w - a.w || b.pf - a.pf,
-    // Round 9: "Record", sorted by Wins (the default) or Losses
-    phoneSorts: [{ value: "record", label: "Record", within: sorts("wins:Wins", "losses:Losses") }, ...sorts("pf:PF", "pa:PA", "titles:Titles")],
+    key: "game",
+    label: "Power Rankings",
+    rate: true,
+    stats: GAME,
+    rankStat: "winpct",
+    rank: (a, b) => winPctOf(b) - winPctOf(a) || perGame(b.pf, b) - perGame(a.pf, a),
+    // PDIFF removed in Round 8 (the site owner, 2026-11-20)
+    phoneSorts: sorts("winpct:Win %", "pf:PF", "pa:PA"),
   },
   {
     key: "season",
@@ -113,14 +114,15 @@ export const VIEWS: View[] = [
     phoneSorts: sorts("wins:Wins", "losses:Losses", "pf:PF", "pa:PA"),
   },
   {
-    key: "game",
-    label: "Power Rankings",
-    rate: true,
-    stats: GAME,
-    rankStat: "winpct",
-    rank: (a, b) => winPctOf(b) - winPctOf(a) || perGame(b.pf, b) - perGame(a.pf, a),
-    // PDIFF removed in Round 8 (the site owner, 2026-11-20)
-    phoneSorts: sorts("winpct:Win %", "pf:PF", "pa:PA"),
+    key: "all",
+    label: "Career Records",
+    rate: false,
+    stats: ALL,
+    rankStat: "wins",
+    // Like the old Sheet: by wins, then points for
+    rank: (a, b) => b.w - a.w || b.pf - a.pf,
+    // Round 9: "Record", sorted by Wins (the default) or Losses
+    phoneSorts: [{ value: "record", label: "Record", within: sorts("wins:Wins", "losses:Losses") }, ...sorts("pf:PF", "pa:PA", "titles:Titles")],
   },
 ];
 

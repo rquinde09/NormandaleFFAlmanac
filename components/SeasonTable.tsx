@@ -18,6 +18,7 @@ export type SeasonTableRow = {
   pa: number;
   rankChange: number | null;
   trades: number; // how many
+  injuries: number | null; // injured starters (Round 11); null without ESPN's game logs (2017)
   // The Playcall Review's numbers (null: none that season). Streaks: W6 = 6, L4 = −4.
   review: Record<ReviewKey, number | null>;
 };
@@ -36,8 +37,8 @@ const toneOf = (n: number, digits: number) => {
 
 // A season's standings with the site owner's stat sets (Round 8, 2026-11-20): Standard (W-L, PF, PA
 // and Rank Δ) and Playcall. Round 10 (2026-11-25) made Playcall the manager's decisions (Draft IQ,
-// Roster IQ, Waiver IQ, Trade IQ) and added Odds (Odds, Luck, Streaks), as on the manager pages. The
-// choice lives in the URL (?stats=playcall, ?stats=odds).
+// Roster IQ, Waiver IQ, Trade IQ) and added Odds (Odds, Luck, Streaks), as on the manager pages; Round 11
+// (2026-11-25) added Injuries to Odds. The choice lives in the URL (?stats=playcall, ?stats=odds).
 type Props = { rows: SeasonTableRow[]; complete: boolean; playoffTeams: number };
 
 export function SeasonTable(props: Props) {
@@ -50,14 +51,14 @@ export function SeasonTable(props: Props) {
 const HEADERS: Record<Stats, string[]> = {
   standard: ["W-L", "PF", "PA", "Rank Δ"],
   playcall: ["Draft IQ", "Roster IQ", "Waiver IQ", "Trade IQ"],
-  odds: ["Odds", "Luck", "Streaks"],
+  odds: ["Odds", "Luck", "Streaks", "Injuries"],
 };
 
 const NOTES: Record<Exclude<Stats, "standard">, string> = {
   playcall:
     "Each is the team against the league that season, in points its starting lineup scored. Draft IQ and Waiver IQ: what its draft picks and its pickups scored for it, minus the league’s average. Roster IQ: the league’s average points left on the bench minus the team’s. Trade IQ: what its trades gained or lost. ESPN has bench lineups, pickups and trades from 2018 on.",
   odds:
-    "Odds: wins minus ESPN’s projected wins, where ESPN favors the lineup with the higher projected score (from 2018). Luck: wins above or below expected, where each week a team expects the share of the league it outscored. Streaks: the season’s longest winning (W) or losing (L) streak, whichever is longer.",
+    "Odds: wins minus ESPN’s projected wins, where ESPN favors the lineup with the higher projected score (from 2018). Luck: wins above or below expected, where each week a team expects the share of the league it outscored. Streaks: the season’s longest winning (W) or losing (L) streak, whichever is longer. Injuries: starters who got hurt while on the team, missing their NFL team’s next two games (from 2018; a suspension or benching counts too), green below the league’s average and red above it.",
 };
 
 // The page's static HTML shows the Standard view until it reads its URL
@@ -66,6 +67,9 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
   const th = "px-1.5 py-2.5 text-right leading-tight font-medium sm:px-3 sm:whitespace-nowrap";
   const td = "px-1.5 py-2.5 text-right whitespace-nowrap sm:px-3";
   const headers = HEADERS[stats];
+  // The league's average injured starters that season, which colors each count
+  const hurt = rows.map((r) => r.injuries).filter((n): n is number => n !== null);
+  const average = hurt.length ? hurt.reduce((a, b) => a + b, 0) / hurt.length : null;
 
   return (
     <div className="space-y-2">
@@ -132,6 +136,7 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
                     <td className={`${td} ${r.review.streak! > 0 ? "text-emerald-400" : r.review.streak! < 0 ? "text-red-400" : "text-zinc-400"}`}>
                       {r.review.streak! > 0 ? `W${r.review.streak}` : r.review.streak! < 0 ? `L${-r.review.streak!}` : "–"}
                     </td>
+                    <Injuries td={td} n={r.injuries} average={average} />
                   </>
                 )}
               </tr>
@@ -146,6 +151,7 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
               complete ? "the final place against the regular-season seed" : "the seed’s change since last week"
             }.`
           : NOTES[stats]}
+        {stats === "odds" && average !== null && ` League average: ${average.toFixed(1)} injured starters.`}
       </p>
     </div>
   );
@@ -155,6 +161,13 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
 function Signed({ td, n, digits }: { td: string; n: number | null; digits: number }) {
   if (n === null) return <td className={`${td} text-zinc-600`}>–</td>;
   return <td className={`${td} ${toneOf(n, digits)}`}>{plusMinus(n, digits)}</td>;
+}
+
+// A count of injured starters: green below the league's average, red above, "–" without one
+function Injuries({ td, n, average }: { td: string; n: number | null; average: number | null }) {
+  if (n === null || average === null) return <td className={`${td} text-zinc-600`}>–</td>;
+  const tone = Math.round(n * 10) < Math.round(average * 10) ? "text-emerald-400" : Math.round(n * 10) > Math.round(average * 10) ? "text-red-400" : "text-zinc-400";
+  return <td className={`${td} ${tone}`}>{n}</td>;
 }
 
 // Whole points on a phone, so the four columns fit 375 px; tenths from sm up
