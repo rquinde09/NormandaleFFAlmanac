@@ -453,12 +453,6 @@
               "projectedTotal": 6.69
             },
             {
-              "defaultPositionId": 1,
-              "lineupSlotId": 20,
-              "playerId": 3122840,
-              "projectedTotal": 19.9
-            },
-            {
               "defaultPositionId": 5,
               "lineupSlotId": 17,
               "playerId": 3953687,
@@ -487,6 +481,12 @@
               "lineupSlotId": 23,
               "playerId": 4360569,
               "projectedTotal": 11.46
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 20,
+              "playerId": 4360739,
+              "projectedTotal": 8.05
             },
             {
               "defaultPositionId": 3,
@@ -1675,12 +1675,6 @@
               "projectedTotal": 4.16
             },
             {
-              "defaultPositionId": 1,
-              "lineupSlotId": 20,
-              "playerId": 3122840,
-              "projectedTotal": 15.65
-            },
-            {
               "defaultPositionId": 5,
               "lineupSlotId": 17,
               "playerId": 3953687,
@@ -1709,6 +1703,12 @@
               "lineupSlotId": 23,
               "playerId": 4360569,
               "projectedTotal": 10.15
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 20,
+              "playerId": 4360739,
+              "projectedTotal": 7.63
             },
             {
               "defaultPositionId": 3,
@@ -2897,12 +2897,6 @@
               "projectedTotal": 5.22
             },
             {
-              "defaultPositionId": 1,
-              "lineupSlotId": 20,
-              "playerId": 3122840,
-              "projectedTotal": 17.94
-            },
-            {
               "defaultPositionId": 5,
               "lineupSlotId": 17,
               "playerId": 3953687,
@@ -2931,6 +2925,12 @@
               "lineupSlotId": 23,
               "playerId": 4360569,
               "projectedTotal": 10.47
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 20,
+              "playerId": 4360739,
+              "projectedTotal": 0.0
             },
             {
               "defaultPositionId": 3,
@@ -4119,12 +4119,6 @@
               "projectedTotal": 6.49
             },
             {
-              "defaultPositionId": 1,
-              "lineupSlotId": 20,
-              "playerId": 3122840,
-              "projectedTotal": 13.95
-            },
-            {
               "defaultPositionId": 5,
               "lineupSlotId": 17,
               "playerId": 3953687,
@@ -4153,6 +4147,12 @@
               "lineupSlotId": 20,
               "playerId": 4360569,
               "projectedTotal": 9.24
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 23,
+              "playerId": 4360739,
+              "projectedTotal": 8.69
             },
             {
               "defaultPositionId": 3,
@@ -5341,12 +5341,6 @@
               "projectedTotal": 6.77
             },
             {
-              "defaultPositionId": 1,
-              "lineupSlotId": 20,
-              "playerId": 3122840,
-              "projectedTotal": 15.73
-            },
-            {
               "defaultPositionId": 5,
               "lineupSlotId": 17,
               "playerId": 3953687,
@@ -5375,6 +5369,12 @@
               "lineupSlotId": 20,
               "playerId": 4360569,
               "projectedTotal": 9.75
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 23,
+              "playerId": 4360739,
+              "projectedTotal": 7.98
             },
             {
               "defaultPositionId": 3,
@@ -6563,12 +6563,6 @@
               "projectedTotal": 7.06
             },
             {
-              "defaultPositionId": 1,
-              "lineupSlotId": 20,
-              "playerId": 3122840,
-              "projectedTotal": 17.14
-            },
-            {
               "defaultPositionId": 5,
               "lineupSlotId": 17,
               "playerId": 3953687,
@@ -6597,6 +6591,12 @@
               "lineupSlotId": 20,
               "playerId": 4360569,
               "projectedTotal": 10.83
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 4,
+              "playerId": 4360739,
+              "projectedTotal": 9.29
             },
             {
               "defaultPositionId": 3,

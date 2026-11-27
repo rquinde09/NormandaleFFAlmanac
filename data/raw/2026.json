@@ -3208,7 +3208,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 54.54
+          "12": 56.64
         },
         "teamId": 12,
         "tiebreak": 0.0,
@@ -3231,7 +3231,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 42.8
+          "12": 48.3
         },
         "teamId": 1,
         "tiebreak": 0.0,
@@ -3248,7 +3248,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 77.2
+          "12": 79.36
         },
         "teamId": 16,
         "tiebreak": 0.0,
@@ -3328,7 +3328,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 2.9
+          "12": 12.9
         },
         "teamId": 2,
         "tiebreak": 0.0,
@@ -3351,7 +3351,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 15.7
+          "12": 19.5
         },
         "teamId": 15,
         "tiebreak": 0.0,
@@ -3391,7 +3391,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 19.48
+          "12": 19.14
         },
         "teamId": 8,
         "tiebreak": 0.0,
@@ -4381,10 +4381,10 @@
       2025
     ],
     "requestedMatchupPeriodId": 12,
-    "standingsUpdateDate": 1795682156006,
+    "standingsUpdateDate": 1795768524581,
     "teamsJoined": 14,
     "transactionScoringPeriod": 12,
-    "waiverLastExecutionDate": 1795682155762,
+    "waiverLastExecutionDate": 1795768524064,
     "waiverProcessStatus": {
       "2026-08-28T07:08:41.999+00:00": 3,
       "2026-08-31T07:09:32.025+00:00": 1,
@@ -4426,7 +4426,8 @@
       "2026-11-18T08:18:10.379+00:00": 12,
       "2026-11-19T08:31:52.956+00:00": 2,
       "2026-11-20T08:59:08.630+00:00": 1,
-      "2026-11-25T08:56:11.969+00:00": 7
+      "2026-11-25T08:56:11.969+00:00": 7,
+      "2026-11-27T08:35:24.064+00:00": 1
     }
   },
   "teams": [
@@ -4573,7 +4574,7 @@
         "98": 0.0,
         "99": 19.0
       },
-      "waiverRank": 14
+      "waiverRank": 13
     },
     {
       "abbrev": "BBL",
@@ -4722,7 +4723,7 @@
     },
     {
       "abbrev": "LLA",
-      "currentProjectedRank": 1,
+      "currentProjectedRank": 2,
       "divisionId": 0,
       "draftDayProjectedRank": 9,
       "eliminated": false,
@@ -4862,7 +4863,7 @@
         "98": 0.0,
         "99": 27.0
       },
-      "waiverRank": 13
+      "waiverRank": 12
     },
     {
       "abbrev": "AAT",
@@ -5218,12 +5219,12 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 41,
-        "drops": 43,
+        "acquisitions": 42,
+        "drops": 44,
         "matchupAcquisitionTotals": {
           "10": 3,
           "11": 3,
-          "12": 3,
+          "12": 4,
           "2": 3,
           "3": 4,
           "4": 7,
@@ -5287,11 +5288,11 @@
         "98": 0.0,
         "99": 28.0
       },
-      "waiverRank": 11
+      "waiverRank": 14
     },
     {
       "abbrev": "BC",
-      "currentProjectedRank": 4,
+      "currentProjectedRank": 5,
       "divisionId": 0,
       "draftDayProjectedRank": 14,
       "eliminated": false,
@@ -5713,7 +5714,7 @@
     },
     {
       "abbrev": "CMC",
-      "currentProjectedRank": 2,
+      "currentProjectedRank": 1,
       "divisionId": 0,
       "draftDayProjectedRank": 7,
       "eliminated": false,
@@ -5856,7 +5857,7 @@
     },
     {
       "abbrev": "LFY",
-      "currentProjectedRank": 5,
+      "currentProjectedRank": 4,
       "divisionId": 0,
       "draftDayProjectedRank": 2,
       "eliminated": false,
@@ -5997,7 +5998,7 @@
         "98": 0.0,
         "99": 26.0
       },
-      "waiverRank": 12
+      "waiverRank": 11
     },
     {
       "abbrev": "RA",
