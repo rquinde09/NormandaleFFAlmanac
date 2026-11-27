@@ -3151,7 +3151,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 27.9
         },
         "teamId": 3,
         "tiebreak": 0.0,
@@ -3168,7 +3168,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 21.6
         },
         "teamId": 19,
         "tiebreak": 0.0,
@@ -3191,7 +3191,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 28.5
+          "12": 103.32
         },
         "teamId": 9,
         "tiebreak": 0.0,
@@ -3208,7 +3208,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 16.5
+          "12": 54.54
         },
         "teamId": 12,
         "tiebreak": 0.0,
@@ -3231,7 +3231,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 42.8
         },
         "teamId": 1,
         "tiebreak": 0.0,
@@ -3248,7 +3248,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 77.2
         },
         "teamId": 16,
         "tiebreak": 0.0,
@@ -3271,7 +3271,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 19.52
+          "12": 42.92
         },
         "teamId": 11,
         "tiebreak": 0.0,
@@ -3288,7 +3288,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 3.4
+          "12": 51.6
         },
         "teamId": 17,
         "tiebreak": 0.0,
@@ -3328,7 +3328,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 2.9
         },
         "teamId": 2,
         "tiebreak": 0.0,
@@ -3351,7 +3351,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 15.7
         },
         "teamId": 15,
         "tiebreak": 0.0,
@@ -3368,7 +3368,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 16.5
+          "12": 43.2
         },
         "teamId": 20,
         "tiebreak": 0.0,
@@ -3391,7 +3391,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 4.9
+          "12": 19.48
         },
         "teamId": 8,
         "tiebreak": 0.0,
@@ -3408,7 +3408,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 0.0
+          "12": 5.3
         },
         "teamId": 18,
         "tiebreak": 0.0,
@@ -4647,13 +4647,13 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 47,
-        "drops": 50,
+        "acquisitions": 48,
+        "drops": 51,
         "matchupAcquisitionTotals": {
           "1": 1,
           "10": 4,
           "11": 4,
-          "12": 2,
+          "12": 3,
           "2": 3,
           "3": 4,
           "4": 6,
@@ -4664,7 +4664,7 @@
           "9": 4
         },
         "misc": 0,
-        "moveToActive": 80,
+        "moveToActive": 81,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,

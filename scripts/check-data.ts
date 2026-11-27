@@ -49,6 +49,7 @@ import {
   type RecordDef,
 } from "../lib/league";
 import { isStarter, lineupSides, readLineups } from "../lib/bench";
+import { readPlayers } from "../lib/injuries";
 import { firstLadder, ladderPlaces, lastOf, nextLadder, pancakeOdds } from "../lib/pancake";
 import { FIRST_NEWS_SEASON, recordPosts, weekDate } from "../lib/recordNews";
 import { STARRED, gameEntry, leagueEntry, lineupEntry, recordSet, seasonEntry } from "../lib/records";
@@ -643,6 +644,14 @@ const kaden23 = full.teamSeasons.find((t) => t.season === 2023 && t.person === "
 check(knownHurt.every(([y, p, n, w]) => hurtWeek(y, p, n) === w) && kaden23.injuries === 0 && !full.injuries.some((i) => i.season === 2023 && i.name === "Matthew Stafford"),
   "injured starters: Jefferson, Chubb, Burrow and Walker in 2023, Alex Smith in 2018, Kamara in 2025; none for Kaden in 2023",
   knownHurt.map(([y, p, n]) => `${y} ${n} ${hurtWeek(y, p, n) ?? "missing"}`).join(", "));
+// The game logs agree with the lineups: a player who scored that week played (2026-11-26: while a
+// season is on, ESPN also sends last season's weeks, which once overwrote this season's)
+const logsOff = full.seasons.filter((info) => info.season >= 2018).flatMap((info) => {
+  const logs = new Map((readPlayers(info.season)?.players ?? []).map((p) => [p.playerId, p.games ?? ""]));
+  return lineupSides(readLineups(info.season))
+    .flatMap(({ scoringPeriod, side }) => side.lineup.filter((p) => Math.round((p.appliedStatTotal ?? 0) * 100) !== 0 && logs.get(p.playerId)?.[scoringPeriod - 1] !== "P").map((p) => `${info.season} week ${scoringPeriod} ${p.fullName}`));
+});
+check(logsOff.length === 0, "game logs: every player who scored in a lineup played that week (2018 on)", logsOff.slice(0, 5).join(", ") || `${full.seasons.filter((x) => x.season >= 2018).length} seasons`);
 // Every team-season from 2018 has a count (2017 none), and each season's counts are its injuries
 const countsOff = full.teamSeasons.filter((t) =>
   t.season === 2017 ? t.injuries !== null : t.injuries !== full.injuries.filter((i) => i.season === t.season && i.teamId === t.teamId).length);

@@ -154,7 +154,11 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   row in his team's bye week, a row with his stats when he played, and a row without them when his
   team played without him (2018's rows then hold only the team's result, stats 155–157). Each row's
   `proTeamId` is that game's team. Checked on 2023's Jefferson, Burrow, Chubb, Walker, Allen and
-  Cooper and 2018's Alex Smith. 2017 (leagueHistory) gives season totals only.
+  Cooper and 2018's Alex Smith. 2017 (leagueHistory) gives season totals only. While a season is
+  on, the same request also returns last season's weekly rows with the same week numbers (2026
+  came with 2025's weeks 4–18), so the fetch keeps rows whose `seasonId` is the season (fixed
+  2026-11-26; until then 2026's `games` and weekly `points` mixed in 2025's, and Kyle showed no
+  injuries). Completed seasons get only their own rows: 2018–2025 refetched byte for byte.
 - `fetch_seasons.py` drops personal settings, team-private lists and live/projection fields
   (`DROP_KEYS`) before saving, so the repo holds no private data and unchanged days don't commit.
   The projections the Pancake Watch needs go in their own file (below), which does change daily.
@@ -203,7 +207,8 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   Infirmary against the seasons' counts, Injury Bug; the three tiers in his order; Dynasty Manager
   (AJ 2025), no Playoff Cinderella or Revenge Tour through 2025, Comeback Manager each season;
   waiver and drop RBs, WRs and TEs only (2025: Rico Dowdle); every player named in a Trade of the
-  Year; the starred records; the Standings' order. Run it
+  Year; the starred records; the Standings' order; and every player who scored in a lineup
+  (2018 on) has played that week in his game log. Run it
   after any change to `lib/league.ts`, `lib/standings.ts`, `lib/acquisitions.ts`, `lib/injuries.ts`,
   `lib/champions.ts`, `lib/manager.ts`, `lib/bench.ts`, `lib/seasons.ts`, `lib/playcalls.ts`,
   `lib/roster.ts`, `lib/pancake.ts`, `lib/records.ts` or `lib/recordNews.ts`.
@@ -572,7 +577,7 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     and Round 11's The Infirmary ("add whoever had the most injuries as a league record"; the name
     is a placeholder): the most injured starters over a career, from 2018, the season in progress
     included; a tie goes to fewer seasons (`careerInjuries`, counted from `league.injuries`, so the
-    record-break news cuts it at each week). Through 2026 week 11: AJ 58, Jeremy 51, Jordan 46.
+    record-break news cuts it at each week). Through 2026 week 11: AJ 57, Jeremy 50, Jordan 46.
 
   On a phone, small cards two to a row, as in his mockup: the name in red capitals, the
   description (none on the Match Up records, as mocked), the number, the holder ("Luke def.

@@ -41,7 +41,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4429615,
-              "projectedTotal": 14.62
+              "projectedTotal": 14.64
             },
             {
               "defaultPositionId": 1,
@@ -100,11 +100,11 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16019,
-              "projectedTotal": 7.06
+              "projectedTotal": 6.98
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 4,
+              "lineupSlotId": 20,
               "playerId": 15818,
               "projectedTotal": 6.87
             },
@@ -112,7 +112,7 @@
               "defaultPositionId": 4,
               "lineupSlotId": 6,
               "playerId": 3121023,
-              "projectedTotal": 8.29
+              "projectedTotal": 8.3
             },
             {
               "defaultPositionId": 5,
@@ -163,16 +163,16 @@
               "projectedTotal": 10.24
             },
             {
-              "defaultPositionId": 3,
-              "lineupSlotId": 20,
-              "playerId": 4600981,
-              "projectedTotal": 6.62
-            },
-            {
               "defaultPositionId": 2,
               "lineupSlotId": 23,
               "playerId": 4685382,
               "projectedTotal": 13.6
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 4,
+              "playerId": 5083754,
+              "projectedTotal": 8.0
             }
           ],
           "teamId": 2
@@ -201,7 +201,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4241389,
-              "projectedTotal": 20.35
+              "projectedTotal": 20.34
             },
             {
               "defaultPositionId": 4,
@@ -332,7 +332,7 @@
               "defaultPositionId": 2,
               "lineupSlotId": 2,
               "playerId": 4569987,
-              "projectedTotal": 14.76
+              "projectedTotal": 14.77
             },
             {
               "defaultPositionId": 3,
@@ -350,7 +350,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4701936,
-              "projectedTotal": 16.7
+              "projectedTotal": 16.69
             }
           ],
           "teamId": 8
@@ -373,7 +373,7 @@
               "defaultPositionId": 1,
               "lineupSlotId": 0,
               "playerId": 3046779,
-              "projectedTotal": 16.94
+              "projectedTotal": 16.92
             },
             {
               "defaultPositionId": 4,
@@ -409,13 +409,13 @@
               "defaultPositionId": 3,
               "lineupSlotId": 23,
               "playerId": 4426354,
-              "projectedTotal": 14.98
+              "projectedTotal": 14.97
             },
             {
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4426388,
-              "projectedTotal": 12.26
+              "projectedTotal": 12.27
             },
             {
               "defaultPositionId": 2,
@@ -468,7 +468,7 @@
               "defaultPositionId": 1,
               "lineupSlotId": 0,
               "playerId": 4036378,
-              "projectedTotal": 13.37
+              "projectedTotal": 13.36
             },
             {
               "defaultPositionId": 2,
@@ -504,7 +504,7 @@
               "defaultPositionId": 4,
               "lineupSlotId": 6,
               "playerId": 4430027,
-              "projectedTotal": 10.79
+              "projectedTotal": 10.8
             },
             {
               "defaultPositionId": 3,
@@ -581,13 +581,13 @@
               "defaultPositionId": 3,
               "lineupSlotId": 23,
               "playerId": 4248528,
-              "projectedTotal": 14.13
+              "projectedTotal": 14.12
             },
             {
               "defaultPositionId": 4,
               "lineupSlotId": 20,
               "playerId": 4361411,
-              "projectedTotal": 7.62
+              "projectedTotal": 7.63
             },
             {
               "defaultPositionId": 2,
@@ -616,13 +616,13 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16014,
-              "projectedTotal": 7.69
+              "projectedTotal": 7.8
             },
             {
               "defaultPositionId": 16,
               "lineupSlotId": 20,
               "playerId": -16003,
-              "projectedTotal": 3.7
+              "projectedTotal": 3.68
             },
             {
               "defaultPositionId": 4,
@@ -634,7 +634,7 @@
               "defaultPositionId": 2,
               "lineupSlotId": 2,
               "playerId": 3043078,
-              "projectedTotal": 14.48
+              "projectedTotal": 14.49
             },
             {
               "defaultPositionId": 5,
@@ -705,7 +705,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16034,
-              "projectedTotal": 7.26
+              "projectedTotal": 7.18
             },
             {
               "defaultPositionId": 1,
@@ -830,7 +830,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4241478,
-              "projectedTotal": 14.39
+              "projectedTotal": 14.4
             },
             {
               "defaultPositionId": 3,
@@ -875,7 +875,7 @@
           "players": [
             {
               "defaultPositionId": 16,
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "playerId": -16008,
               "projectedTotal": 5.5
             },
@@ -889,7 +889,7 @@
               "defaultPositionId": 4,
               "lineupSlotId": 20,
               "playerId": 3116365,
-              "projectedTotal": 6.81
+              "projectedTotal": 6.82
             },
             {
               "defaultPositionId": 2,
@@ -919,13 +919,13 @@
               "defaultPositionId": 2,
               "lineupSlotId": 2,
               "playerId": 4429795,
-              "projectedTotal": 25.6
+              "projectedTotal": 25.61
             },
             {
               "defaultPositionId": 4,
               "lineupSlotId": 6,
               "playerId": 4572680,
-              "projectedTotal": 9.24
+              "projectedTotal": 9.23
             },
             {
               "defaultPositionId": 3,
@@ -966,7 +966,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16006,
-              "projectedTotal": 7.28
+              "projectedTotal": 7.21
             },
             {
               "defaultPositionId": 4,
@@ -976,7 +976,7 @@
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 4,
+              "lineupSlotId": 23,
               "playerId": 3916433,
               "projectedTotal": 12.39
             },
@@ -1030,7 +1030,7 @@
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 23,
+              "lineupSlotId": 4,
               "playerId": 4688813,
               "projectedTotal": 8.27
             },
@@ -1055,7 +1055,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16007,
-              "projectedTotal": 5.68
+              "projectedTotal": 5.69
             },
             {
               "defaultPositionId": 3,
@@ -1156,7 +1156,7 @@
               "defaultPositionId": 2,
               "lineupSlotId": 20,
               "playerId": 4038441,
-              "projectedTotal": 9.52
+              "projectedTotal": 9.53
             },
             {
               "defaultPositionId": 3,
@@ -1326,7 +1326,7 @@
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 4,
+              "lineupSlotId": 20,
               "playerId": 15818,
               "projectedTotal": 7.15
             },
@@ -1364,7 +1364,7 @@
               "defaultPositionId": 2,
               "lineupSlotId": 2,
               "playerId": 4430807,
-              "projectedTotal": 19.95
+              "projectedTotal": 19.96
             },
             {
               "defaultPositionId": 1,
@@ -1385,16 +1385,16 @@
               "projectedTotal": 0.0
             },
             {
-              "defaultPositionId": 3,
-              "lineupSlotId": 20,
-              "playerId": 4600981,
-              "projectedTotal": 6.32
-            },
-            {
               "defaultPositionId": 2,
               "lineupSlotId": 23,
               "playerId": 4685382,
               "projectedTotal": 10.01
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 4,
+              "playerId": 5083754,
+              "projectedTotal": 7.52
             }
           ],
           "teamId": 2
@@ -1524,7 +1524,7 @@
               "defaultPositionId": 4,
               "lineupSlotId": 20,
               "playerId": 3929645,
-              "projectedTotal": 5.31
+              "projectedTotal": 5.3
             },
             {
               "defaultPositionId": 3,
@@ -2097,9 +2097,9 @@
           "players": [
             {
               "defaultPositionId": 16,
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "playerId": -16008,
-              "projectedTotal": 4.67
+              "projectedTotal": 4.66
             },
             {
               "defaultPositionId": 1,
@@ -2135,7 +2135,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4361370,
-              "projectedTotal": 14.97
+              "projectedTotal": 14.96
             },
             {
               "defaultPositionId": 2,
@@ -2177,7 +2177,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 20,
               "playerId": 4880281,
-              "projectedTotal": 10.31
+              "projectedTotal": 10.3
             }
           ],
           "teamId": 17
@@ -2188,7 +2188,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16006,
-              "projectedTotal": 3.98
+              "projectedTotal": 3.91
             },
             {
               "defaultPositionId": 4,
@@ -2198,7 +2198,7 @@
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 4,
+              "lineupSlotId": 23,
               "playerId": 3916433,
               "projectedTotal": 10.61
             },
@@ -2224,7 +2224,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4426502,
-              "projectedTotal": 15.43
+              "projectedTotal": 15.44
             },
             {
               "defaultPositionId": 2,
@@ -2252,13 +2252,13 @@
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 23,
+              "lineupSlotId": 20,
               "playerId": 4688813,
               "projectedTotal": 7.84
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 20,
+              "lineupSlotId": 4,
               "playerId": 4832800,
               "projectedTotal": 11.69
             },
@@ -2277,7 +2277,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16007,
-              "projectedTotal": 7.24
+              "projectedTotal": 7.23
             },
             {
               "defaultPositionId": 3,
@@ -2402,7 +2402,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4430878,
-              "projectedTotal": 23.94
+              "projectedTotal": 23.95
             },
             {
               "defaultPositionId": 3,
@@ -2548,7 +2548,7 @@
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 4,
+              "lineupSlotId": 20,
               "playerId": 15818,
               "projectedTotal": 7.12
             },
@@ -2607,16 +2607,16 @@
               "projectedTotal": 9.98
             },
             {
-              "defaultPositionId": 3,
-              "lineupSlotId": 20,
-              "playerId": 4600981,
-              "projectedTotal": 6.58
-            },
-            {
               "defaultPositionId": 2,
               "lineupSlotId": 23,
               "playerId": 4685382,
               "projectedTotal": 14.65
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 4,
+              "playerId": 5083754,
+              "projectedTotal": 0.0
             }
           ],
           "teamId": 2
@@ -2883,7 +2883,7 @@
               "defaultPositionId": 1,
               "lineupSlotId": 20,
               "playerId": 4688380,
-              "projectedTotal": 14.25
+              "projectedTotal": 14.26
             }
           ],
           "teamId": 9
@@ -3013,7 +3013,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 3915416,
-              "projectedTotal": 13.33
+              "projectedTotal": 13.32
             },
             {
               "defaultPositionId": 2,
@@ -3066,7 +3066,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 20,
               "playerId": -16003,
-              "projectedTotal": 7.54
+              "projectedTotal": 7.53
             },
             {
               "defaultPositionId": 4,
@@ -3238,7 +3238,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 20,
               "playerId": -16012,
-              "projectedTotal": 4.8
+              "projectedTotal": 4.72
             },
             {
               "defaultPositionId": 2,
@@ -3319,9 +3319,9 @@
           "players": [
             {
               "defaultPositionId": 16,
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "playerId": -16008,
-              "projectedTotal": 5.88
+              "projectedTotal": 5.86
             },
             {
               "defaultPositionId": 1,
@@ -3393,7 +3393,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 23,
               "playerId": 4871023,
-              "projectedTotal": 12.96
+              "projectedTotal": 12.97
             },
             {
               "defaultPositionId": 3,
@@ -3770,7 +3770,7 @@
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 4,
+              "lineupSlotId": 20,
               "playerId": 15818,
               "projectedTotal": 7.7
             },
@@ -3829,16 +3829,16 @@
               "projectedTotal": 10.81
             },
             {
-              "defaultPositionId": 3,
-              "lineupSlotId": 20,
-              "playerId": 4600981,
-              "projectedTotal": 6.93
-            },
-            {
               "defaultPositionId": 2,
               "lineupSlotId": 23,
               "playerId": 4685382,
               "projectedTotal": 10.4
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 4,
+              "playerId": 5083754,
+              "projectedTotal": 7.73
             }
           ],
           "teamId": 2
@@ -3944,7 +3944,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 21,
               "playerId": 16800,
-              "projectedTotal": 18.33
+              "projectedTotal": 18.34
             },
             {
               "defaultPositionId": 2,
@@ -3974,7 +3974,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4262921,
-              "projectedTotal": 19.29
+              "projectedTotal": 19.3
             },
             {
               "defaultPositionId": 4,
@@ -3992,7 +3992,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 23,
               "playerId": 4569603,
-              "projectedTotal": 7.74
+              "projectedTotal": 7.73
             },
             {
               "defaultPositionId": 2,
@@ -4152,7 +4152,7 @@
               "defaultPositionId": 2,
               "lineupSlotId": 20,
               "playerId": 4360569,
-              "projectedTotal": 9.23
+              "projectedTotal": 9.24
             },
             {
               "defaultPositionId": 3,
@@ -4431,7 +4431,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4869645,
-              "projectedTotal": 9.68
+              "projectedTotal": 9.67
             },
             {
               "defaultPositionId": 2,
@@ -4484,7 +4484,7 @@
               "defaultPositionId": 4,
               "lineupSlotId": 6,
               "playerId": 4036133,
-              "projectedTotal": 10.5
+              "projectedTotal": 10.51
             },
             {
               "defaultPositionId": 3,
@@ -4541,9 +4541,9 @@
           "players": [
             {
               "defaultPositionId": 16,
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "playerId": -16008,
-              "projectedTotal": 5.46
+              "projectedTotal": 5.44
             },
             {
               "defaultPositionId": 1,
@@ -4632,7 +4632,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16006,
-              "projectedTotal": 3.01
+              "projectedTotal": 2.94
             },
             {
               "defaultPositionId": 4,
@@ -4804,7 +4804,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 20,
               "playerId": -16027,
-              "projectedTotal": 6.96
+              "projectedTotal": 6.88
             },
             {
               "defaultPositionId": 2,
@@ -4953,7 +4953,7 @@
               "defaultPositionId": 4,
               "lineupSlotId": 6,
               "playerId": 4723086,
-              "projectedTotal": 10.26
+              "projectedTotal": 10.25
             },
             {
               "defaultPositionId": 3,
@@ -4992,7 +4992,7 @@
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 4,
+              "lineupSlotId": 20,
               "playerId": 15818,
               "projectedTotal": 7.02
             },
@@ -5051,16 +5051,16 @@
               "projectedTotal": 10.88
             },
             {
-              "defaultPositionId": 3,
-              "lineupSlotId": 20,
-              "playerId": 4600981,
-              "projectedTotal": 6.01
-            },
-            {
               "defaultPositionId": 2,
               "lineupSlotId": 23,
               "playerId": 4685382,
               "projectedTotal": 12.2
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 4,
+              "playerId": 5083754,
+              "projectedTotal": 7.9
             }
           ],
           "teamId": 2
@@ -5131,7 +5131,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4685278,
-              "projectedTotal": 12.82
+              "projectedTotal": 12.81
             },
             {
               "defaultPositionId": 2,
@@ -5552,13 +5552,13 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4432620,
-              "projectedTotal": 17.5
+              "projectedTotal": 17.51
             },
             {
               "defaultPositionId": 1,
               "lineupSlotId": 0,
               "playerId": 4433970,
-              "projectedTotal": 15.13
+              "projectedTotal": 15.14
             },
             {
               "defaultPositionId": 3,
@@ -5599,7 +5599,7 @@
               "defaultPositionId": 1,
               "lineupSlotId": 0,
               "playerId": 4360310,
-              "projectedTotal": 21.96
+              "projectedTotal": 22.03
             },
             {
               "defaultPositionId": 4,
@@ -5763,9 +5763,9 @@
           "players": [
             {
               "defaultPositionId": 16,
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "playerId": -16008,
-              "projectedTotal": 7.23
+              "projectedTotal": 7.22
             },
             {
               "defaultPositionId": 1,
@@ -5819,7 +5819,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4595348,
-              "projectedTotal": 16.56
+              "projectedTotal": 16.57
             },
             {
               "defaultPositionId": 2,
@@ -5854,7 +5854,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16006,
-              "projectedTotal": 2.91
+              "projectedTotal": 2.84
             },
             {
               "defaultPositionId": 4,
@@ -5973,7 +5973,7 @@
               "defaultPositionId": 4,
               "lineupSlotId": 6,
               "playerId": 4361050,
-              "projectedTotal": 12.25
+              "projectedTotal": 12.26
             },
             {
               "defaultPositionId": 3,
@@ -6074,7 +6074,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 20,
               "playerId": 4431299,
-              "projectedTotal": 10.69
+              "projectedTotal": 10.68
             },
             {
               "defaultPositionId": 4,
@@ -6157,7 +6157,7 @@
               "defaultPositionId": 1,
               "lineupSlotId": 0,
               "playerId": 4431611,
-              "projectedTotal": 16.66
+              "projectedTotal": 16.67
             },
             {
               "defaultPositionId": 3,
@@ -6214,7 +6214,7 @@
             },
             {
               "defaultPositionId": 3,
-              "lineupSlotId": 4,
+              "lineupSlotId": 20,
               "playerId": 15818,
               "projectedTotal": 7.09
             },
@@ -6273,16 +6273,16 @@
               "projectedTotal": 9.6
             },
             {
-              "defaultPositionId": 3,
-              "lineupSlotId": 20,
-              "playerId": 4600981,
-              "projectedTotal": 6.54
-            },
-            {
               "defaultPositionId": 2,
               "lineupSlotId": 23,
               "playerId": 4685382,
               "projectedTotal": 9.82
+            },
+            {
+              "defaultPositionId": 3,
+              "lineupSlotId": 4,
+              "playerId": 5083754,
+              "projectedTotal": 8.02
             }
           ],
           "teamId": 2
@@ -6353,7 +6353,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4685278,
-              "projectedTotal": 13.13
+              "projectedTotal": 13.14
             },
             {
               "defaultPositionId": 2,
@@ -6572,7 +6572,7 @@
               "defaultPositionId": 5,
               "lineupSlotId": 17,
               "playerId": 3953687,
-              "projectedTotal": 10.32
+              "projectedTotal": 10.33
             },
             {
               "defaultPositionId": 1,
@@ -6602,7 +6602,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 20,
               "playerId": 4366031,
-              "projectedTotal": 8.49
+              "projectedTotal": 8.48
             },
             {
               "defaultPositionId": 2,
@@ -6780,7 +6780,7 @@
               "defaultPositionId": 1,
               "lineupSlotId": 0,
               "playerId": 4433970,
-              "projectedTotal": 18.91
+              "projectedTotal": 18.97
             },
             {
               "defaultPositionId": 3,
@@ -6946,7 +6946,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4258173,
-              "projectedTotal": 14.48
+              "projectedTotal": 14.47
             },
             {
               "defaultPositionId": 2,
@@ -6985,9 +6985,9 @@
           "players": [
             {
               "defaultPositionId": 16,
-              "lineupSlotId": 16,
+              "lineupSlotId": 20,
               "playerId": -16008,
-              "projectedTotal": 5.52
+              "projectedTotal": 5.5
             },
             {
               "defaultPositionId": 1,
@@ -7041,7 +7041,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 4,
               "playerId": 4595348,
-              "projectedTotal": 18.32
+              "projectedTotal": 18.33
             },
             {
               "defaultPositionId": 2,
@@ -7076,7 +7076,7 @@
               "defaultPositionId": 16,
               "lineupSlotId": 16,
               "playerId": -16006,
-              "projectedTotal": 4.92
+              "projectedTotal": 4.85
             },
             {
               "defaultPositionId": 4,
@@ -7130,7 +7130,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 23,
               "playerId": 4432708,
-              "projectedTotal": 6.49
+              "projectedTotal": 6.48
             },
             {
               "defaultPositionId": 3,
@@ -7296,7 +7296,7 @@
               "defaultPositionId": 3,
               "lineupSlotId": 20,
               "playerId": 4431299,
-              "projectedTotal": 10.96
+              "projectedTotal": 10.97
             },
             {
               "defaultPositionId": 4,

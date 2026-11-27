@@ -351,7 +351,10 @@ def update_players(req, season, data, force):
     weekly_any = False
     for wrap in found:
         player = wrap.get("player") or {}
-        stats = player.get("stats") or []
+        # While a season is on, ESPN's "top 25 scoring periods" reach back into last season too, with
+        # the same week numbers (2026-11-26: DeVonta Smith's 2025 weeks 4–18 came with 2026's). Keep
+        # this season's rows only.
+        stats = [s for s in player.get("stats") or [] if s.get("seasonId") in (None, season)]
         rows = {s["scoringPeriodId"]: s for s in stats
                 if s.get("statSourceId") == 0 and s.get("statSplitTypeId") == 1 and s.get("scoringPeriodId")}
         weekly = {p: s.get("appliedTotal") or 0 for p, s in rows.items()}
