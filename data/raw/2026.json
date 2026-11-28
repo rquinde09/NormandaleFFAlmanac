@@ -3151,7 +3151,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 27.9
+          "12": 30.9
         },
         "teamId": 3,
         "tiebreak": 0.0,
@@ -3168,7 +3168,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 21.6
+          "12": 29.6
         },
         "teamId": 19,
         "tiebreak": 0.0,
@@ -3191,7 +3191,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 103.32
+          "12": 113.32
         },
         "teamId": 9,
         "tiebreak": 0.0,
@@ -3231,7 +3231,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 48.3
+          "12": 63.5
         },
         "teamId": 1,
         "tiebreak": 0.0,
@@ -3391,7 +3391,7 @@
         "eliminationMatchupPeriod": 0,
         "gamesPlayed": 0,
         "pointsByScoringPeriod": {
-          "12": 19.14
+          "12": 50.74
         },
         "teamId": 8,
         "tiebreak": 0.0,
@@ -4381,10 +4381,10 @@
       2025
     ],
     "requestedMatchupPeriodId": 12,
-    "standingsUpdateDate": 1795768524581,
+    "standingsUpdateDate": 1795856545630,
     "teamsJoined": 14,
     "transactionScoringPeriod": 12,
-    "waiverLastExecutionDate": 1795768524064,
+    "waiverLastExecutionDate": 1795856545537,
     "waiverProcessStatus": {
       "2026-08-28T07:08:41.999+00:00": 3,
       "2026-08-31T07:09:32.025+00:00": 1,
@@ -4666,7 +4666,7 @@
         },
         "misc": 0,
         "moveToActive": 81,
-        "moveToIR": 2,
+        "moveToIR": 3,
         "paid": 0.0,
         "teamCharges": 0.0,
         "trades": 2
@@ -4793,12 +4793,12 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 20,
-        "drops": 22,
+        "acquisitions": 21,
+        "drops": 23,
         "matchupAcquisitionTotals": {
           "10": 3,
           "11": 2,
-          "12": 2,
+          "12": 3,
           "2": 2,
           "3": 1,
           "4": 1,
@@ -4809,7 +4809,7 @@
           "9": 1
         },
         "misc": 0,
-        "moveToActive": 30,
+        "moveToActive": 31,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5292,7 +5292,7 @@
     },
     {
       "abbrev": "BC",
-      "currentProjectedRank": 5,
+      "currentProjectedRank": 4,
       "divisionId": 0,
       "draftDayProjectedRank": 14,
       "eliminated": false,
@@ -5516,7 +5516,7 @@
           "8": 2
         },
         "misc": 0,
-        "moveToActive": 26,
+        "moveToActive": 27,
         "moveToIR": 2,
         "paid": 0.0,
         "teamCharges": 0.0,
@@ -5857,7 +5857,7 @@
     },
     {
       "abbrev": "LFY",
-      "currentProjectedRank": 4,
+      "currentProjectedRank": 5,
       "divisionId": 0,
       "draftDayProjectedRank": 2,
       "eliminated": false,
@@ -6073,13 +6073,13 @@
       },
       "transactionCounter": {
         "acquisitionBudgetSpent": 0,
-        "acquisitions": 42,
-        "drops": 44,
+        "acquisitions": 43,
+        "drops": 45,
         "matchupAcquisitionTotals": {
           "1": 2,
           "10": 4,
           "11": 7,
-          "12": 4,
+          "12": 5,
           "2": 2,
           "3": 5,
           "4": 3,
@@ -6090,7 +6090,7 @@
           "9": 3
         },
         "misc": 0,
-        "moveToActive": 111,
+        "moveToActive": 112,
         "moveToIR": 8,
         "paid": 0.0,
         "teamCharges": 0.0,
