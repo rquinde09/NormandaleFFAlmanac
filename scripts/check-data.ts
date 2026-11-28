@@ -17,8 +17,8 @@
 // - Round 9: the Leaderboard's Record sort, the career row and where the home cards go
 // - Round 10: draft, pickup and trade points add up to points for; Draft IQ and Waiver IQ; the
 //   waiver, drop, trade and fleece awards; the Standings' view names
-// - Round 11: injured starters (known cases, counts, Injuries adds up to zero, The Infirmary and
-//   Injury Bug), the three achievement tiers and the new awards, waiver and drop positions, every
+// - Round 11: injuries (known cases, the site owner's 2026 examples of 2026-11-27, counts, Injuries
+//   adds up to zero, The Infirmary and Injury Bug), the three achievement tiers and the new awards, waiver and drop positions, every
 //   player in a trade, the starred records and the Standings' order
 // Usage: npm run check
 import fs from "node:fs";
@@ -626,24 +626,45 @@ check(VIEWS.map((v) => v.label).join() === "Power Rankings,Season Averages,Caree
 
 // ---- Round 11 (the site owner, 2026-11-25) ----
 
-// Injured starters (lib/injuries.ts): known cases from ESPN's game logs. 2023: Jefferson hurt in
-// week 5 (out through Minnesota's week 13 bye), Chubb in week 2, Burrow in week 11, Walker missing
-// weeks 12–13 with no bye between; 2018: Alex Smith hurt in week 11 while on Nigel's bench, after
-// starting for him; 2025: Kamara, benched by Ammari the week he got hurt. Kaden's 2023 starters
-// missed no two straight games (Stafford missed one, then had his bye).
-const hurtWeek = (season: number, person: string, name: string) => full.injuries.find((i) => i.season === season && i.person === person && i.name === name)?.hurt;
-const knownHurt: [number, string, string, number][] = [
-  [2023, "randy", "Justin Jefferson", 5],
-  [2023, "luke", "Nick Chubb", 2],
-  [2023, "jordan", "Joe Burrow", 11],
-  [2023, "ammari", "Kenneth Walker III", 11],
-  [2018, "nigel", "Alex Smith", 11],
-  [2025, "ammari", "Alvin Kamara", 12],
+// Injuries (lib/injuries.ts; redefined by the site owner on 2026-11-27): known cases from ESPN's game
+// logs. 2023: Jefferson hurt in week 5 (out through Minnesota's week 13 bye), Walker missing weeks
+// 12–13, Stafford one game for Kaden (one missed game counts now); 2025: Kamara, benched by Ammari the
+// week he got hurt. Chubb (2023, week 2), Burrow (2023, week 11) and Alex Smith (2018, week 11) were
+// let go before they missed a game and never played again that season, so they count at its end.
+const hurtIn = (season: number, person: string, name: string) => full.injuries.find((i) => i.season === season && i.person === person && i.name === name);
+const knownHurt: [number, string, string, number, boolean][] = [
+  [2023, "randy", "Justin Jefferson", 5, false],
+  [2023, "luke", "Nick Chubb", 2, true],
+  [2023, "jordan", "Joe Burrow", 11, true],
+  [2023, "ammari", "Kenneth Walker III", 11, false],
+  [2023, "kaden", "Matthew Stafford", 8, false],
+  [2018, "nigel", "Alex Smith", 11, true],
+  [2025, "ammari", "Alvin Kamara", 12, false],
 ];
-const kaden23 = full.teamSeasons.find((t) => t.season === 2023 && t.person === "kaden")!;
-check(knownHurt.every(([y, p, n, w]) => hurtWeek(y, p, n) === w) && kaden23.injuries === 0 && !full.injuries.some((i) => i.season === 2023 && i.name === "Matthew Stafford"),
-  "injured starters: Jefferson, Chubb, Burrow and Walker in 2023, Alex Smith in 2018, Kamara in 2025; none for Kaden in 2023",
-  knownHurt.map(([y, p, n]) => `${y} ${n} ${hurtWeek(y, p, n) ?? "missing"}`).join(", "));
+check(knownHurt.every(([y, p, n, w, letGo]) => hurtIn(y, p, n)?.hurt === w && hurtIn(y, p, n)?.letGo === letGo),
+  "injuries: Jefferson, Walker and Stafford in 2023, Kamara in 2025; Chubb and Burrow (2023) and Alex Smith (2018) out for the season",
+  knownHurt.map(([y, p, n]) => `${y} ${n} ${hurtIn(y, p, n)?.hurt ?? "missing"}`).join(", "));
+// The site owner's 2026 examples (2026-11-27), through week 11 so they hold as the season goes on.
+// Each stretch of missed games counts: A.J. Brown twice for Randy so far ("a three count" once he
+// misses week 12), TreVeyon Henderson, RJ Harvey, Ladd McConkey and Jeremiyah Love twice each, DJ
+// Moore once (weeks 5–6 around his bye). Picked up or traded for while out counts: Brooks for Randy,
+// Goedert for AJ, Price for Ryan, Tank Dell for Robel and AJ but not Ammari (he came back the week
+// Ammari got him). Adonai Mitchell counts for Ryan only: Jeremy let him go before he missed a game.
+// Unlike his list, Robel isn't charged for Goedert, traded before he missed a game and back in week 5.
+const hurt26 = (person: string, name: string) => full.injuries.filter((i) => i.season === 2026 && i.week <= 11 && i.person === person && i.name === name).length;
+const owner26: [string, string, number][] = [
+  ["randy", "A.J. Brown", 2], ["kyle", "TreVeyon Henderson", 2], ["suny", "RJ Harvey", 2], ["ryan", "Ladd McConkey", 2],
+  ["jeremy", "Jeremiyah Love", 2], ["kaden", "DJ Moore", 1], ["randy", "Jonathon Brooks", 1], ["robel", "Dallas Goedert", 0],
+  ["aj", "Dallas Goedert", 1], ["ryan", "Jadarian Price", 1], ["robel", "Tank Dell", 1], ["aj", "Tank Dell", 1], ["ammari", "Tank Dell", 0],
+  ["ryan", "Adonai Mitchell", 1], ["jeremy", "Adonai Mitchell", 0], ["aj", "Adonai Mitchell", 0], ["randy", "Kyler Murray", 1],
+];
+const owner26Off = owner26.filter(([p, n, c]) => hurt26(p, n) !== c);
+// His latest for each manager, through week 11 (Randy's becomes A.J. Brown once he misses week 12)
+const latest26 = careerInjuries(cutAt(2026, 11));
+const latestWant: [string, string][] = [["aj", "Jordan Addison"], ["jeremy", "Jeremiyah Love"], ["randy", "Jonathon Brooks"], ["kaden", "Mike Evans"]];
+const latestOff = latestWant.filter(([p, n]) => latest26.get(p)?.latest?.name !== n);
+check(owner26Off.length === 0 && latestOff.length === 0, "injuries: the site owner's 2026 examples through week 11, and the latest for AJ, Jeremy, Randy and Kaden",
+  [...owner26Off.map(([p, n, c]) => `${p} ${n} ${hurt26(p, n)}, not ${c}`), ...latestOff.map(([p]) => `${p} latest ${latest26.get(p)?.latest?.name}`)].join(", "));
 // The game logs agree with the lineups: a player who scored that week played (2026-11-26: while a
 // season is on, ESPN also sends last season's weeks, which once overwrote this season's)
 const logsOff = full.seasons.filter((info) => info.season >= 2018).flatMap((info) => {
@@ -655,18 +676,19 @@ check(logsOff.length === 0, "game logs: every player who scored in a lineup play
 // Every team-season from 2018 has a count (2017 none), and each season's counts are its injuries
 const countsOff = full.teamSeasons.filter((t) =>
   t.season === 2017 ? t.injuries !== null : t.injuries !== full.injuries.filter((i) => i.season === t.season && i.teamId === t.teamId).length);
-check(countsOff.length === 0 && full.injuries.every((i) => i.week > i.hurt),
-  "injured starters counted for every team-season from 2018 (none for 2017)", `${full.injuries.length} through ${latestSeason(full).season} week ${latestSeason(full).throughWeek}`);
+const seasonOver = new Map(full.seasons.map((s) => [s.season, s.complete]));
+check(countsOff.length === 0 && full.injuries.every((i) => (i.hurt === null || i.week > i.hurt) && i.since <= i.week && (!i.letGo || seasonOver.get(i.season))),
+  "injuries counted for every team-season from 2018 (none for 2017); out-for-the-season ones once it's over", `${full.injuries.length} through ${latestSeason(full).season} week ${latestSeason(full).throughWeek}`);
 // Injuries in Against the Odds is the league's average minus the team's count, so it adds up to zero
 const injurySums = full.seasons.filter((s) => s.season >= 2018).map((info) => reviews.filter(({ s }) => s.season === info.season).reduce((n, { s }) => n + (s.review.injuries.value ?? 0), 0));
 check(injurySums.every((n) => Math.abs(n) < 1e-6) && reviews.every(({ s }) => (s.review.injuries.value === null) === (s.season === 2017)),
   "Injuries adds up to zero in every season from 2018", injurySums.map((n) => n.toFixed(6)).join(" "));
-// The Infirmary: the most injured starters over a career, matching the team-season counts
+// The Infirmary: the most injuries over a career, matching the team-season counts
 const careers = careerInjuries(full);
 const infirmary = leagueRecords(full, 5).find((r) => r.key === "injuries")!.entries;
 const careerOff = [...careers].filter(([p, c]) => c.count !== full.teamSeasons.filter((t) => t.person === p).reduce((n, t) => n + (t.injuries ?? 0), 0));
 check(careerOff.length === 0 && infirmary[0].value === Math.max(...[...careers.values()].map((c) => c.count)),
-  "The Infirmary: career injured starters match the seasons, and the holder has the most", infirmary.map((e) => `${e.person} ${e.value}`).join(", "));
+  "The Infirmary: career injuries match the seasons, and the holder has the most", infirmary.map((e) => `${e.person} ${e.value}`).join(", "));
 
 // The achievements: three tiers in the site owner's order, six, six and eight
 const tierTitles = (tier: string) => achievements(league, "aj").filter((a) => a.tier === tier).map((a) => a.title).join(", ");
@@ -680,13 +702,13 @@ const comebacks = award("comeback").join(", ");
 check(award("dynasty").join() === "2025 aj" && award("cinderella").length === 0 && award("revenge").length === 0 &&
   comebacks === "2018 kaden, 2019 nigel, 2020 madison, 2021 luke, 2022 suny, 2023 abdi, 2023 aj, 2024 jeremy, 2025 kaden",
   "Dynasty Manager, Playoff Cinderella, Revenge Tour and Comeback Manager through 2025", `comeback: ${comebacks}`);
-// Injury Bug: the season's most injured starters, ties shared
+// Injury Bug: the season's most injuries, ties shared
 const bugs = done.filter((y) => y >= 2018).flatMap((y) => {
   const field = league.teamSeasons.filter((t) => t.season === y);
   const most = Math.max(...field.map((t) => t.injuries!));
   return field.filter((t) => t.injuries === most).map((t) => `${y} ${t.person}`);
 }).sort();
-check(award("injury").join() === bugs.join(), "Injury Bug: the most injured starters each season from 2018", award("injury").join(", "));
+check(award("injury").join() === bugs.join(), "Injury Bug: the most injuries each season from 2018", award("injury").join(", "));
 // Waiver Pick and Drop of the Year: running backs, receivers and tight ends only
 const positionsOk = done.filter((y) => y >= 2018).every((y) => [...seasonAwards(y).waiver, ...seasonAwards(y).drop].every((x) => AWARD_POSITIONS.has(x.position ?? -1)));
 check(positionsOk && seasonAwards(2025).waiver.map((x) => x.name).join() === "Rico Dowdle", "Waiver Pick and Drop of the Year: RBs, WRs and TEs only (2025's pick: Rico Dowdle)");

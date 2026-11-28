@@ -64,3 +64,19 @@ export function RankChange({ change }: { change: number | null }) {
     </span>
   );
 }
+
+// Notes that fold away under a table, shut by default: the Records page's "* How the starred records
+// are counted" (Round 11) and, since 2026-11-27, the season pages' "How the stats are counted"
+export function FoldNotes({ summary, children, className = "" }: { summary: ReactNode; children: ReactNode; className?: string }) {
+  return (
+    <details className={`group text-xs text-zinc-500 ${className}`}>
+      <summary className="flex cursor-pointer list-none items-center gap-1 hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
+        {summary}
+        <span className="transition-transform group-open:rotate-180" aria-hidden>
+          ▾
+        </span>
+      </summary>
+      <ul className="mt-2 list-disc space-y-1 pl-4">{children}</ul>
+    </details>
+  );
+}

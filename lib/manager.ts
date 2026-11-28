@@ -5,7 +5,7 @@ import { seasonAwards, type TradeResult } from "@/lib/acquisitions";
 import { topStarters } from "@/lib/champions";
 import { ordinal, pct, pts, record, score, signed } from "@/lib/format";
 import { DUNZO_OVER, ICE_WITHIN, type Game, type Kind, type League, type TeamSeason, careerTotals, luck, managerBySlug, marginCents, odds, winPct as careerWinPct } from "@/lib/league";
-import { DECISIONS, FATE, type ReviewKey } from "@/lib/review";
+import { DECISIONS, FATE, INJURIES_COUNTED, type ReviewKey } from "@/lib/review";
 import { rosterBox, type RosterBox } from "@/lib/roster";
 
 export type OpponentLine = {
@@ -181,7 +181,7 @@ function average(field: TeamSeason[], value: (t: TeamSeason) => number | null) {
 // them, minus the league's average; Waiver IQ the same for its pickups; Roster IQ the league's average
 // points left on the bench minus the team's own. So each adds up to zero over a season, like Luck,
 // Odds and Trade IQ. Trade IQ is 0 for a team that made no trade. Injuries (Round 11) is the league's
-// average count of injured starters minus the team's, so fewer is better, like Roster IQ.
+// average count of injuries minus the team's, so fewer is better, like Roster IQ.
 export function playcallValues(field: TeamSeason[]): Map<TeamSeason, Record<ReviewKey, number | null>> {
   const drafted = average(field, (t) => t.draftPoints);
   const picked = average(field, (t) => t.pickupPoints);
@@ -385,13 +385,13 @@ export function achievements(league: League, person: string): Achievement[] {
     },
   );
 
-  // Injury Bug (Round 11): the most injured starters that season (lib/injuries.ts)
+  // Injury Bug (Round 11): the most injuries that season (lib/injuries.ts)
   const injuryBug = won(
     (t) => {
       const field = league.teamSeasons.filter((x) => x.season === t.season && x.injuries !== null).map((x) => x.injuries!);
       return t.injuries !== null && t.injuries > 0 && t.injuries === Math.max(...field) ? [t] : [];
     },
-    (t) => `${t.injuries} injured starters`,
+    (t) => `${t.injuries} injuries`,
   );
 
   return [
@@ -468,7 +468,7 @@ export function achievements(league: League, person: string): Achievement[] {
       fine: `Of every running back, receiver and tight end let go that season (drafted, picked up or traded for), the one who then scored the most for the team that picked him up. ${ROSTERS}`,
       ...listed(drops) },
     { key: "injury", tier: "pancake", icon: "🐛", title: "Injury Bug", detail: "Has the most players suffer significant injuries",
-      fine: "The most starters hurt that season: players who had started for the team and then, while on it, missed their NFL team’s next two games. ESPN keeps no injury reports for past weeks, so a suspension or a benching counts too. From 2018.",
+      fine: `The most injuries that season. ${INJURIES_COUNTED}`,
       ...listed(injuryBug) },
     { key: "fleece", tier: "pancake", icon: "🐑", title: "Fleece of the Year", detail: "Gets fleeced in a trade",
       fine: "The other side of the season’s most lopsided trade: what the players sent scored for their new team, minus what the players received scored in the starting lineup. ESPN has trade details from 2018 on.",

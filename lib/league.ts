@@ -74,8 +74,8 @@ export type TeamSeason = {
   // Round 7 (2026-11-18), every decided game: decided by under 7 points, or by more than 50
   close: MarginSplit;
   blowout: MarginSplit;
-  // Round 11 (2026-11-25), from lib/injuries.ts: starters hurt while on the team (missed their NFL
-  // team's next two games); null without ESPN's game logs (2017)
+  // Round 11 (2026-11-25; redefined 2026-11-27), from lib/injuries.ts: players who missed NFL games
+  // while on the team's roster; null without ESPN's game logs (2017)
   injuries: number | null;
 };
 
@@ -106,7 +106,7 @@ export type SeasonInfo = {
 // A game on the schedule that isn't decided yet (the season in progress), by ESPN team ID
 export type Upcoming = { season: number; week: number; kind: Kind; homeTeamId: number; awayTeamId: number };
 
-// An injured starter (lib/injuries.ts) and the manager whose team he was on
+// An injury (lib/injuries.ts) and the manager whose team it counts for
 export type InjuryEntry = Injury & { person: string };
 
 export type League = {
@@ -300,7 +300,7 @@ export function getLeague(): League {
     const rosters = acquisitions(s.seasonId).rosters;
     const division = new Map(s.teams.map((t) => [t.id, t.divisionId ?? 0]));
     const optimized = complete && seasonBench.length ? optimizedSeeds(seasonGames, seasonBench, division) : null;
-    const hurt = seasonInjuries(s.seasonId);
+    const hurt = seasonInjuries(s.seasonId, complete);
     injured.push(...(hurt ?? []).map((i) => ({ ...i, person: credit.get(i.teamId)! })));
 
     // Playoff weeks as scheduled, byes and undecided games included, in ESPN's (bracket) order
@@ -578,9 +578,10 @@ export function careerSplits(league: League, kind: "close" | "blowout"): Map<str
   return new Map([...out].map(([p, { years, ...r }]) => [p, { ...r, wonBy: r.wonBy / 100, lostBy: r.lostBy / 100, seasons: years.size }]));
 }
 
-// Injured starters over a career (Round 11, the site owner, 2026-11-25: "add whoever had the most
-// injuries as a league record"). Counted from league.injuries, so a league cut at a week counts to it;
-// `seasons` are the person's seasons with ESPN's game logs (2018 on).
+// Injuries over a career (Round 11, the site owner, 2026-11-25: "add whoever had the most injuries as a
+// league record"). Counted from league.injuries, so a league cut at a week counts to it; `seasons` are
+// the person's seasons with ESPN's game logs (2018 on). The latest is the last to become his (`since`:
+// the game the player got hurt in while on the team, or the week the team got him while out).
 export type CareerInjuries = { count: number; seasons: number; latest: InjuryEntry | null };
 export function careerInjuries(league: League): Map<string, CareerInjuries> {
   const out = new Map<string, CareerInjuries>();
@@ -593,7 +594,7 @@ export function careerInjuries(league: League): Map<string, CareerInjuries> {
     const row = out.get(i.person);
     if (!row) continue;
     row.count += 1;
-    row.latest = i;
+    if (!row.latest || i.season > row.latest.season || (i.season === row.latest.season && i.since >= row.latest.since)) row.latest = i;
   }
   return out;
 }
@@ -606,7 +607,7 @@ export function leagueRecords(league: League, top = 5, counts: (person: string) 
       .sort(([pa, a], [pb, b]) => value(b) - value(a) || tie(a, b) || pa.localeCompare(pb))
       .slice(0, top)
       .map(([person, split]) => ({ person, split, value: value(split) }));
-  // Ties go to fewer seasons: more injured starters a season
+  // Ties go to fewer seasons: more injuries a season
   const hurt = [...careerInjuries(league)]
     .filter(([person, c]) => counts(person) && c.count > 0)
     .sort(([pa, a], [pb, b]) => b.count - a.count || a.seasons - b.seasons || pa.localeCompare(pb))
@@ -622,7 +623,7 @@ export function leagueRecords(league: League, top = 5, counts: (person: string) 
     { key: "close-losses", title: "Heartbreak Hotel", subtitle: `Most losses by under ${CLOSE_UNDER} points`, unit: "losses",
       entries: list("close", (s) => s.l, (a, b) => cents(a.lostBy) - cents(b.lostBy)) },
     // The name is a placeholder until the site owner picks one
-    { key: "injuries", title: "The Infirmary", subtitle: "Most injured starters", unit: "injuries", entries: hurt },
+    { key: "injuries", title: "The Infirmary", subtitle: "Most injured players", unit: "injuries", entries: hurt },
   ];
 }
 

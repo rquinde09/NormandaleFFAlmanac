@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Segmented } from "@/components/Segmented";
-import { RankChange } from "@/components/ui";
-import type { ReviewKey } from "@/lib/review";
+import { FoldNotes, RankChange } from "@/components/ui";
+import { INJURIES_COUNTED, type ReviewKey } from "@/lib/review";
 import { updateParams } from "@/lib/url";
 
 export type SeasonTableRow = {
@@ -18,7 +18,7 @@ export type SeasonTableRow = {
   pa: number;
   rankChange: number | null;
   trades: number; // how many
-  injuries: number | null; // injured starters (Round 11); null without ESPN's game logs (2017)
+  injuries: number | null; // injuries (Round 11, lib/injuries.ts); null without ESPN's game logs (2017)
   // The Playcall Review's numbers (null: none that season). Streaks: W6 = 6, L4 = −4.
   review: Record<ReviewKey, number | null>;
 };
@@ -54,12 +54,38 @@ const HEADERS: Record<Stats, string[]> = {
   odds: ["Odds", "Luck", "Streaks", "Injuries"],
 };
 
-const NOTES: Record<Exclude<Stats, "standard">, string> = {
-  playcall:
-    "Each is the team against the league that season, in points its starting lineup scored. Draft IQ and Waiver IQ: what its draft picks and its pickups scored for it, minus the league’s average. Roster IQ: the league’s average points left on the bench minus the team’s. Trade IQ: what its trades gained or lost. ESPN has bench lineups, pickups and trades from 2018 on.",
-  odds:
-    "Odds: wins minus ESPN’s projected wins, where ESPN favors the lineup with the higher projected score (from 2018). Luck: wins above or below expected, where each week a team expects the share of the league it outscored. Streaks: the season’s longest winning (W) or losing (L) streak, whichever is longer. Injuries: starters who got hurt while on the team, missing their NFL team’s next two games (from 2018; a suspension or benching counts too), green below the league’s average and red above it.",
-};
+const LABELS: Record<Stats, string> = { standard: "Standard", playcall: "Playcall", odds: "Odds" };
+
+// How each stat set is counted, folded away under the table like the Records page's notes (the site
+// owner, 2026-11-27: "replicate the * How the starred records are counted ... for standard, playcall,
+// and odds"), one point a column
+function counted(stats: Stats, complete: boolean, playoffTeams: number): string[] {
+  if (stats === "standard")
+    return [
+      complete
+        ? "The number by each name: the final place, from the playoffs and the pancake ladder."
+        : `The number by each name: the current seed, as ESPN seeds it (wins, then total points). The top ${playoffTeams} make the playoffs; the line marks the cut.`,
+      "W-L: every decided game, regular season, playoffs, placement and consolation alike. ESPN’s own record counts the regular season only.",
+      "PF and PA: the points the team scored and allowed in those games.",
+      complete
+        ? "Rank Δ: the final place against the regular-season seed, so a 6 seed who wins it all shows ▲5."
+        : "Rank Δ: the seed’s change since last week.",
+    ];
+  if (stats === "playcall")
+    return [
+      "Each is the team against the league that season, in points its starting lineup scored, so each column adds up to zero.",
+      "Draft IQ: what the team’s draft picks scored for it, minus the league’s average. Players traded away or dropped count only for their time on the team.",
+      "Roster IQ: the league’s average points left on the bench minus the team’s. The bench is each week’s best possible lineup minus the one started. From 2018.",
+      "Waiver IQ: what the players it picked up (off waivers or free agency) scored for it, minus the league’s average. From 2018.",
+      "Trade IQ: what the players it received scored for it, minus what the players it sent away scored for their new team, from the trade on; – without a trade. From 2018.",
+    ];
+  return [
+    "Odds: wins minus ESPN’s projected wins. ESPN’s favorite each game is the lineup with the higher projected score. From 2018.",
+    "Luck: wins minus expected wins. Each week a team expects the share of the league it outscored.",
+    "Streaks: the season’s longest winning (W) or losing (L) streak, whichever is longer.",
+    `${INJURIES_COUNTED} Green is below the league’s average, red above.`,
+  ];
+}
 
 // The page's static HTML shows the Standard view until it reads its URL
 export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange }: Props & { stats: Stats; onChange?: (v: Stats) => void }) {
@@ -67,7 +93,7 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
   const th = "px-1.5 py-2.5 text-right leading-tight font-medium sm:px-3 sm:whitespace-nowrap";
   const td = "px-1.5 py-2.5 text-right whitespace-nowrap sm:px-3";
   const headers = HEADERS[stats];
-  // The league's average injured starters that season, which colors each count
+  // The league's average injuries that season, which colors each count
   const hurt = rows.map((r) => r.injuries).filter((n): n is number => n !== null);
   const average = hurt.length ? hurt.reduce((a, b) => a + b, 0) / hurt.length : null;
 
@@ -75,11 +101,7 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
     <div className="space-y-2">
       <Segmented
         label="Stats"
-        options={[
-          { value: "standard", label: "Standard" },
-          { value: "playcall", label: "Playcall" },
-          { value: "odds", label: "Odds" },
-        ]}
+        options={STATS.map((v) => ({ value: v, label: LABELS[v] }))}
         value={stats}
         onChange={(v) => onChange?.(v)}
       />
@@ -145,14 +167,14 @@ export function SeasonTableView({ rows, complete, playoffTeams, stats, onChange 
         </table>
       </div>
       <p className="text-xs text-zinc-500">
-        {complete ? "Final place. " : `Current seed: the top ${playoffTeams} make the playoffs. `}
-        {stats === "standard"
-          ? `W-L, PF and PA count every game: regular season, playoffs and consolation. Rank Δ: ${
-              complete ? "the final place against the regular-season seed" : "the seed’s change since last week"
-            }.`
-          : NOTES[stats]}
-        {stats === "odds" && average !== null && ` League average: ${average.toFixed(1)} injured starters.`}
+        {complete ? "Final place." : `Current seed: the top ${playoffTeams} make the playoffs.`}
+        {stats === "odds" && average !== null && ` League average: ${average.toFixed(1)} injuries.`}
       </p>
+      <FoldNotes summary={`How the ${LABELS[stats]} stats are counted`}>
+        {counted(stats, complete, playoffTeams).map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </FoldNotes>
     </div>
   );
 }
@@ -163,7 +185,7 @@ function Signed({ td, n, digits }: { td: string; n: number | null; digits: numbe
   return <td className={`${td} ${toneOf(n, digits)}`}>{plusMinus(n, digits)}</td>;
 }
 
-// A count of injured starters: green below the league's average, red above, "–" without one
+// A count of injuries: green below the league's average, red above, "–" without one
 function Injuries({ td, n, average }: { td: string; n: number | null; average: number | null }) {
   if (n === null || average === null) return <td className={`${td} text-zinc-600`}>–</td>;
   const tone = Math.round(n * 10) < Math.round(average * 10) ? "text-emerald-400" : Math.round(n * 10) > Math.round(average * 10) ? "text-red-400" : "text-zinc-400";

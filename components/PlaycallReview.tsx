@@ -4,7 +4,7 @@ import { GREEN, GREY, RED, keep, plusMinus } from "@/components/ChartFrame";
 import { Toggle } from "@/components/RosterBox";
 import { ordinal } from "@/lib/format";
 import type { ReviewRow, SeasonPoint } from "@/lib/manager";
-import { DECISIONS, FATE, type ReviewKey } from "@/lib/review";
+import { DECISIONS, FATE, INJURIES_COUNTED, type ReviewKey } from "@/lib/review";
 
 type Tone = "good" | "bad" | "even";
 
@@ -123,7 +123,7 @@ const STATS: Record<ReviewKey, Stat> = {
       even: ["Even", ""],
     },
   },
-  // Round 11 (the site owner, 2026-11-25): starters who got hurt, against the league's average
+  // Round 11 (the site owner, 2026-11-25; redefined 2026-11-27): injuries, against the league's average
   injuries: {
     key: "injuries",
     label: "Injuries",
@@ -133,9 +133,9 @@ const STATS: Record<ReviewKey, Stat> = {
     format: (v) => plusMinus(v, 1),
     counts: true,
     words: {
-      good: ["Healthy", "Fewer starters got hurt than league mates"],
-      bad: ["Banged up", "More starters got hurt than league mates"],
-      even: ["Even", "As many starters got hurt as the league average"],
+      good: ["Healthy", "Fewer players got hurt than league mates"],
+      bad: ["Banged up", "More players got hurt than league mates"],
+      even: ["Even", "As many players got hurt as the league average"],
     },
     missing: (p) => `ESPN has no ${p.season} game logs`,
   },
@@ -164,7 +164,7 @@ const GROUPS: Record<ReviewGroup, { title: string; keys: ReviewKey[]; counted: s
       "Odds: wins minus ESPN’s projected wins. ESPN’s favorite each game is the lineup with the higher projected score. From 2018.",
       "Luck: wins minus expected wins. Each week a team expects the share of the league it outscored.",
       "Streaks: the season’s longest winning (W) or losing (L) streak, whichever is longer.",
-      "Injuries: players who had started for the team that season and got hurt while on it, counted when they missed their NFL team’s next two games (byes skipped). The middle of the bar is the league’s average. ESPN keeps no injury reports for past weeks, only whether each player played, so a suspension or a benching counts too. From 2018.",
+      `${INJURIES_COUNTED} The middle of the bar is the league’s average.`,
     ],
   },
 };

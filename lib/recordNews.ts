@@ -103,7 +103,8 @@ function post(league: League, t: Tracked, after: unknown, previous: RecordEntry,
   const person = (after as { person?: string }).person;
   const hurt = person && week !== null ? league.injuries.filter((i) => i.person === person && i.season === season && i.week === week) : [];
   if (def.key === "injuries") {
-    if (hurt.length) paragraphs.push(`It came in week ${week} of ${season}: ${escape(hurt.map((i) => i.name).join(" and "))} missed a second straight game.`);
+    const out = (i: (typeof hurt)[number]) => (i.letGo ? `${i.name}, let go after week ${i.hurt}, never played again that season` : `${i.name} missed a game`);
+    if (hurt.length) paragraphs.push(`It came in week ${week} of ${season}: ${escape(hurt.map(out).join(", and "))}.`);
   } else if (person && week !== null) {
     const g = league.games.find((x) => x.season === season && x.week === week && (x.home.person === person || x.away.person === person));
     if (g) {

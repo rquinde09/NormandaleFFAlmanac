@@ -201,9 +201,10 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   up to zero and each team's to its Trade IQ; Draft IQ and Waiver IQ add up to zero each season
   (Waiver IQ from 2018); every completed season from 2018 has a Waiver Pick and a Drop of the Year,
   and Trade and Fleece of the Year are one trade's two sides; the Standings' view names. Round 11
-  adds: injured starters' known cases (2023's Jefferson, Chubb, Burrow and Walker, 2018's Alex
-  Smith, 2025's Kamara; none for Kaden in 2023, whose Stafford missed one game and then had his
-  bye), a count for every team-season from 2018, Injuries adding up to zero each season, The
+  adds: injuries' known cases (2023's Jefferson, Walker and Kaden's Stafford, 2025's Kamara; out for
+  the season, 2023's Chubb and Burrow and 2018's Alex Smith), the site owner's 2026 examples of
+  2026-11-27 through week 11 (each stretch counted, picked up or traded for while out, and the latest
+  for AJ, Jeremy, Randy and Kaden), a count for every team-season from 2018, Injuries adding up to zero each season, The
   Infirmary against the seasons' counts, Injury Bug; the three tiers in his order; Dynasty Manager
   (AJ 2025), no Playoff Cinderella or Revenge Tour through 2025, Comeback Manager each season;
   waiver and drop RBs, WRs and TEs only (2025: Rico Dowdle); every player named in a Trade of the
@@ -477,11 +478,11 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
       other rows.
     - Injuries, Banged up ↔ Healthy (Round 11, 2026-11-25: "count the number of players that got
       injured on the starting lineup throughout the season and compare it with the league
-      average"; the words are ours). The value is the league's average injured starters that
-      season minus the team's (like Roster IQ, so it adds up to zero and fewest ranks 1st), but the
-      row shows counts: the team's, the league's most and fewest at the ends and "avg 4.1" in the
-      middle (`counts` in `PlaycallReview.tsx`, `ReviewRow.average`). 2017: "ESPN has no 2017 game
-      logs". The rule is under Injured starters, below.
+      average"; the words are ours). The value is the league's average injuries that season minus
+      the team's (like Roster IQ, so it adds up to zero and fewest ranks 1st), but the row shows
+      counts: the team's, the league's most and fewest at the ends and "avg 11.7" in the middle
+      (`counts` in `PlaycallReview.tsx`, `ReviewRow.average`). 2017: "ESPN has no 2017 game logs".
+      The rule (his redefinition, 2026-11-27) is under Injuries, below.
     `npm run check` tests his sketch, 2023: AJ +1.3, +2, +54.1, −76, W10; Luke −1.3, −1, −100.8,
     +24, L8 (his 54.6 and −99.4 were read off the old chart).
   - Opponents (`lib/manager.ts`, `components/Opponents.tsx`): head-to-head over every decided
@@ -524,7 +525,7 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
       Zero until Round 11, which also ends its clash with the Below Zero season record); 😢 It Was
       Only a Dream (most PA); 🪑 The Benchwarmer (most points left on the bench; Luke,
       2026-11-15); 💥 Dunzo; 🗑️ Drop of the Year; 🐛 Injury Bug ("Has the most players suffer
-      significant injuries": the most injured starters that season, from 2018; ties shared); 🐑
+      significant injuries": the most injuries that season, from 2018; ties shared); 🐑
       Fleece of the Year. He also offered a GOAT award for the fewest injuries, but his table
       leaves it out (and the fewest is often shared: four teams in 2018), so there is none.
     Round 7 added Ice in the Veins and Dunzo; Round 8 (2026-11-20) redefined both. Dunzo, Round
@@ -565,7 +566,7 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   description under the title since Round 10 (the site owner; the fine print at the bottom stays).
   Round 11 (2026-11-25) folded that fine print into "* How the starred records are counted"
   (`<details>`, shut by default), one bullet each in his order (The One Hit Wonder, season
-  projection, bench, close games and blowouts, then injured starters), and marked the records it
+  projection, bench, close games and blowouts, then injuries), and marked the records it
   explains with a * (`STARRED` in `lib/records.ts`).
   Three tabs since Round 8 (the site owner, 2026-11-20), in his sections:
   - Game: Match Up Records (The @$$-Whooping, The Clincher, Clash of Titans, The Snooze Fest) and
@@ -575,9 +576,12 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     (The Peaky Blinders, The Horseshoe, The Black Cat).
   - League: League Records, the four Round 7 close-game and blowout records as all-time totals,
     and Round 11's The Infirmary ("add whoever had the most injuries as a league record"; the name
-    is a placeholder): the most injured starters over a career, from 2018, the season in progress
-    included; a tie goes to fewer seasons (`careerInjuries`, counted from `league.injuries`, so the
-    record-break news cuts it at each week). Through 2026 week 11: AJ 57, Jeremy 50, Jordan 46.
+    is a placeholder): "Most injured players", the most injuries over a career, from 2018, the
+    season in progress included; a tie goes to fewer seasons (`careerInjuries`, counted from
+    `league.injuries`, so the record-break news cuts it at each week). Each entry names the
+    manager's latest: the injury that became his last, by `Injury.since` (the site owner, 2026-11-27:
+    AJ's is Jordan Addison, Randy's Jonathon Brooks "after week 12 … AJ Brown"). Through 2026 week
+    11: Jeremy 127, AJ 112, Suny 109.
 
   On a phone, small cards two to a row, as in his mockup: the name in red capitals, the
   description (none on the Match Up records, as mocked), the number, the holder ("Luke def.
@@ -637,18 +641,37 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
   progress, whose decided weeks are fetched weekly since Round 5 (so the season page's Roster IQ
   column and the game records count it live). `lib/bench.ts` also reads the lineup files for
   `lib/champions.ts`, `lib/playcalls.ts` and `lib/roster.ts`.
-- Injured starters (`lib/injuries.ts`, the site owner's Round 11, 2026-11-25): ESPN keeps no
-  injury reports for past weeks, so an injury is read from its game logs (`games` in the players
-  files). A player counts for a team-season if he had started for it that season, then played a
-  game while on its roster and missed his NFL team's next two games (`MISSED_IN_A_ROW`; byes
-  skipped, so one missed game next to a bye doesn't count). Once per team-season, for the team he
-  was on when hurt, whether or not it kept him; benched that week counts too (Kamara, Ammari's 2025).
-  D/STs are left out. It counts when the second game is missed (`Injury.week`), which is how the
-  live season and the record-break news cut it. A suspension, or an NFL starter benched for a
-  backup (2018 Winston, 2025 Mariota after filling in), looks the same and counts; the notes say
-  so. Two straight games, not one, is "significant" (Injury Bug's word). Seasons 2018–2025
-  average 4.1 to 6.1 a team-season; 2017 has none (`TeamSeason.injuries` null). The IR slot (2025 on, one per team) was the Round 10 idea;
-  it counts managers' IR moves, not injuries, so it isn't used.
+- Injuries (`lib/injuries.ts`; Round 11, 2026-11-25, redefined by the site owner 2026-11-27,
+  replacing Round 11's injured starters, who had to have started and then miss two straight games):
+  "the total count of injured players a manager had rostered regardless in the starting line up or
+  bench or IR spot", counted his way, "if they had missed any weeks that had no stats and then I
+  confirmed if that player was rostered by the manager that same week". ESPN keeps no injury
+  reports for past weeks, so it's read from the game logs (`games` in the players files). An injury
+  is a stretch of missed NFL games (byes don't break it, a game played ends it), counted once for
+  every team that had the player on its roster, any slot, in a week he missed: a player picked up
+  or traded for while out counts for both teams (Brooks for Jeremy's and Randy's 2026), and one hurt
+  again after he came back counts again ("AJ Brown is a three count"). One missed game is enough.
+  It counts in the week of his first game missed on that roster (`Injury.week`), which is how the
+  live season and the record-break news cut it. His other case, a player "on IR and dropped",
+  which he confirmed from the player's status ("out for the season"): a team that had him in his
+  last game and let him go before he missed one is charged only if he never played again that
+  season (`letGo`), counted once the season is over (`week` = its last week), since game logs
+  can't tell a player dropped hurt from one dropped healthy (2023's Chubb and Burrow, 2018's Alex
+  Smith). Counting that for the live season ("hasn't played since") would add his Reed, Dart,
+  Michael Wilson, Omar Cooper, Achane and Brooks for Jeremy, plus 14 more he didn't list (2026
+  through week 11); a question for him. `Injury.since` (the game he got hurt in while on the team,
+  or the week the team got him while out) orders the latest. Benched that week counts (Kamara,
+  Ammari's 2025); so does a suspension or a healthy scratch, which look the same; the notes say so
+  (`INJURIES_COUNTED` in `lib/review.ts`, one wording everywhere). D/STs are left out. Seasons
+  2018–2025 average 8.7 to 16.6 a team-season; 2017 has none (`TeamSeason.injuries` null). His
+  2026 list (68 through week 11, by hand) differs from the rule's 81: he left out single games the
+  logs show (Keenan Allen and Zay Flowers for Jeremy, Justin Jefferson for Andrew) and longer ones
+  (Deebo Samuel 3 games on Nigel's bench, Jayden Daniels 2 on Robel's IR, Rashee Rice 2 for
+  Jeremy), counted Lamar Jackson and DeVonta Smith once though each missed two separate stretches,
+  and counted the dropped-when-hurt players above and Goedert, Price, Croskey-Merritt, Jordan
+  Mason and Kyler Murray for the teams that let them go before they missed a game. The IR slot
+  (2025 on, one per team) was the Round 10 idea; it counts managers' IR moves, not injuries, so it
+  isn't used.
 - Season pages (`lib/seasons.ts`, `components/Bracket.tsx`, Luke 2026-11-15). `/seasons` lists
   every season with champion, runner-up and last place. `/seasons/[year]` has:
   - the podium
@@ -659,7 +682,11 @@ Env vars, same names in `.env.local` and in Actions secrets: `ESPN_LEAGUE_ID`, `
     Playcall (Draft IQ, Roster IQ, Waiver IQ, Trade IQ, in whole points, "–" without the data or,
     for Trade IQ, without a trade) and Odds (Odds, Luck, Streaks W10 or L8, and since Round 11
     Injuries: the count, green below the season's average and red above it, with the average in
-    the note under the table; "Odds" is his name for the tab). Round 8's Playcall set was Luck,
+    the line under the table; "Odds" is his name for the tab). Under the table, since 2026-11-27,
+    "How the Odds stats are counted" (or Standard, Playcall) folds out like the Records page's
+    notes (`FoldNotes` in `components/ui.tsx`, which both use), one point a column (the site owner:
+    "replicate the * How the starred records are counted … for standard, playcall, and odds"; no *
+    on the headers, since every column is explained). Round 8's Playcall set was Luck,
     Bench, Trades and Streaks. W-L, PF and PA count every
     game; on a phone PF and PA show whole points, and the Playcall headers wrap to two lines, so the
     four columns fit 375 px. Rank Δ (`rankChange` in `lib/seasons.ts`, Luke's pick): while the season is on, the seed's
@@ -853,11 +880,14 @@ Records (game and season subpages, kept by hand, "Will Update End of Season").
    points" (that would change 2017, 2019, 2021, 2023 and 2025); (2) Ice in the Veins keeps 1.00 or
    less (his table: "less than one point"; only Ryan's 2021 win by exactly 1.00 differs); (3) no
    GOAT award for the fewest injuries (offered in his notes, missing from his table); (4) the
-   injury rule (two straight missed NFL games after starting) and its caveats; (5) Comeback
+   injury rule (replaced by his redefinition, 2026-11-27, under Injuries above); (5) Comeback
    Manager's reading (missed the playoffs, then the biggest climb in final place); (6) Playoff
    Cinderella read as the season's last playoff seed, which nobody has done (a looser reading,
    say a champion seeded in the bottom half, gives Robel 2021 and Jeremy 2019); (7) The
-   Infirmary's name. Next: the domain.
+   Infirmary's name. His injury clarification (2026-11-27) is built: every rostered player counts,
+   each stretch of missed games once per team, The Infirmary's latest, and the season pages'
+   "How the … stats are counted". Open: whether players let go right after getting hurt count
+   while the season is on (see Injuries). Next: the domain.
 
 Later, not v1: head-to-head records, photos for the Hall.
 
